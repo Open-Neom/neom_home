@@ -1,0 +1,284 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:get/get.dart';
+import 'package:neom_commons/auth/ui/login/login_controller.dart';
+import 'package:neom_commons/core/data/firestore/activity_feed_firestore.dart';
+import 'package:neom_commons/core/data/firestore/user_firestore.dart';
+import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
+import 'package:neom_commons/core/data/implementations/user_controller.dart';
+import 'package:neom_commons/core/domain/model/activity_feed.dart';
+import 'package:neom_commons/core/domain/model/event.dart';
+import 'package:neom_commons/core/domain/use_cases/home_service.dart';
+import 'package:neom_commons/core/utils/app_color.dart';
+import 'package:neom_commons/core/utils/app_theme.dart';
+import 'package:neom_commons/core/utils/app_utilities.dart';
+import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
+import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
+import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
+import 'package:neom_commons/core/utils/enums/auth_status.dart';
+
+import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
+import '../utils/constants/home_constants.dart';
+
+class HomeController extends GetxController implements HomeService {
+
+  var logger = AppUtilities.logger;
+  final loginController = Get.find<LoginController>();
+  final userController = Get.find<UserController>();
+  final timelineController = Get.put(TimelineController());
+
+  int currentIndex = 0;
+
+  bool startingHome = true;
+  bool hasItems = false;
+
+  final RxBool _isLoading = true.obs;
+  bool get isLoading => _isLoading.value;
+  set isLoading(bool isLoading) => _isLoading.value = isLoading;
+
+  final RxBool _isPressed = false.obs;
+  bool get isPressed => _isPressed.value;
+  set isPressed(bool isPressed) => _isPressed.value = isPressed;
+
+  final PageController pageController = PageController();
+  final ScrollController scrollController = ScrollController();
+
+  final Rx<Event> _event = Event().obs;
+  Event get event => _event.value;
+  set event(Event event) => _event.value = event;
+
+  String toRoute = "";
+  @override
+  void onInit() async {
+    super.onInit();
+    logger.i("Home Controller Init");
+
+    try {
+      pageController.addListener(() {
+        currentIndex = pageController.page!.toInt();
+      });
+
+      int toIndex =  0;
+
+      if(Get.arguments != null && Get.arguments.isNotEmpty) {
+        if (Get.arguments[0] is int) {
+          toIndex = Get.arguments[0];
+        } else if (Get.arguments[0] is Event) {
+          event = Get.arguments[0];
+        } else if (Get.arguments[0] is String) {
+          toRoute = Get.arguments[0];
+        }
+      }
+
+      if(!currentIndex.isEqual(toIndex) || currentIndex == 0) {
+        selectPageView(toIndex);
+      }
+
+    } catch (e) {
+      logger.e(e.toString());
+    }
+
+  }
+
+  @override
+  void onReady() async {
+    super.onReady();
+    logger.d("Home Controller Ready");
+
+    loginController.authStatus = AuthStatus.loggedIn;
+    loginController.setIsLoading(false);
+    startingHome = false;
+    isLoading = false;
+    update([AppPageIdConstants.home]);
+
+    if(event.id.isNotEmpty) {
+      logger.i("Coming from payment event processed successfully Event: ${event.id}");
+      Get.snackbar(
+          AppTranslationConstants.paymentProcessed.tr,
+          AppTranslationConstants.paymentProcessedMsg.tr,
+          snackPosition: SnackPosition.bottom,
+      );
+
+      await timelineController.gotoEventDetails(event);
+    }
+
+    if(toRoute.isNotEmpty) {
+      logger.i("Coming from payment for appCoins processed successfully");
+      Get.snackbar(
+        AppTranslationConstants.paymentProcessed.tr,
+        AppTranslationConstants.paymentProcessedMsg.tr,
+        snackPosition: SnackPosition.bottom,
+      );
+      await Get.toNamed(toRoute);
+    }
+
+    if(userController.user!.fcmToken.isEmpty
+        || userController.user!.fcmToken != userController.fcmToken) {
+      UserFirestore().updateFcmToken(userController.user!.id, userController.fcmToken);
+    }
+
+    hasItems = (userController.profile.appItems?.length ?? 0) > 1;
+    verifyLocation();
+    UserFirestore().updateLastTimeOn(userController.user!.id);
+
+    try {
+      bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
+      if (isAppBadgeSupported) {
+        logger.i('App Badger supported.');
+        List<ActivityFeed> unreadActivityFeed = [];
+        unreadActivityFeed = await ActivityFeedFirestore().retrieve(userController.profile.id);
+        unreadActivityFeed.removeWhere((element) => element.unread == false);
+        if (unreadActivityFeed.isNotEmpty) {
+          FlutterAppBadger.updateBadgeCount(unreadActivityFeed.length + 10);
+        } else {
+          FlutterAppBadger.removeBadge();
+        }
+      } else {
+        logger.i('App Badger not supported.');
+      }
+    } catch(e) {
+      logger.e('Failed to get badge support.');
+    }
+
+    update([AppPageIdConstants.home]);
+  }
+
+
+  @override
+  void selectPageView(int index) async {
+    logger.d("Changing page view to index: $index");
+
+    try {
+      switch(index) {
+        case HomeConstants.timelineIndex:
+          await setInitialTimeline();
+          break;
+        case HomeConstants.itemlistsIndex:
+          break;
+        case HomeConstants.eventsIndex:
+          break;
+        case HomeConstants.inboxIndex:
+          //TODO VERIFY ITS WORKING
+          //Get.delete<InboxRoomController>();
+          break;
+      }
+
+      if(pageController.hasClients) {
+        pageController.jumpToPage(index);
+      }
+
+      currentIndex = index;
+    } catch (e) {
+      logger.e(e.toString());
+    }
+
+    update([AppPageIdConstants.home]);
+  }
+
+
+  @override
+  Future<void> verifyLocation() async {
+    logger.d("Verifying location");
+    try {
+      userController.profile.position = await GeoLocatorController()
+          .updateLocation(userController.profile.id, userController.profile.position);
+      isLoading = false;
+    } catch (e) {
+      logger.e(e.toString());
+    }
+
+    update([AppPageIdConstants.home, AppPageIdConstants.timeline]);
+  }
+
+
+  @override
+  Future<void> modalBottomSheetMenu(BuildContext context) async {
+    isPressed = true;
+    final result = await showModalBottomSheet(
+        elevation: 0,
+        backgroundColor: AppTheme.canvasColor75(context),
+        context: context,
+        builder: (BuildContext context) {
+          return Column(
+            children: <Widget>[
+              Container(
+                height: 280,
+                padding: const EdgeInsets.only(top: 10),
+                margin: const EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(
+                    color: AppColor.main50,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0))),
+                child: ListView.separated(
+                    separatorBuilder:  (context, index) => const Divider(),
+                    itemCount: HomeConstants.bottomMenuItems.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.all(Radius.circular(30)),
+                            color: Colors.teal[100],
+                          ),
+                          child: Icon(HomeConstants.bottomMenuItems[index].icon, color: Colors.white),
+                        ),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 15,),
+                        title: Text(
+                          HomeConstants.bottomMenuItems[index].title.tr,
+                          style: const TextStyle(color: Colors.white, fontSize: 18),
+                        ),
+                        subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr),
+                        onTap: () {
+                          switch (HomeConstants.bottomMenuItems[index].title) {
+                            case AppTranslationConstants.createPost:
+                              Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                              break;
+                            case AppTranslationConstants.organizeEvent:
+                              Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                              break;
+                            case AppTranslationConstants.shareComment:
+                              Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                              break;
+                            case AppTranslationConstants.startPoll:
+                              Get.snackbar(AppTranslationConstants.underConstruction.tr,
+                                  AppTranslationConstants.underConstructionMsg.tr,
+                                  snackPosition: SnackPosition.bottom);
+                              break;
+                          }
+                        },
+                      );
+                    }
+                ),
+              ),
+              Container(
+                  height: 60, width: 60,
+                  decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(30))),
+                  margin: const EdgeInsets.symmetric(vertical: 10),
+                  child: GestureDetector(
+                      onTap: () => Get.back(),
+                      child: Icon(Icons.close, size: 25, color: Colors.grey[900])
+                  )
+              ),
+            ],
+          );
+        }).whenComplete(() => Get.back());
+
+    if(result != null && result == true) Get.back();
+  }
+
+  void gotoEvent(Event event) {
+    Get.toNamed(AppRouteConstants.eventDetails, arguments: [event]);
+  }
+
+  Future<void> setInitialTimeline() async {
+    if(timelineController.initialized && currentIndex == 0 && !startingHome) {
+      if(timelineController.timelineScrollController.hasClients) {
+        await timelineController.timelineScrollController.animateTo(
+            0.0, curve: Curves.easeOut,
+            duration: const Duration(milliseconds: 1000));
+      }
+      await timelineController.getTimeline();
+    }
+  }
+
+}
