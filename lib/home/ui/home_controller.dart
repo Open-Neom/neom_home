@@ -255,7 +255,7 @@ class HomeController extends GetxController implements HomeService {
                       borderRadius: BorderRadius.all(Radius.circular(30))),
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   child: GestureDetector(
-                      onTap: () => Get.back(),
+                      onTap: () => Navigator.pop(context),
                       child: Icon(Icons.close, size: 25, color: Colors.grey[900])
                   )
               ),

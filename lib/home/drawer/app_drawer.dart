@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/data/implementations/app_drawer_controller.dart';
 import 'package:neom_commons/core/ui/widgets/custom_widgets.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
@@ -10,8 +11,8 @@ import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/constants/url_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_commons/emxi/utils/constants/emxi_constants.dart';
@@ -39,25 +40,35 @@ class AppDrawer extends StatelessWidget {
                       Obx(()=>_menuHeader(context, _)),
                       const Divider(),
                       _menuListRowButton(AppConstants.profile,  const Icon(Icons.person), true, context),
-                      _.appProfile.type != ProfileType.musician ? Container() :
-                      _menuListRowButton(AppConstants.instruments, const Icon(FontAwesomeIcons.pencil), true, context),
-                      _menuListRowButton(AppConstants.events, const Icon(FontAwesomeIcons.calendar), true, context),
+                      _.appProfile.type != ProfileType.instrumentist ? Container() :
+                      _menuListRowButton(AppConstants.instruments, Icon(
+                          AppFlavour.getInstrumentIcon()), true, context),
+                      AppFlavour.appInUse == AppInUse.emxi
+                      ? _menuListRowButton(AppConstants.events, const Icon(FontAwesomeIcons.calendar), true, context)
+                      : Container(),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
-                      //_.appProfile.type != ProfileType.musician ? Container() :
-                      //_menuListRowButton(AppConstants.bands, const Icon(Icons.people), true, context),
-                      // _.user.userRole == UserRole.subscriber ? Container() :
-                      // _menuListRowButton(AppConstants.events, const Icon(Icons.event), true, context),
-                      //_menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context),
-                      // _.user.userRole == UserRole.subscriber ? Container() :
+                      AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
+                       ? _menuListRowButton(AppConstants.bands, const Icon(Icons.people), true, context)
+                      : Container(),
+                      AppFlavour.appInUse == AppInUse.gigmeout
+                          ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
+                          : Container(),
                       _menuListRowButton(AppConstants.requests, const Icon(Icons.email), true, context),
-                      _.user.userRole == UserRole.subscriber ? Container() :
-                      _menuListRowButton(EmxiConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), false, context),
-                      //_menuListRowButton(AppConstants.wallet, const Icon(FontAwesomeIcons.coins), true, context),
+                      AppFlavour.appInUse == AppInUse.emxi && _.user.userRole != UserRole.subscriber
+                          ? _menuListRowButton(EmxiConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), false, context)
+                          : Container(),
+                      AppFlavour.appInUse == AppInUse.gigmeout
+                          ? _menuListRowButton(AppConstants.booking, const Icon(FontAwesomeIcons.building), _.user.userRole != UserRole.subscriber, context)
+                          : Container(),
+                      AppFlavour.appInUse == AppInUse.gigmeout
+                          ? _menuListRowButton(AppConstants.wallet, const Icon(FontAwesomeIcons.coins), true, context)
+                          : Container(),
                       const Divider(),
                       _menuListRowButton(AppConstants.settings, const Icon(Icons.settings), true, context),
-                      // _.gigUser.gigUserRole == GigUserRole.subscriber ? Container() :
-                      // _menuListRowButton('Admin Center', Icon(Icons.admin_panel_settings), true, context),
+                      // _.user.userRole != UserRole.subscriber
+                      //     ? _menuListRowButton('Admin Center', const Icon(Icons.admin_panel_settings), true, context)
+                      //     : Container(),
                       const Divider(),
                       _menuListRowButton(AppConstants.logout, const Icon(Icons.logout), true, context),
                     ],
@@ -103,7 +114,8 @@ class AppDrawer extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(_.appProfile.photoUrl.isNotEmpty ? _.appProfile.photoUrl : UrlConstants.noImageUrl),
+                  image: CachedNetworkImageProvider(_.appProfile.photoUrl.isNotEmpty
+                      ? _.appProfile.photoUrl : AppFlavour.getNoImageUrl()),
                   fit: BoxFit.cover,
                   ),
                 ),
@@ -130,7 +142,7 @@ class AppDrawer extends StatelessWidget {
               ),
               subtitle: Row(
                 children: [
-                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).toLowerCase().tr.capitalize!,
+                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize!,
                     style: AppTheme.primarySubtitleText.copyWith(
                         color: Colors.white70, fontSize: 15),
                     context: context),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
@@ -35,22 +36,22 @@ class AboutPage extends StatelessWidget {
                 vPadding: 0,
                 showDivider: false,
                 onPressed: () {
-                  CoreUtilities.launchURL(UrlConstants.webContact);
+                  CoreUtilities.launchURL(AppFlavour.getWebContact());
                 },
               ),
               HeaderWidget(AppTranslationConstants.websites.tr),
               SettingRowWidget(
-                  AppConstants.appTitle,
+                  AppConstants.appTitle.tr,
                   showDivider: true,
                   onPressed: (){
-                    CoreUtilities.launchURL(UrlConstants.landingPage);
+                    CoreUtilities.launchURL(AppFlavour.getLandingPageUrl());
                   }
               ),
               SettingRowWidget(
                   AppConstants.blog,
                   showDivider: true,
                   onPressed: (){
-                    CoreUtilities.launchURL(UrlConstants.blog);
+                    CoreUtilities.launchURL(AppFlavour.getBlogUrl());
                   }
               ),
               HeaderWidget(AppTranslationConstants.developer.tr),

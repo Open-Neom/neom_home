@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/constants/url_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'app_settings_controller.dart';
 import 'widgets/header_widget.dart';
@@ -31,14 +31,14 @@ class PrivacyAndTermsPage extends StatelessWidget {
                 AppTranslationConstants.termsOfService.tr,
                 showDivider: true,
                 onPressed: (){
-                  CoreUtilities.launchURL(UrlConstants.termsOfService);
+                  CoreUtilities.launchURL(AppFlavour.getTermsOfServiceUrl());
                 },
               ),
               SettingRowWidget(
                 AppTranslationConstants.privacyPolicy.tr,
                 showDivider: true,
                 onPressed: (){
-                  CoreUtilities.launchURL(UrlConstants.privacyPolicy);
+                  CoreUtilities.launchURL(AppFlavour.getPrivacyPolicyUrl());
                 },
               ),
               SettingRowWidget(

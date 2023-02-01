@@ -24,6 +24,8 @@ dependencies:
     path: ../neom_inbox
   neom_itemlists:
     path: ../neom_itemlists
+  neom_events:
+    path: ../neom_events
 
 dev_dependencies:
   flutter_test:

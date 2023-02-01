@@ -14,7 +14,6 @@ import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/constants/message_translation_constants.dart';
-import 'package:neom_commons/core/utils/constants/url_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/search_type.dart';
 
@@ -45,7 +44,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: IconButton(
         icon: CircleAvatar(
           maxRadius: 60,
-          backgroundImage: CachedNetworkImageProvider(profileImg.isNotEmpty ? profileImg : UrlConstants.noImageUrl)
+          backgroundImage: CachedNetworkImageProvider(profileImg.isNotEmpty
+              ? profileImg : AppFlavour.getNoImageUrl())
         ),
         onPressed: ()=> Scaffold.of(context).openDrawer(),
       ),
@@ -58,8 +58,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           )
       ],), onTap: () => {
             AppUtilities.showAlert(context,
-                AppFlavour().appInUse.value,
-                "${AppTranslationConstants.version.tr}1233123 ${AppConstants.appVersion}"),
+                AppFlavour.appInUse.value,
+                "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}"),
           }
       ),
       actions: <Widget>[

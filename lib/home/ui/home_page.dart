@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/constants/url_constants.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import '../drawer/app_drawer.dart';
 import '../utils/constants/home_constants.dart';
 import '../widgets/custom_appbar.dart';
@@ -29,7 +30,7 @@ class HomePage extends StatelessWidget {
         appBar: CustomAppBar(
             title: AppConstants.appTitle,
             profileImg: _.userController.profile.photoUrl.isNotEmpty
-            ? _.userController.profile.photoUrl : UrlConstants.noImageUrl,
+            ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
             profileId: _.userController.profile.id),
         drawer: const AppDrawer(),
         body: _.isLoading ? Container(
@@ -40,7 +41,9 @@ class HomePage extends StatelessWidget {
         ) : PageView(          
           physics: const NeverScrollableScrollPhysics(),
           controller: _.pageController,
-          children: HomeConstants.homePages
+          children: AppFlavour.appInUse == AppInUse.gigmeout
+              ? HomeConstants.gigHomePages
+              : HomeConstants.emxiHomePages
         ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(canvasColor: Colors.grey[900]),
@@ -53,7 +56,10 @@ class HomePage extends StatelessWidget {
             onTabSelected:(int index) => _.selectPageView(index),
             items: [
               CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
-              CustomBottomAppBarItem(iconData: FontAwesomeIcons.bookOpen, text: AppTranslationConstants.itemlists.tr,
+              CustomBottomAppBarItem(
+                  iconData: AppFlavour.appInUse == AppInUse.gigmeout
+                      ? Icons.library_music : FontAwesomeIcons.bookOpen,
+                  text: AppTranslationConstants.itemlists.tr,
                   animation: _.hasItems ? null : Column(
                     children: [
                       SizedBox(
@@ -75,13 +81,20 @@ class HomePage extends StatelessWidget {
                   AppTheme.widthSpace10,
                 ],
               )),
-              CustomBottomAppBarItem(iconData: FontAwesomeIcons.filePen, text: AppTranslationConstants.inspiration.tr),
+              CustomBottomAppBarItem(
+                  iconData: AppFlavour.appInUse == AppInUse.gigmeout
+                      ? FontAwesomeIcons.calendarDay : FontAwesomeIcons.filePen,
+                  text: AppFlavour.appInUse == AppInUse.gigmeout
+                      ? AppTranslationConstants.event.tr : AppTranslationConstants.inspiration.tr),
               CustomBottomAppBarItem(iconData: FontAwesomeIcons.comments, text: AppTranslationConstants.inbox),
             ],
           ),
         ),
-        floatingActionButtonLocation: _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
-        floatingActionButton:  _.currentIndex == 2 ? Container() : FloatingActionButton(
+        floatingActionButtonLocation: AppFlavour.appInUse == AppInUse.emxi
+            && _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
+        floatingActionButton:  AppFlavour.appInUse == AppInUse.emxi
+            && _.currentIndex == 2 ? Container()
+            : FloatingActionButton(
           tooltip: AppTranslationConstants.createPost.tr,
           splashColor: Colors.white,
           onPressed: () => _.modalBottomSheetMenu(context),

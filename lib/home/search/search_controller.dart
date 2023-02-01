@@ -32,6 +32,10 @@ class SearchController extends GetxController implements SearchService {
   Map<String, AppProfile> get filteredProfiles => _filteredProfiles;
   set filteredProfiles(Map<String, AppProfile> filteredProfiles) => _filteredProfiles.value = filteredProfiles;
 
+  final Rx<SplayTreeMap<double, AppProfile>> _sortedProfileLocation = SplayTreeMap<double, AppProfile>().obs;
+  SplayTreeMap<double, AppProfile> get sortedProfileLocation => _sortedProfileLocation.value;
+  set sortedProfileLocation(SplayTreeMap<double, AppProfile> sortedProfileLocation) => _sortedProfileLocation.value = sortedProfileLocation;
+
   SearchType searchType = SearchType.profile;
 
   @override
@@ -93,10 +97,6 @@ class SearchController extends GetxController implements SearchService {
     sortByLocation();
     update([AppPageIdConstants.search]);
   }
-
-  final Rx<SplayTreeMap<double, AppProfile>> _sortedProfileLocation = SplayTreeMap<double, AppProfile>().obs;
-  SplayTreeMap<double, AppProfile> get sortedProfileLocation => _sortedProfileLocation.value;
-  set sortedProfileLocation(SplayTreeMap<double, AppProfile> sortedProfileLocation) => _sortedProfileLocation.value = sortedProfileLocation;
 
   @override
   void sortByLocation() {
