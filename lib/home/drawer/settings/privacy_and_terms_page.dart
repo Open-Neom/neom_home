@@ -4,7 +4,6 @@ import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
-import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'app_settings_controller.dart';
@@ -54,9 +53,9 @@ class PrivacyAndTermsPage extends StatelessWidget {
                             cardColor: AppColor.main50,
                             backgroundColor: AppColor.main50,
                           ),
-                          child: const LicensePage(
-                            applicationVersion: AppConstants.appVersion,
-                            applicationName: AppConstants.appTitle,
+                          child: LicensePage(
+                            applicationVersion: AppFlavour.appVersion,
+                            applicationName: AppFlavour.appInUse.value,
                           ),
                         ),
                       ),

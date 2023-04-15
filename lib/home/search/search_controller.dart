@@ -81,7 +81,6 @@ class SearchController extends GetxController implements SearchService {
         : mateController.filterByNameOrInstrument(searchParam);
 
     sortByLocation();
-
     update([AppPageIdConstants.search]);
   }
 

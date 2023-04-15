@@ -43,25 +43,24 @@ class AppDrawer extends StatelessWidget {
                       _.appProfile.type != ProfileType.instrumentist ? Container() :
                       _menuListRowButton(AppConstants.instruments, Icon(
                           AppFlavour.getInstrumentIcon()), true, context),
-                      AppFlavour.appInUse == AppInUse.emxi
-                      ? _menuListRowButton(AppConstants.events, const Icon(FontAwesomeIcons.calendar), true, context)
-                      : Container(),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
                       AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
                        ? _menuListRowButton(AppConstants.bands, const Icon(Icons.people), true, context)
                       : Container(),
-                      AppFlavour.appInUse == AppInUse.gigmeout
-                          ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
+                      _menuListRowButton(AppConstants.events, const Icon(FontAwesomeIcons.calendar), true, context),
+                      //TODO To enable when users create events.
+                      // AppFlavour.appInUse == AppInUse.gigmeout
+                      //     ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
+                      //     : Container(),
+                      AppFlavour.appInUse == AppInUse.emxi
+                          ? _menuListRowButton(AppConstants.directory, const Icon(FontAwesomeIcons.building), true, context)
                           : Container(),
                       _menuListRowButton(AppConstants.requests, const Icon(Icons.email), true, context),
-                      AppFlavour.appInUse == AppInUse.emxi && _.user.userRole != UserRole.subscriber
-                          ? _menuListRowButton(EmxiConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), false, context)
+                      AppFlavour.appInUse == AppInUse.emxi
+                          ? _menuListRowButton(EmxiConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context)
                           : Container(),
-                      AppFlavour.appInUse == AppInUse.gigmeout
-                          ? _menuListRowButton(AppConstants.booking, const Icon(FontAwesomeIcons.building), _.user.userRole != UserRole.subscriber, context)
-                          : Container(),
-                      AppFlavour.appInUse == AppInUse.gigmeout
+                      AppFlavour.appInUse == AppInUse.gigmeout && _.user.userRole != UserRole.subscriber
                           ? _menuListRowButton(AppConstants.wallet, const Icon(FontAwesomeIcons.coins), true, context)
                           : Container(),
                       const Divider(),
@@ -170,7 +169,7 @@ class AppDrawer extends StatelessWidget {
             if (isEnabled) Get.toNamed(AppRouteConstants.genresFav);
             break;
           case EmxiConstants.digitalLibrary:
-            if (isEnabled) Get.toNamed(AppRouteConstants.digitalLibrary);
+            if (isEnabled) CoreUtilities.launchURL(EmxiConstants.digitalLibraryUrl);
             break;
           case AppConstants.bands:
             if (isEnabled) Get.toNamed(AppRouteConstants.bands);
@@ -186,6 +185,9 @@ class AppDrawer extends StatelessWidget {
             break;
           case AppConstants.booking:
             if (isEnabled) Get.toNamed(AppRouteConstants.booking);
+            break;
+          case AppConstants.directory:
+            if (isEnabled) Get.toNamed(AppRouteConstants.directory);
             break;
           case AppConstants.wallet:
             if (isEnabled) Get.toNamed(AppRouteConstants.wallet);

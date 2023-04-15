@@ -83,9 +83,9 @@ class HomePage extends StatelessWidget {
               )),
               CustomBottomAppBarItem(
                   iconData: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? FontAwesomeIcons.calendarDay : FontAwesomeIcons.filePen,
+                      ? FontAwesomeIcons.building : FontAwesomeIcons.filePen,
                   text: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? AppTranslationConstants.event.tr : AppTranslationConstants.inspiration.tr),
+                      ? AppTranslationConstants.directory.tr : AppTranslationConstants.inspiration.tr),
               CustomBottomAppBarItem(iconData: FontAwesomeIcons.comments, text: AppTranslationConstants.inbox),
             ],
           ),

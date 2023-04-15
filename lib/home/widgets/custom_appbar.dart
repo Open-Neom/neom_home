@@ -82,28 +82,26 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         unreadActivityFeed.add(activityFeed);
                       }
                   }
-                  
-                  return unreadActivityFeed.isNotEmpty ? Positioned(
-                        right: 11,
-                        top: 11,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 15,
-                            minHeight: 15,
-                          ),
-                          child: Text(unreadActivityFeed.length.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 8,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
+                  return unreadActivityFeed.isNotEmpty
+                      ? Positioned(
+                    right: 11, top: 11,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 15, minHeight: 15,
+                      ),
+                      child: Text(unreadActivityFeed.length.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 8,
                         ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ) : Container();
                 } else {
                   return Container();
