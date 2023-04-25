@@ -15,12 +15,12 @@ dependencies:
   neom_commons:
     git:
       url: https://github.com/Cyberneom/neom_commons.git
-    neom_timeline:
-      git:
-        url: https://github.com/Cyberneom/neom_timeline.git
-    neom_posts:
-      git:
-        url: https://github.com/Cyberneom/neom_posts.git
+  neom_timeline:
+    git:
+      url: https://github.com/Cyberneom/neom_timeline.git
+  neom_posts:
+    git:
+      url: https://github.com/Cyberneom/neom_posts.git
   neom_profile:
     git:
       url: https://github.com/Cyberneom/neom_profile.git

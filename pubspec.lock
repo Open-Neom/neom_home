@@ -907,87 +907,111 @@ packages:
   neom_admin:
     dependency: transitive
     description:
-      path: "../neom_admin"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: aeca0ec229bd47ffc35112891789c98b64cd4896
+      url: "https://github.com/Cyberneom/neom_admin.git"
+    source: git
+    version: "1.0.0"
   neom_bands:
     dependency: transitive
     description:
-      path: "../neom_bands"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: e24c126a41c9d8c05809e407ae3b3cdc6a37246b
+      url: "https://github.com/emmanuel-montoya/neom_bands.git"
+    source: git
+    version: "1.0.0"
   neom_booking:
     dependency: "direct main"
     description:
-      path: "../neom_booking"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: "875dfd9b6963a37de2ddce1c4417ad2ceaec85f2"
+      url: "https://github.com/emmanuel-montoya/neom_booking.git"
+    source: git
+    version: "1.0.0"
   neom_commerce:
     dependency: transitive
     description:
-      path: "../neom_commerce"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: d99949897f0006bd6ff573885194d51dea85902c
+      url: "https://github.com/emmanuel-montoya/neom_commerce.git"
+    source: git
+    version: "1.0.0"
   neom_commons:
     dependency: "direct main"
     description:
-      path: "../neom_commons"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: "2d9e076d4406e66087792b787b81ba65dfead550"
+      url: "https://github.com/Cyberneom/neom_commons.git"
+    source: git
+    version: "1.0.0"
   neom_events:
     dependency: "direct main"
     description:
-      path: "../neom_events"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: bd962a02f1fdaafc3a6e084d93717a872e579362
+      url: "https://github.com/Cyberneom/neom_events.git"
+    source: git
+    version: "1.0.0"
   neom_inbox:
     dependency: "direct main"
     description:
-      path: "../neom_inbox"
-      relative: true
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: b20cf3e41468f4318c953f274897f4ff4a32599e
+      url: "https://github.com/Cyberneom/neom_inbox.git"
+    source: git
     version: "1.0.0"
   neom_instruments:
     dependency: transitive
     description:
-      path: "../neom_instruments"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: "682171ab6d1df50d30608065c3ed4a1d9de31bcd"
+      url: "https://github.com/Cyberneom/neom_instruments.git"
+    source: git
+    version: "1.0.0"
   neom_itemlists:
     dependency: "direct main"
     description:
-      path: "../neom_itemlists"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: da365c8a01d90182d3698a2e635d972facb155d5
+      url: "https://github.com/Cyberneom/neom_itemlists.git"
+    source: git
+    version: "1.0.0"
   neom_posts:
     dependency: "direct main"
     description:
-      path: "../neom_posts"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: a67697add97fe0189d1fbef6be1f536f52822c96
+      url: "https://github.com/Cyberneom/neom_posts.git"
+    source: git
+    version: "1.0.0"
   neom_profile:
     dependency: "direct main"
     description:
-      path: "../neom_profile"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: f7234084bbbe7f6f3f151b393c0482df52f44ec9
+      url: "https://github.com/Cyberneom/neom_profile.git"
+    source: git
+    version: "1.0.0"
   neom_timeline:
     dependency: "direct main"
     description:
-      path: "../neom_timeline"
-      relative: true
-    source: path
-    version: "0.0.1"
+      path: "."
+      ref: HEAD
+      resolved-ref: "1873ef11ff4bae28d488ee5af76c8c6ba1a6451f"
+      url: "https://github.com/Cyberneom/neom_timeline.git"
+    source: git
+    version: "1.0.0"
   oauth2:
     dependency: transitive
     description:
