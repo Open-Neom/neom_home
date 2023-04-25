@@ -158,8 +158,6 @@ class HomeController extends GetxController implements HomeService {
         case HomeConstants.eventsIndex:
           break;
         case HomeConstants.inboxIndex:
-          //TODO VERIFY ITS WORKING
-          //Get.delete<InboxRoomController>();
           break;
       }
 

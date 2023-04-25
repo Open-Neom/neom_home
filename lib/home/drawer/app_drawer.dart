@@ -15,7 +15,6 @@ import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
-import 'package:neom_commons/emxi/utils/constants/emxi_constants.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -58,7 +57,7 @@ class AppDrawer extends StatelessWidget {
                           : Container(),
                       _menuListRowButton(AppConstants.requests, const Icon(Icons.email), true, context),
                       AppFlavour.appInUse == AppInUse.emxi
-                          ? _menuListRowButton(EmxiConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context)
+                          ? _menuListRowButton(AppConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context)
                           : Container(),
                       AppFlavour.appInUse == AppInUse.gigmeout && _.user.userRole != UserRole.subscriber
                           ? _menuListRowButton(AppConstants.wallet, const Icon(FontAwesomeIcons.coins), true, context)
@@ -168,8 +167,8 @@ class AppDrawer extends StatelessWidget {
           case AppConstants.genres:
             if (isEnabled) Get.toNamed(AppRouteConstants.genresFav);
             break;
-          case EmxiConstants.digitalLibrary:
-            if (isEnabled) CoreUtilities.launchURL(EmxiConstants.digitalLibraryUrl);
+          case AppConstants.digitalLibrary:
+            if (isEnabled) CoreUtilities.launchURL(AppFlavour.getECommerceUrl());
             break;
           case AppConstants.bands:
             if (isEnabled) Get.toNamed(AppRouteConstants.bands);

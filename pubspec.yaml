@@ -1,6 +1,6 @@
 name: neom_home
-description: Home for apps like Gigmeout, Emxi, Cyberneom and so forth.
-version: 0.0.1
+description: Home for Cyberneom.
+version: 1.0.0
 homepage: https://github.com/emmanuel-montoya/neom_home
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
