@@ -1,7 +1,7 @@
 name: neom_home
 description: Home for Cyberneom.
-version: 1.0.0
-homepage: https://github.com/emmanuel-montoya/neom_home
+version: 1.0.1
+homepage: https://github.com/Cyberneom/neom_home
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
@@ -15,6 +15,9 @@ dependencies:
   neom_commons:
     git:
       url: https://github.com/Cyberneom/neom_commons.git
+  neom_commerce:
+    git:
+      url: https://github.com/emmanuel-montoya/neom_commerce.git
   neom_timeline:
     git:
       url: https://github.com/Cyberneom/neom_timeline.git
@@ -37,10 +40,22 @@ dependencies:
     git:
       url: https://github.com/emmanuel-montoya/neom_booking.git
 
+#Used when working with locale libraries
+#  neom_commons:
+#    path: ../neom_commons
+#  neom_commerce:
+#    path: ../neom_commerce
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+
+dependency_overrides:
+  neom_commons:
+    path: ../neom_commons
+  neom_commerce:
+    path: ../neom_commerce
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

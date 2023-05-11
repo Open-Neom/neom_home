@@ -1,11 +1,11 @@
 import 'package:get/get.dart';
 
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
+import 'drawer/quotation/quotation_page.dart';
 import 'drawer/settings/about_page.dart';
 import 'drawer/settings/account_settings_page.dart';
 import 'drawer/settings/blocked_profiles_page.dart';
 import 'drawer/settings/content_preferences.dart';
-import 'drawer/settings/direct_message.dart';
 import 'drawer/settings/privacy_and_terms_page.dart';
 import 'drawer/settings/settings_and_privacy_page.dart';
 import 'search/search_page.dart';
@@ -48,12 +48,13 @@ class HomeRoutes {
       page: () => const AboutPage(),
     ),
     GetPage(
-      name: AppRouteConstants.settingsDirectMessage,
-      page: () => const DirectMessagesPage(),
-    ),
-    GetPage(
       name: AppRouteConstants.refresh,
       page: () => const HomePage(),
+      transition: Transition.zoom,
+    ),
+    GetPage(
+      name: AppRouteConstants.quotation,
+      page: () => const QuotationPage(),
       transition: Transition.zoom,
     ),
   ];

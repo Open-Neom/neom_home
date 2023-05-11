@@ -24,6 +24,7 @@ class HomeConstants {
     MenuModel(AppTranslationConstants.createPost, AppTranslationConstants.createPostMsg, Icons.colorize, AppRouteConstants.postUpload),
     MenuModel(AppTranslationConstants.organizeEvent, AppTranslationConstants.organizeEventMsg, Icons.event, AppRouteConstants.createEventType),
     MenuModel(AppTranslationConstants.shareComment, AppTranslationConstants.shareCommentMsg, Icons.info, AppRouteConstants.createPostText),
+    MenuModel(AppTranslationConstants.uploadYourBook, AppTranslationConstants.uploadYourBookMsg, Icons.book, AppRouteConstants.createEventType),
     //TODO
     //MenuModel(GigTranslationConstants.startPoll, GigTranslationConstants.startPollMsg, Icons.equalizer, GigRouteConstants.UNDER_CONSTRUCTION)
   ];

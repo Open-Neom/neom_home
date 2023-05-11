@@ -55,9 +55,18 @@ class AppDrawer extends StatelessWidget {
                       AppFlavour.appInUse == AppInUse.emxi
                           ? _menuListRowButton(AppConstants.directory, const Icon(FontAwesomeIcons.building), true, context)
                           : Container(),
+                      AppFlavour.appInUse == AppInUse.emxi
+                          ? _menuListRowButton(AppConstants.services, const Icon(Icons.room_service), true, context)
+                          : Container(),
                       _menuListRowButton(AppConstants.requests, const Icon(Icons.email), true, context),
                       AppFlavour.appInUse == AppInUse.emxi
                           ? _menuListRowButton(AppConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context)
+                          : Container(),
+                      AppFlavour.appInUse == AppInUse.emxi
+                          ? _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context)
+                          : Container(),
+                      AppFlavour.appInUse == AppInUse.emxi
+                          ? _menuListRowButton(AppConstants.appItemQuotation, const Icon(Icons.attach_money), true, context)
                           : Container(),
                       AppFlavour.appInUse == AppInUse.gigmeout && _.user.userRole != UserRole.subscriber
                           ? _menuListRowButton(AppConstants.wallet, const Icon(FontAwesomeIcons.coins), true, context)
@@ -179,6 +188,9 @@ class AppDrawer extends StatelessWidget {
           case AppConstants.eventsCalendar:
             if (isEnabled) Get.toNamed(AppRouteConstants.calendar);
             break;
+          case AppConstants.services:
+            if (isEnabled) Get.toNamed(AppRouteConstants.services);
+            break;
           case AppConstants.requests:
             if (isEnabled) Get.toNamed(AppRouteConstants.request);
             break;
@@ -193,6 +205,12 @@ class AppDrawer extends StatelessWidget {
             break;
           case AppConstants.settings:
             if (isEnabled) Get.toNamed(AppRouteConstants.settingsPrivacy);
+             break;
+          case AppConstants.crowdfunding:
+            if (isEnabled) CoreUtilities.launchURL(AppFlavour.getCrowdfundingUrl());
+            break;
+          case AppConstants.appItemQuotation:
+            if (isEnabled) Get.toNamed(AppRouteConstants.quotation);
             break;
           case AppConstants.logout:
             if (isEnabled) {

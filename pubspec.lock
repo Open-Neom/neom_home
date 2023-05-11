@@ -932,23 +932,19 @@ packages:
     source: git
     version: "1.0.0"
   neom_commerce:
-    dependency: transitive
+    dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: d99949897f0006bd6ff573885194d51dea85902c
-      url: "https://github.com/emmanuel-montoya/neom_commerce.git"
-    source: git
-    version: "1.0.0"
+      path: "../neom_commerce"
+      relative: true
+    source: path
+    version: "1.0.1"
   neom_commons:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "2d9e076d4406e66087792b787b81ba65dfead550"
-      url: "https://github.com/Cyberneom/neom_commons.git"
-    source: git
-    version: "1.0.0"
+      path: "../neom_commons"
+      relative: true
+    source: path
+    version: "1.0.1"
   neom_events:
     dependency: "direct main"
     description:

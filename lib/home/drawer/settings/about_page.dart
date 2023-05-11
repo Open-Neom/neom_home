@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
+import 'package:neom_commons/core/ui/widgets/header_widget.dart';
+import 'package:neom_commons/core/ui/widgets/settings_row_widget.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/constants/url_constants.dart';
-import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'app_settings_controller.dart';
-import 'widgets/header_widget.dart';
-import 'widgets/settings_row_widget.dart';
 
 class AboutPage extends StatelessWidget {
 
@@ -35,39 +34,29 @@ class AboutPage extends StatelessWidget {
                 AppTranslationConstants.helpCenter.tr,
                 vPadding: 0,
                 showDivider: false,
-                onPressed: () {
-                  CoreUtilities.launchURL(AppFlavour.getWebContact());
-                },
+                url: AppFlavour.getWebContact(),
               ),
               HeaderWidget(AppTranslationConstants.websites.tr),
               SettingRowWidget(
                   AppConstants.appTitle.tr,
                   showDivider: true,
-                  onPressed: (){
-                    CoreUtilities.launchURL(AppFlavour.getLandingPageUrl());
-                  }
+                  url: AppFlavour.getLandingPageUrl(),
               ),
               SettingRowWidget(
                   AppConstants.blog,
                   showDivider: true,
-                  onPressed: (){
-                    CoreUtilities.launchURL(AppFlavour.getBlogUrl());
-                  }
+                  url: AppFlavour.getBlogUrl(),
               ),
               HeaderWidget(AppTranslationConstants.developer.tr),
-              SettingRowWidget(
+              const SettingRowWidget(
                 AppConstants.github,
                 showDivider: true,
-                onPressed: (){
-                  CoreUtilities.launchURL(UrlConstants.devGithub);
-                }
+                url: UrlConstants.devGithub
               ),
-              SettingRowWidget(
+              const SettingRowWidget(
                 AppConstants.linkedin,
                 showDivider: true,
-                onPressed: (){
-                  CoreUtilities.launchURL(UrlConstants.devLinkedIn);
-                }
+                url: UrlConstants.devLinkedIn
               ),
             ],
           ),
