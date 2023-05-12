@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/country_picker_dialog.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/ui/widgets/header_intro.dart';
@@ -9,8 +11,9 @@ import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/core_utilities.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/app_item_size.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 import 'quotation_controller.dart';
 
@@ -75,7 +78,7 @@ class QuotationPage extends StatelessWidget {
                       onChanged: (String? chosenSize) {
                         _.setAppItemSize(chosenSize!);
                       },
-                      value: _.itemToQuote.size.value ?? AppItemSize.a4.value,
+                      value: _.itemToQuote.size.value,
                       elevation: 20,
                       dropdownColor: AppColor.getMain(),
                       underline: Container(),
@@ -204,6 +207,12 @@ class QuotationPage extends StatelessWidget {
                         fontWeight: FontWeight.w400),
                   ) : Container(),
                   const Divider(),
+                  AppFlavour.appInUse == AppInUse.emxi && _.userController.user!.userRole != UserRole.subscriber ?
+                  Column(
+                    children: [
+                      buildPhoneField(quotationController: _),
+                      AppTheme.heightSpace10
+                    ],) : Container(),
                   Center(child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20,vertical: 20),
                     decoration: BoxDecoration(
@@ -211,20 +220,11 @@ class QuotationPage extends StatelessWidget {
                         color: AppColor.bondiBlue
                     ),
                     child: InkWell(
-                      child: Text(AppTranslationConstants.contactUsViaWhatsapp.tr,
+                      child: Text(_.userController.user!.userRole == UserRole.subscriber ?
+                      AppTranslationConstants.contactUsViaWhatsapp.tr : "${AppTranslationConstants.send.tr} ${AppTranslationConstants.whatsappQuotation.tr}",
                         style: const TextStyle(color: Colors.white),),
                       onTap: () {
-                        String message = "${AppTranslationConstants.quotationWhatsappMsgA.tr}\n"
-                            "${_.itemToQuote.duration != 0 ? "\n${AppTranslationConstants.appItemDuration.tr}: ${_.itemToQuote.duration}" : ""}"
-                            "${(_.itemQty != 0 && _.isPhysical) ? "\n${AppTranslationConstants.appItemQty.tr}: ${_.itemQty}\n" : ""}"
-                            "${_.proccessACost != 0 ? "\n${AppTranslationConstants.processA.tr}: \$${_.proccessACost} MXN" : ""}"
-                            "${_.proccessBCost != 0 ? "\n${AppTranslationConstants.processB.tr}: \$${_.proccessBCost} MXN" : ""}"
-                            "${_.coverDesignCost != 0 ? "\n${AppTranslationConstants.coverDesign.tr}: \$${_.coverDesignCost} MXN" : ""}"
-                            "${_.pricePerUnit != 0 ? "\n${AppTranslationConstants.pricePerUnit.tr}: \$${_.pricePerUnit} MXN\n" : ""}"
-                            "${_.totalCost != 0 ? "\n${AppTranslationConstants.totalToPay.tr}: \$${_.totalCost.toString()} MXN\n\n" : ""}"
-                            "${AppTranslationConstants.thanksForYourAttention.tr}\n"
-                            "${_.userController.profile.name}";
-                        CoreUtilities.launchWhatsappURL(AppFlavour.getWhatsappBusinessNumber(), message);
+                        _.sendWhatsappQuotation();
                       },
                     ),
                   ),),
@@ -267,5 +267,40 @@ class QuotationPage extends StatelessWidget {
       ),
     );
   }
+
+  Widget buildPhoneField({required QuotationController quotationController}) {
+    return Container(
+        padding: const EdgeInsets.only(
+          left: AppTheme.padding20,
+          right: AppTheme.padding20,
+          bottom: AppTheme.padding5,
+        ),
+        decoration: BoxDecoration(
+          color: AppColor.bondiBlue25,
+          borderRadius: BorderRadius.circular(40),
+        ),
+        child: IntlPhoneField(
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: '${AppTranslationConstants.phoneNumber.tr} (${AppTranslationConstants.optional.tr})',
+              alignLabelWithHint: true,
+            ),
+            pickerDialogStyle: PickerDialogStyle(
+                backgroundColor: AppColor.getMain(),
+                searchFieldInputDecoration: InputDecoration(
+                  labelText: AppTranslationConstants.searchByCountryName.tr,
+                )
+            ),
+            initialCountryCode: Get.locale!.countryCode,
+            onChanged: (phone) {
+              quotationController.controllerPhone.text = phone.number;
+            },
+            onCountryChanged: (country) {
+              quotationController.phoneCountry = country;
+            },
+        )
+    );
+  }
+
 
 }

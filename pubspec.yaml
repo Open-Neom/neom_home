@@ -1,6 +1,6 @@
 name: neom_home
 description: Home for Cyberneom.
-version: 1.0.1
+version: 1.0.2
 homepage: https://github.com/Cyberneom/neom_home
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -51,11 +51,11 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
 
-dependency_overrides:
-  neom_commons:
-    path: ../neom_commons
-  neom_commerce:
-    path: ../neom_commerce
+#dependency_overrides:
+#  neom_commons:
+#    path: ../neom_commons
+#  neom_commerce:
+#    path: ../neom_commerce
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

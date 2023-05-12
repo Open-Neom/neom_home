@@ -1,13 +1,11 @@
 import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:intl_phone_field/countries.dart';
 import 'package:neom_commerce/commerce/utils/constants/app_commerce_constants.dart';
-import 'package:neom_commons/auth/ui/login/login_controller.dart';
-import 'package:neom_commons/core/data/implementations/user_controller.dart';
 import 'package:neom_commons/core/domain/model/app_phyisical_item.dart';
-import 'package:neom_commons/core/utils/app_utilities.dart';
-import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_item_size.dart';
+import 'package:neom_commons/neom_commons.dart';
 
 class QuotationController extends GetxController {
 
@@ -46,15 +44,13 @@ class QuotationController extends GetxController {
 
   TextEditingController itemQtyController = TextEditingController();
   TextEditingController itemDurationController = TextEditingController();
+  TextEditingController controllerPhone = TextEditingController();
 
-  TextEditingController nameController = TextEditingController();
-  TextEditingController descController = TextEditingController();
-  TextEditingController placeController = TextEditingController();
-  TextEditingController maxDistanceKmController = TextEditingController();
+  final Rx<Country> _phoneCountry = countries[0].obs;
+  Country get phoneCountry => _phoneCountry.value;
+  set phoneCountry(Country country) => _phoneCountry.value = country;
 
-  TextEditingController paymentAmountController = TextEditingController();
-  TextEditingController coverAmountController = TextEditingController();
-
+  String phoneNumber = '';
 
   @override
   void onInit() async {
@@ -65,6 +61,13 @@ class QuotationController extends GetxController {
     itemQty = AppCommerceConstants.minQty;
     updateQuotation();
     logger.d("Settings Controller Init");
+
+    for (var country in countries) {
+      if(Get.locale!.countryCode == country.code){
+        phoneCountry = country; //Mexico
+      }
+    }
+
     isLoading = false;
   }
 
@@ -79,13 +82,6 @@ class QuotationController extends GetxController {
       logger.toString();
     }
 
-    update([AppPageIdConstants.quotation]);
-  }
-
-  @override
-  void setAppItemName() {
-    logger.d("");
-    itemToQuote.name = nameController.text.trim();
     update([AppPageIdConstants.quotation]);
   }
 
@@ -173,4 +169,57 @@ class QuotationController extends GetxController {
     proccessACost = (proccessACost * (1+AppCommerceConstants.revenuePercentage)).round();
     proccessBCost = (proccessBCost * (1+AppCommerceConstants.revenuePercentage)).round();
   }
+
+  Future<void> sendWhatsappQuotation() async {
+
+    String message = "";
+    String phone = "";
+    String validateMsg = "";
+
+    try {
+
+      message = "${userController.user!.userRole == UserRole.subscriber
+          ? AppTranslationConstants.subscriberQuotationWhatsappMsg.tr : AppTranslationConstants.adminQuotationWhatsappMsg.tr}\n"
+          "${itemToQuote.duration != 0 ? "\n${AppTranslationConstants.appItemDuration.tr}: ${itemToQuote.duration}" : ""}"
+          "${(itemQty != 0 && isPhysical) ? "\n${AppTranslationConstants.appItemQty.tr}: $itemQty\n" : ""}"
+          "${proccessACost != 0 ? "\n${AppTranslationConstants.processA.tr}: \$$proccessACost MXN" : ""}"
+          "${proccessBCost != 0 ? "\n${AppTranslationConstants.processB.tr}: \$$proccessBCost MXN" : ""}"
+          "${coverDesignCost != 0 ? "\n${AppTranslationConstants.coverDesign.tr}: \$$coverDesignCost MXN" : ""}"
+          "${pricePerUnit != 0 ? "\n${AppTranslationConstants.pricePerUnit.tr}: \$$pricePerUnit MXN\n" : ""}"
+          "${totalCost != 0 ? "\n${AppTranslationConstants.totalToPay.tr}: \$${totalCost.toString()} MXN\n\n" : ""}"
+          "${AppTranslationConstants.thanksForYourAttention.tr}\n"
+          "${userController.profile.name}";
+
+      if(userController.user!.userRole == UserRole.subscriber) {
+        phone = AppFlavour.getWhatsappBusinessNumber();
+      } else {
+        if (controllerPhone.text.isEmpty &&
+            (controllerPhone.text.length < phoneCountry.minLength
+                || controllerPhone.text.length > phoneCountry.maxLength)
+        ) {
+          validateMsg = MessageTranslationConstants.pleaseEnterPhone;
+          phoneNumber = "";
+        } else if (phoneCountry.code.isEmpty) {
+          validateMsg = MessageTranslationConstants.pleaseEnterCountryCode;
+          phoneNumber = "";
+        } else {
+          phoneNumber = controllerPhone.text;
+          phone = phoneCountry.dialCode + phoneNumber;
+        }
+      }
+
+
+      if(phone.isNotEmpty) {
+        AppUtilities.logger.i("Sending WhatsApp Quotation to $phone");
+        CoreUtilities.launchWhatsappURL(phone, message);
+      } else {
+        AppUtilities.showSnackBar(AppTranslationConstants.whatsappQuotation, validateMsg);
+      }
+    } catch (e) {
+      AppUtilities.logger.e(e.toString());
+    }
+
+    update([AppPageIdConstants.quotation]);
+  }
+
 }
