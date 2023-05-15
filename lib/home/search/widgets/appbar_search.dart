@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-
 import '../search_controller.dart';
+
 
 class AppBarSearch extends StatelessWidget implements PreferredSizeWidget {
 
