@@ -4,10 +4,10 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
-import '../search_controller.dart';
+import '../app_search_controller.dart';
 
 
-Widget buildMateSearchList(SearchController _) {
+Widget buildMateSearchList(AppSearchController _) {
   return ListView.builder(
     itemCount: _.sortedProfileLocation.length,
     itemBuilder: (context, index) {
@@ -35,7 +35,7 @@ Widget buildMateSearchList(SearchController _) {
           title: Text(mate.name.capitalize!),
           subtitle: Row(
               children: [
-                Text(mate.appItems?.length.toString() ?? ""),
+                Text(mate.appItems?.isNotEmpty ?? false ? (mate.appItems?.length.toString() ?? ""): ""),
                 const Icon(Icons.book, color: Colors.blueGrey, size: 15),
                 Text(mate.mainFeature.tr.capitalize!),
                 Text(" - $distanceBetween KM"),

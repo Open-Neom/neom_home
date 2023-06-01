@@ -60,13 +60,13 @@ class HomeController extends GetxController implements HomeService {
 
       int toIndex =  0;
 
-      if(Get.arguments != null && Get.arguments.isNotEmpty) {
+      if(Get.arguments != null) {
         if (Get.arguments[0] is int) {
-          toIndex = Get.arguments[0];
+          toIndex = Get.arguments[0] as int;
         } else if (Get.arguments[0] is Event) {
-          event = Get.arguments[0];
+          event = Get.arguments[0] as  Event;
         } else if (Get.arguments[0] is String) {
-          toRoute = Get.arguments[0];
+          toRoute = Get.arguments[0] as String;
         }
       }
 
@@ -234,6 +234,11 @@ class HomeController extends GetxController implements HomeService {
                               break;
                             case AppTranslationConstants.shareComment:
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                              break;
+                            case AppTranslationConstants.uploadYourBook:
+                              Get.snackbar(AppTranslationConstants.underConstruction.tr,
+                                  AppTranslationConstants.underConstructionMsg.tr,
+                                  snackPosition: SnackPosition.bottom);
                               break;
                             case AppTranslationConstants.startPoll:
                               Get.snackbar(AppTranslationConstants.underConstruction.tr,

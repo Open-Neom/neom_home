@@ -11,7 +11,7 @@ import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/enums/search_type.dart';
 
-class SearchController extends GetxController implements SearchService {
+class AppSearchController extends GetxController implements SearchService {
 
   var logger = AppUtilities.logger;  
   final userController = Get.find<UserController>();
@@ -43,7 +43,7 @@ class SearchController extends GetxController implements SearchService {
     super.onInit();
     logger.i("Search Controller Init");
     try {
-      searchType = Get.arguments ?? SearchType.profile;
+      searchType = Get.arguments as SearchType ?? SearchType.profile;
     } catch (e) {
       logger.e(e.toString());
     }

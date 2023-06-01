@@ -8,7 +8,7 @@ import 'drawer/settings/blocked_profiles_page.dart';
 import 'drawer/settings/content_preferences.dart';
 import 'drawer/settings/privacy_and_terms_page.dart';
 import 'drawer/settings/settings_and_privacy_page.dart';
-import 'search/search_page.dart';
+import 'search/app_search_page.dart';
 import 'ui/home_page.dart';
 
 class HomeRoutes {
@@ -25,7 +25,7 @@ class HomeRoutes {
     ),
     GetPage(
       name: AppRouteConstants.search,
-      page: () => const SearchPage(),
+      page: () => const AppSearchPage(),
     ),
     GetPage(
       name: AppRouteConstants.privacyAndTerms,

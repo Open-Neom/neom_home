@@ -3,19 +3,19 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 
-import 'search_controller.dart';
+import 'app_search_controller.dart';
 import 'widgets/appbar_search.dart';
 import 'widgets/search_widgets.dart';
 
-class SearchPage extends StatelessWidget {
+class AppSearchPage extends StatelessWidget {
 
-  const SearchPage({Key? key}) : super(key: key);
+  const AppSearchPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<SearchController>(
+    return GetBuilder<AppSearchController>(
       id: AppPageIdConstants.search,
-      init: SearchController(),
+      init: AppSearchController(),
       builder: (_) => Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),

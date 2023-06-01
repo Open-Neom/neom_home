@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import '../search_controller.dart';
+import '../app_search_controller.dart';
 
 
 class AppBarSearch extends StatelessWidget implements PreferredSizeWidget {
 
-  final SearchController searchController;
-  const AppBarSearch(this.searchController, {Key? key}) : super(key: key);
+  final AppSearchController appSearchController;
+  const AppBarSearch(this.appSearchController, {Key? key}) : super(key: key);
   
   @override
   Size get preferredSize => AppTheme.appBarHeight;
@@ -20,7 +20,7 @@ class AppBarSearch extends StatelessWidget implements PreferredSizeWidget {
     return AppBar(
       title: TextField(
         maxLines: 1,
-        onChanged: (param) => searchController.setSearchParam(param.trim()),
+        onChanged: (param) => appSearchController.setSearchParam(param.trim()),
         decoration: InputDecoration(
           suffixIcon: const Icon(CupertinoIcons.search),
           contentPadding: const EdgeInsets.all(12),
