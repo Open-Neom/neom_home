@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/ui/widgets/header_widget.dart';
-import 'package:neom_commons/core/ui/widgets/settings_row_widget.dart';
+import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
@@ -25,17 +25,17 @@ class PrivacyAndTermsPage extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
             children: <Widget>[
               HeaderWidget(AppTranslationConstants.legal.tr),
-              SettingRowWidget(
+              TitleSubtitleRow(
                 AppTranslationConstants.termsOfService.tr,
                 showDivider: true,
                 url: AppFlavour.getTermsOfServiceUrl(),
               ),
-              SettingRowWidget(
+              TitleSubtitleRow(
                 AppTranslationConstants.privacyPolicy.tr,
                 showDivider: true,
                 url: AppFlavour.getPrivacyPolicyUrl(),
               ),
-              SettingRowWidget(
+              TitleSubtitleRow(
                 AppTranslationConstants.legalNotices.tr,
                 showDivider: true,
                 onPressed: () =>

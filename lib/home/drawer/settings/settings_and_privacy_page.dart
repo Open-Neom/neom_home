@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/ui/widgets/header_widget.dart';
-import 'package:neom_commons/core/ui/widgets/settings_row_widget.dart';
+import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
@@ -22,29 +22,41 @@ class SettingsPrivacyPage extends StatelessWidget {
       init: AppSettingsController(),
       builder: (_) => Scaffold(
         appBar: AppBarChild(title: AppConstants.settingsPrivacy.tr),
-        body: Container(
+        body: Obx(()=>Container(
           decoration: AppTheme.appBoxDecoration,
-          child: ListView(
+          child: _.isLoading ? Container(
+              decoration: AppTheme.appBoxDecoration,
+              child: const Center(
+                  child: CircularProgressIndicator()
+              )
+          ) : ListView(
           children: <Widget>[
             HeaderWidget(_.userController.user!.name),
-            SettingRowWidget(AppTranslationConstants.account.tr, navigateTo: AppRouteConstants.settingsAccount),
-            SettingRowWidget(AppTranslationConstants.privacyAndPolicy.tr, navigateTo: AppRouteConstants.privacyAndTerms),
-            SettingRowWidget(AppTranslationConstants.contentPreferences.tr, navigateTo: AppRouteConstants.contentPreferences),
+            TitleSubtitleRow(AppTranslationConstants.account.tr, navigateTo: AppRouteConstants.settingsAccount),
+            TitleSubtitleRow(AppTranslationConstants.privacyAndPolicy.tr, navigateTo: AppRouteConstants.privacyAndTerms),
+            TitleSubtitleRow(AppTranslationConstants.contentPreferences.tr, navigateTo: AppRouteConstants.contentPreferences),
             const HeaderWidget(AppTranslationConstants.general, secondHeader: true,),
-            SettingRowWidget(AppTranslationConstants.aboutApp.tr, navigateTo: AppRouteConstants.about),
+            TitleSubtitleRow(AppTranslationConstants.aboutApp.tr, navigateTo: AppRouteConstants.about),
             //TODO
-            _.userController.user!.userRole == UserRole.subscriber
-                ? Container() :
-                Column(children: [
-                  const HeaderWidget("Admin Center", secondHeader: true,),
-                  SettingRowWidget(AppTranslationConstants.createCoupon.tr, navigateTo: AppRouteConstants.createCoupon),
-                  const SettingRowWidget("Crear Patrocinador", navigateTo: AppRouteConstants.createSponsor),
-                ],),
-
-            SettingRowWidget("", showDivider: false, vPadding: 10, subtitle: AppTranslationConstants.settingPrivacyMsg.tr),
+            _.userController.user!.userRole != UserRole.subscriber ?
+            Column(
+              children: [
+                HeaderWidget(AppTranslationConstants.adminCenter.tr, secondHeader: true),
+                TitleSubtitleRow(AppTranslationConstants.createCoupon.tr, navigateTo: AppRouteConstants.createCoupon),
+                TitleSubtitleRow(AppTranslationConstants.createSponsor.tr, navigateTo: AppRouteConstants.createSponsor),
+                TitleSubtitleRow(AppTranslationConstants.seeAnalytics.tr, navigateTo: AppRouteConstants.analytics),
+                _.userController.user!.userRole == UserRole.superAdmin ?
+                Column(
+                  children: [
+                    TitleSubtitleRow(AppTranslationConstants.runAnalyticsJobs.tr, onPressed: _.runAnalyticJobs),
+                    TitleSubtitleRow(AppTranslationConstants.runProfileJobs.tr, onPressed: _.runProfileJobs),
+                ],) : Container(),
+              ],
+            ) : Container(),
+            TitleSubtitleRow("", showDivider: false, vPadding: 10, subtitle: AppTranslationConstants.settingPrivacyMsg.tr),
           ],
         ),
-        ),
+        ),),
     ),);
   }
 }

@@ -23,7 +23,7 @@
 //         physics: const BouncingScrollPhysics(),
 //         children: <Widget>[
 //           const HeaderWidget('Posts'),
-//           SettingRowWidget(
+//           TitleSubtitleRow(
 //             "Protect what you share",
 //             subtitle:
 //                 'Only current followers and people you approve in future will be able to see your posts, itemlists, gig events, etc.',
@@ -35,7 +35,7 @@
 //             'Inbox Message',
 //             secondHeader: true,
 //           ),
-//           SettingRowWidget(
+//           TitleSubtitleRow(
 //             'Inbox Message',
 //              navigateTo: GigRouteConstants.SETTINGS_DIRECT_MESSAGE,
 //           ),
@@ -43,11 +43,11 @@
 //             'Discoverability and contacts',
 //             secondHeader: true,
 //           ),
-//           SettingRowWidget(
+//           TitleSubtitleRow(
 //             "Discoverability and contacts",
 //             showDivider: false,
 //           ),
-//           SettingRowWidget(
+//           TitleSubtitleRow(
 //             "",
 //             subtitle:
 //                 'Learn more about how this data is used to connect you with people',
@@ -62,12 +62,12 @@
 //             'Location',
 //             secondHeader: true,
 //           ),
-//           SettingRowWidget(
+//           TitleSubtitleRow(
 //             "Precise location",
 //             subtitle:
 //                 'Disabled \n\n\nIf enabled, Gigmeout will collect, store, and use your device\'s precise location, such as your GPS information. This lets us improve your experience - For example, showing you more local itemmates, content, ads, and recommendations.',
 //           ),
-//           SettingRowWidget(
+//           TitleSubtitleRow(
 //               GigTranslationConstants.privacyAndPolicy.tr,
 //               showDivider: true,
 //               onPressed: (){

@@ -3,7 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/ui/widgets/header_widget.dart';
-import 'package:neom_commons/core/ui/widgets/settings_row_widget.dart';
+import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
@@ -32,7 +32,7 @@ class ContentPreferencePage extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           children: <Widget>[
             HeaderWidget(AppTranslationConstants.language.tr, secondHeader: true),
-            SettingRowWidget(
+            TitleSubtitleRow(
                 AppTranslationConstants.preferredLanguage.tr,
                 subtitle: AppTranslationConstants.languageFromLocale(Get.locale!).tr,
                 onPressed: () => Alert(
@@ -78,7 +78,7 @@ class ContentPreferencePage extends StatelessWidget {
                 ).show()
             ),
             HeaderWidget(AppTranslationConstants.safety.tr, secondHeader: true),
-            SettingRowWidget('${AppTranslationConstants.locationUsage.tr}: ${_.locationPermission.name.tr}',
+            TitleSubtitleRow('${AppTranslationConstants.locationUsage.tr}: ${_.locationPermission.name.tr}',
               onPressed: () async {
                 //Get.toNamed(GigRouteConstants.INTRO_REQUIRED_PERMISSIONS);
                 _.locationPermission == LocationPermission.denied ?
@@ -86,7 +86,7 @@ class ContentPreferencePage extends StatelessWidget {
                   : AppUtilities.showAlert(context, AppTranslationConstants.locationUsage.tr, AppTranslationConstants.changeThisInTheAppSettings.tr.tr);
               }
             ),
-            SettingRowWidget(AppTranslationConstants.blockedProfiles.tr,
+            TitleSubtitleRow(AppTranslationConstants.blockedProfiles.tr,
               onPressed: () => _.userController.profile.blockTo!.isNotEmpty
                   ? Get.toNamed(AppRouteConstants.blockedProfiles, arguments: _.userController.profile.blockTo)
                   : AppUtilities.showAlert(context, AppTranslationConstants.blockedProfiles.tr, AppTranslationConstants.blockedProfilesMsg.tr),

@@ -7,7 +7,9 @@ import 'package:neom_commons/core/domain/model/app_phyisical_item.dart';
 import 'package:neom_commons/core/utils/enums/app_item_size.dart';
 import 'package:neom_commons/neom_commons.dart';
 
-class QuotationController extends GetxController {
+import '../../domain.use_cases/quotation_service.dart';
+
+class QuotationController extends GetxController implements QuotationService {
 
   var logger = AppUtilities.logger;
   final loginController = Get.find<LoginController>();
@@ -71,6 +73,7 @@ class QuotationController extends GetxController {
     isLoading = false;
   }
 
+  @override
   void setAppItemSize(String selectedSize){
     logger.d("Setting new locale");
     try {
@@ -154,6 +157,7 @@ class QuotationController extends GetxController {
     update([AppPageIdConstants.quotation]);
   }
 
+  @override
   void updateQuotation() {
     pricePerUnit = isPhysical ? (itemToQuote.duration * AppCommerceConstants.costPerDurationUnit).roundToDouble() : 0;
     proccessACost = processARequired ? (itemToQuote.duration * AppCommerceConstants.processACost).round() : 0;
@@ -164,12 +168,14 @@ class QuotationController extends GetxController {
     update([AppPageIdConstants.quotation]);
   }
 
+  @override
   void addRevenuePercentage() {
     pricePerUnit = (pricePerUnit * (1+AppCommerceConstants.revenuePercentage)).roundToDouble();
     proccessACost = (proccessACost * (1+AppCommerceConstants.revenuePercentage)).round();
     proccessBCost = (proccessBCost * (1+AppCommerceConstants.revenuePercentage)).round();
   }
 
+  @override
   Future<void> sendWhatsappQuotation() async {
 
     String message = "";

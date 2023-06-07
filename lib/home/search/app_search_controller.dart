@@ -43,7 +43,7 @@ class AppSearchController extends GetxController implements SearchService {
     super.onInit();
     logger.i("Search Controller Init");
     try {
-      searchType = Get.arguments as SearchType ?? SearchType.profile;
+      searchType = Get.arguments as SearchType;
     } catch (e) {
       logger.e(e.toString());
     }

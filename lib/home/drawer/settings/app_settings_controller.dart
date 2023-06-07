@@ -2,6 +2,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
+import 'package:neom_commons/core/data/firestore/app_analytics_firestore.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
 import 'package:neom_commons/core/data/implementations/shared_preference_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
@@ -9,6 +10,7 @@ import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_locale.dart';
+import 'package:neom_jobs/jobs/jobs_firestore.dart';
 
 class AppSettingsController extends GetxController {
 
@@ -86,6 +88,36 @@ class AppSettingsController extends GetxController {
   Future<void> verifyLocationPermission() async {
     logger.d("Verifying and requesting location permission");
     locationPermission = await GeoLocatorController().requestPermission();
+    update([AppPageIdConstants.settingsPrivacy]);
+  }
+
+  Future<void> runAnalyticJobs() async {
+    isLoading = true;
+    update([AppPageIdConstants.settingsPrivacy]);
+
+    try {
+      await AppAnalyticsFirestore().setUserAnalytics();
+    } catch(e) {
+      AppUtilities.logger.e(e.toString());
+    }
+
+    isLoading = false;
+    logger.d("Analytic Jobs successfully ran.");
+    update([AppPageIdConstants.settingsPrivacy]);
+  }
+
+  Future<void> runProfileJobs() async {
+    isLoading = true;
+    update([AppPageIdConstants.settingsPrivacy]);
+
+    try {
+      await JobsFirestore().createProfileInstrumentsCollection();
+    } catch(e) {
+      AppUtilities.logger.e(e.toString());
+    }
+
+    isLoading = false;
+    logger.d("Jobs successfully ran.");
     update([AppPageIdConstants.settingsPrivacy]);
   }
 

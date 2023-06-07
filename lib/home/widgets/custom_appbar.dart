@@ -49,14 +49,17 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         onPressed: ()=> Scaffold.of(context).openDrawer(),
       ),
-      title: GestureDetector(child: Row(
-        children: [
-          Image.asset(
-            AppAssets.logoCompanyWhite,
-            height: 60,
-            width: 150,
-          )
-      ],), onTap: () => {
+      title: GestureDetector(
+          child: Row(
+            children: [
+              Image.asset(
+                AppAssets.logoCompanyWhite,
+                height: 60,
+                width: 150,
+              )
+            ],
+          ),
+          onTap: () => {
             AppUtilities.showAlert(context,
                 AppFlavour.appInUse.value,
                 "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}"),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/ui/widgets/header_widget.dart';
-import 'package:neom_commons/core/ui/widgets/settings_row_widget.dart';
+import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
@@ -23,27 +23,22 @@ class AccountSettingsPage extends StatelessWidget {
         child: ListView(
         children: <Widget>[
           HeaderWidget(AppTranslationConstants.loginAndSecurity.tr),
-          SettingRowWidget(
+          TitleSubtitleRow(
             AppTranslationConstants.username.tr,
             subtitle: _.userController.user!.name,
           ),
           const Divider(height: 0),
-          SettingRowWidget(
+          TitleSubtitleRow(
             AppTranslationConstants.phone.tr,
             subtitle: _.userController.user!.phoneNumber.isEmpty ? AppTranslationConstants.notSpecified.tr : "${_.userController.user!.countryCode}${_.userController.user!.phoneNumber}",
           ),
-          SettingRowWidget(
+          TitleSubtitleRow(
             AppTranslationConstants.emailAddress.tr,
             subtitle: _.userController.user!.email,
           ),
           const Divider(height: 0),
-          // SettingRowWidget("Security"),
-          // HeaderWidget('Data and Permission', secondHeader: true,),
-          // SettingRowWidget("Country"),
-          // SettingRowWidget("Your Gigmeout data"),
-          //SettingRowWidget("Apps and sessions"),
           _.userController.user?.profiles.length == 1 ? Container() :
-          SettingRowWidget(AppTranslationConstants.removeProfile.tr,  textColor: AppColor.ceriseRed,
+          TitleSubtitleRow(AppTranslationConstants.removeProfile.tr,  textColor: AppColor.ceriseRed,
             onPressed: (){
               showDialog(
                   context: context,
@@ -76,7 +71,7 @@ class AccountSettingsPage extends StatelessWidget {
 
             },
           ),
-          SettingRowWidget(AppTranslationConstants.removeAccount.tr,  textColor: AppColor.ceriseRed,
+          TitleSubtitleRow(AppTranslationConstants.removeAccount.tr,  textColor: AppColor.ceriseRed,
               onPressed: (){
                 showDialog(
                     context: context,

@@ -12,6 +12,7 @@ import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
+import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
@@ -32,52 +33,49 @@ class AppDrawer extends StatelessWidget {
             child: Stack(
               children: <Widget>[
                 Container(
-                  padding: const EdgeInsets.only(bottom: 45),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     children: <Widget>[
                       Obx(()=>_menuHeader(context, _)),
                       const Divider(),
-                      _menuListRowButton(AppConstants.profile,  const Icon(Icons.person), true, context),
+                      _menuListRowButton(AppDrawerMenu.profile,  const Icon(Icons.person), true, context),
                       _.appProfile.type != ProfileType.instrumentist ? Container() :
-                      _menuListRowButton(AppConstants.instruments, Icon(
+                      _menuListRowButton(AppDrawerMenu.instruments, Icon(
                           AppFlavour.getInstrumentIcon()), true, context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
                       AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
-                       ? _menuListRowButton(AppConstants.bands, const Icon(Icons.people), true, context)
+                       ? _menuListRowButton(AppDrawerMenu.bands, const Icon(Icons.people), true, context)
                       : Container(),
-                      _menuListRowButton(AppConstants.events, const Icon(FontAwesomeIcons.calendar), true, context),
+                      _menuListRowButton(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), true, context),
+                      _menuListRowButton(AppDrawerMenu.requests, const Icon(Icons.email), true, context),
                       //TODO To enable when users create events.
                       // AppFlavour.appInUse == AppInUse.gigmeout
                       //     ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
                       //     : Container(),
+                      const Divider(),
                       AppFlavour.appInUse == AppInUse.emxi
-                          ? _menuListRowButton(AppConstants.directory, const Icon(FontAwesomeIcons.building), true, context)
-                          : Container(),
-                      AppFlavour.appInUse == AppInUse.emxi
-                          ? _menuListRowButton(AppConstants.services, const Icon(Icons.room_service), true, context)
-                          : Container(),
-                      _menuListRowButton(AppConstants.requests, const Icon(Icons.email), true, context),
-                      AppFlavour.appInUse == AppInUse.emxi
-                          ? _menuListRowButton(AppConstants.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context)
-                          : Container(),
-                      AppFlavour.appInUse == AppInUse.emxi
-                          ? _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context)
-                          : Container(),
-                      AppFlavour.appInUse == AppInUse.emxi
-                          ? _menuListRowButton(AppConstants.appItemQuotation, const Icon(Icons.attach_money), true, context)
-                          : Container(),
-                      AppFlavour.appInUse == AppInUse.gigmeout && _.user.userRole != UserRole.subscriber
-                          ? _menuListRowButton(AppConstants.wallet, const Icon(FontAwesomeIcons.coins), true, context)
+                          ? Column(
+                        children: [
+                          _menuListRowButton(AppDrawerMenu.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context),
+                          _menuListRowButton(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), true, context),
+                          _menuListRowButton(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), true, context),
+                          _menuListRowButton(AppDrawerMenu.services, const Icon(Icons.room_service), true, context),
+                          _menuListRowButton(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), true, context),
+                          // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
+                      ],) : Container(),
+                      _.user.userRole != UserRole.subscriber ? const Divider() : Container(),
+                      _.user.userRole != UserRole.subscriber
+                          ? _menuListRowButton(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), true, context)
                           : Container(),
                       const Divider(),
-                      _menuListRowButton(AppConstants.settings, const Icon(Icons.settings), true, context),
+                      _menuListRowButton(AppDrawerMenu.settings, const Icon(Icons.settings), true, context),
                       // _.user.userRole != UserRole.subscriber
                       //     ? _menuListRowButton('Admin Center', const Icon(Icons.admin_panel_settings), true, context)
                       //     : Container(),
                       const Divider(),
-                      _menuListRowButton(AppConstants.logout, const Icon(Icons.logout), true, context),
+                      _menuListRowButton(AppDrawerMenu.logout, const Icon(Icons.logout), true, context),
                     ],
                   ),
                 ),
@@ -163,62 +161,65 @@ class AppDrawer extends StatelessWidget {
     }
   }
 
-  ListTile _menuListRowButton(String title, Icon icon, bool isEnabled, BuildContext context) {
+  ListTile _menuListRowButton(AppDrawerMenu selectedMenu, Icon icon, bool isEnabled, BuildContext context) {
     return ListTile(
       onTap: () {
-        switch(title) {
-          case AppConstants.profile:
-            if (isEnabled) Get.toNamed(AppRouteConstants.profile);
-            break;
-          case AppConstants.instruments:
-            if (isEnabled) Get.toNamed(AppRouteConstants.instrumentsFav);
-            break;
-          case AppConstants.genres:
-            if (isEnabled) Get.toNamed(AppRouteConstants.genresFav);
-            break;
-          case AppConstants.digitalLibrary:
-            if (isEnabled) CoreUtilities.launchURL(AppFlavour.getECommerceUrl());
-            break;
-          case AppConstants.bands:
-            if (isEnabled) Get.toNamed(AppRouteConstants.bands);
-            break;
-          case AppConstants.events:
-            if (isEnabled) Get.toNamed(AppRouteConstants.events);
-            break;
-          case AppConstants.eventsCalendar:
-            if (isEnabled) Get.toNamed(AppRouteConstants.calendar);
-            break;
-          case AppConstants.services:
-            if (isEnabled) Get.toNamed(AppRouteConstants.services);
-            break;
-          case AppConstants.requests:
-            if (isEnabled) Get.toNamed(AppRouteConstants.request);
-            break;
-          case AppConstants.booking:
-            if (isEnabled) Get.toNamed(AppRouteConstants.booking);
-            break;
-          case AppConstants.directory:
-            if (isEnabled) Get.toNamed(AppRouteConstants.directory);
-            break;
-          case AppConstants.wallet:
-            if (isEnabled) Get.toNamed(AppRouteConstants.wallet);
-            break;
-          case AppConstants.settings:
-            if (isEnabled) Get.toNamed(AppRouteConstants.settingsPrivacy);
-             break;
-          case AppConstants.crowdfunding:
-            if (isEnabled) CoreUtilities.launchURL(AppFlavour.getCrowdfundingUrl());
-            break;
-          case AppConstants.appItemQuotation:
-            if (isEnabled) Get.toNamed(AppRouteConstants.quotation);
-            break;
-          case AppConstants.logout:
-            if (isEnabled) {
+        if(isEnabled) {
+          switch(selectedMenu) {
+            case AppDrawerMenu.profile:
+              Get.toNamed(AppRouteConstants.profile);
+              break;
+            case AppDrawerMenu.instruments:
+              Get.toNamed(AppRouteConstants.instrumentsFav);
+              break;
+            case AppDrawerMenu.genres:
+              if (isEnabled) Get.toNamed(AppRouteConstants.genresFav);
+              break;
+            case AppDrawerMenu.digitalLibrary:
+              CoreUtilities.launchURL(AppFlavour.getECommerceUrl());
+              break;
+            case AppDrawerMenu.bands:
+              Get.toNamed(AppRouteConstants.bands);
+              break;
+            case AppDrawerMenu.events:
+              Get.toNamed(AppRouteConstants.events);
+              break;
+            case AppDrawerMenu.calendar:
+              Get.toNamed(AppRouteConstants.calendar);
+              break;
+            case AppDrawerMenu.services:
+              Get.toNamed(AppRouteConstants.services);
+              break;
+            case AppDrawerMenu.requests:
+              Get.toNamed(AppRouteConstants.request);
+              break;
+            case AppDrawerMenu.booking:
+              Get.toNamed(AppRouteConstants.booking);
+              break;
+            case AppDrawerMenu.directory:
+              Get.toNamed(AppRouteConstants.directory);
+              break;
+            case AppDrawerMenu.wallet:
+              Get.toNamed(AppRouteConstants.wallet);
+              break;
+            case AppDrawerMenu.settings:
+              Get.toNamed(AppRouteConstants.settingsPrivacy);
+              break;
+            case AppDrawerMenu.crowdfunding:
+              CoreUtilities.launchURL(AppFlavour.getCrowdfundingUrl());
+              break;
+            case AppDrawerMenu.appItemQuotation:
+              Get.toNamed(AppRouteConstants.quotation);
+              break;
+            case AppDrawerMenu.logout:
               Get.toNamed(AppRouteConstants.logout,
-                arguments: [AppRouteConstants.logout]
+                  arguments: [AppRouteConstants.logout]
               );
-            }
-            break;
+              break;
+            case AppDrawerMenu.releaseUpload:
+              Get.toNamed(AppRouteConstants.releaseUpload);
+              break;
+          }
         }
       },
       leading: Container(
@@ -226,7 +227,7 @@ class AppDrawer extends StatelessWidget {
           child: icon
       ),
       title: customText(
-        title.tr.capitalize!,
+        selectedMenu.name.tr.capitalize!,
         textAlign: TextAlign.start,
         style: TextStyle(
           fontSize: 20,
