@@ -228,6 +228,7 @@ class QuotationPage extends StatelessWidget {
                       },
                     ),
                   ),),
+                  AppTheme.heightSpace10,
                   const HeaderIntro(showLogo: false),
                 ],
               ),
