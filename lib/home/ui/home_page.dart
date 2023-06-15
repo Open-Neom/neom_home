@@ -73,8 +73,7 @@ class HomePage extends StatelessWidget {
                             animatedTexts: [
                               FlickerAnimatedText(AppTranslationConstants.addItems.tr),
                         ],
-                        onTap: () {
-                        },
+                        onTap: () {},
                       ),
                     ),
                   ),
@@ -86,7 +85,11 @@ class HomePage extends StatelessWidget {
                       ? FontAwesomeIcons.building : FontAwesomeIcons.filePen,
                   text: AppFlavour.appInUse == AppInUse.gigmeout
                       ? AppTranslationConstants.directory.tr : AppTranslationConstants.inspiration.tr),
-              CustomBottomAppBarItem(iconData: FontAwesomeIcons.comments, text: AppTranslationConstants.inbox),
+              CustomBottomAppBarItem(
+                  iconData: AppFlavour.appInUse == AppInUse.gigmeout
+                      ? FontAwesomeIcons.comments : FontAwesomeIcons.shop,
+                  text: AppFlavour.appInUse == AppInUse.gigmeout
+                      ? AppTranslationConstants.inbox.tr : AppTranslationConstants.library.tr),
             ],
           ),
         ),

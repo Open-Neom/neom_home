@@ -58,7 +58,6 @@ class AppDrawer extends StatelessWidget {
                       AppFlavour.appInUse == AppInUse.emxi
                           ? Column(
                         children: [
-                          _menuListRowButton(AppDrawerMenu.digitalLibrary, const Icon(FontAwesomeIcons.shop), true, context),
                           _menuListRowButton(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), true, context),
                           _menuListRowButton(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), true, context),
                           _menuListRowButton(AppDrawerMenu.services, const Icon(Icons.room_service), true, context),
@@ -174,9 +173,6 @@ class AppDrawer extends StatelessWidget {
               break;
             case AppDrawerMenu.genres:
               if (isEnabled) Get.toNamed(AppRouteConstants.genresFav);
-              break;
-            case AppDrawerMenu.digitalLibrary:
-              CoreUtilities.launchURL(AppFlavour.getECommerceUrl());
               break;
             case AppDrawerMenu.bands:
               Get.toNamed(AppRouteConstants.bands);

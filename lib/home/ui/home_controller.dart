@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_commons/core/data/firestore/user_firestore.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
@@ -15,6 +16,7 @@ import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
+import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
 
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
@@ -158,14 +160,17 @@ class HomeController extends GetxController implements HomeService {
         case HomeConstants.eventsIndex:
           break;
         case HomeConstants.inboxIndex:
+          Get.toNamed(AppRouteConstants.libraryHome);
+          // CoreUtilities.launchURL(AppFlavour.getECommerceUrl());
           break;
       }
 
-      if(pageController.hasClients) {
+      if(pageController.hasClients && index != HomeConstants.inboxIndex) {
         pageController.jumpToPage(index);
+        currentIndex = index;
       }
 
-      currentIndex = index;
+
     } catch (e) {
       logger.e(e.toString());
     }

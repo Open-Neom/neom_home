@@ -30,10 +30,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     Key? key
   }) : super(key: key);
 
-
   @override
   Size get preferredSize => AppTheme.appBarHeight;
-
 
   @override
   Widget build(BuildContext context) {
@@ -54,22 +52,22 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Image.asset(
                 AppAssets.logoCompanyWhite,
-                height: 60,
-                width: 150,
+                height: 70,
+                width: 160,
               )
             ],
           ),
-          onTap: () => {
+          onTap: () async {
             AppUtilities.showAlert(context,
                 AppFlavour.appInUse.value,
-                "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}"),
+                "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}");
           }
       ),
       actions: <Widget>[
         Stack(
           children: [
             IconButton(
-              icon: const Icon(Icons.notifications),
+              icon: const Icon(FontAwesomeIcons.bell),
               color: Colors.white70,
               onPressed: ()=> {
                 Get.toNamed(AppRouteConstants.feedActivity)
@@ -112,15 +110,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               },
             )
         ]),
-        Container(
-          padding: const EdgeInsets.only(right: 10),
-          child: IconButton(
-              icon: const Icon(Icons.search),
-              color: Colors.white70,
-              onPressed: ()=>{
-                Get.toNamed(AppRouteConstants.search, arguments: SearchType.profile)
-              }
-          ),
+        IconButton(
+            icon: const Icon(FontAwesomeIcons.magnifyingGlass),
+            color: Colors.white70,
+            onPressed: ()=>{
+              Get.toNamed(AppRouteConstants.search, arguments: SearchType.profile)
+            }
+        ),
+        IconButton(
+            icon: const Icon(FontAwesomeIcons.comments),
+            color: Colors.white70,
+            onPressed: ()=>{
+              Get.toNamed(AppRouteConstants.inbox)
+            }
         ),
         Container(
             padding: const EdgeInsets.only(right: 10),
@@ -141,7 +143,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ),
             )
         ),
-        const Divider()
       ],
     );
   }
