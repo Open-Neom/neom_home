@@ -36,6 +36,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+      titleSpacing: 0,
       backgroundColor: AppColor.appBar,
       elevation: 0.0,
       automaticallyImplyLeading: false,
@@ -52,8 +53,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Image.asset(
                 AppAssets.logoCompanyWhite,
-                height: 70,
-                width: 160,
+                height: 60,
+                width: 150,
               )
             ],
           ),
@@ -63,10 +64,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}");
           }
       ),
+      actionsIconTheme: IconThemeData(
+        size: 20
+      ),
       actions: <Widget>[
         Stack(
           children: [
             IconButton(
+              padding: EdgeInsets.zero,
               icon: const Icon(FontAwesomeIcons.bell),
               color: Colors.white70,
               onPressed: ()=> {
@@ -111,6 +116,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             )
         ]),
         IconButton(
+            padding: EdgeInsets.zero,
             icon: const Icon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: ()=>{
@@ -118,6 +124,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             }
         ),
         IconButton(
+            padding: EdgeInsets.zero,
             icon: const Icon(FontAwesomeIcons.comments),
             color: Colors.white70,
             onPressed: ()=>{
@@ -138,7 +145,6 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 }).toList();
               },
               child: const Icon(FontAwesomeIcons.ellipsisVertical,
-                size: 20,
                 color: Colors.white70,
               ),
             )

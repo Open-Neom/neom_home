@@ -48,26 +48,25 @@ class AppDrawer extends StatelessWidget {
                       AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
                        ? _menuListRowButton(AppDrawerMenu.bands, const Icon(Icons.people), true, context)
                       : Container(),
-                      _menuListRowButton(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), true, context),
+                      AppFlavour.appInUse == AppInUse.emxi ?
+                      _menuListRowButton(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), true, context) : Container(),
                       _menuListRowButton(AppDrawerMenu.requests, const Icon(Icons.email), true, context),
                       //TODO To enable when users create events.
                       // AppFlavour.appInUse == AppInUse.gigmeout
                       //     ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
                       //     : Container(),
-                      const Divider(),
                       AppFlavour.appInUse == AppInUse.emxi
                           ? Column(
                         children: [
+                          const Divider(),
                           _menuListRowButton(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), true, context),
                           _menuListRowButton(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), true, context),
                           _menuListRowButton(AppDrawerMenu.services, const Icon(Icons.room_service), true, context),
                           _menuListRowButton(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), true, context),
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                       ],) : Container(),
-                      _.user.userRole != UserRole.subscriber ? const Divider() : Container(),
-                      _.user.userRole != UserRole.subscriber
-                          ? _menuListRowButton(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), true, context)
-                          : Container(),
+                      const Divider(),
+                      _menuListRowButton(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), true, context),
                       const Divider(),
                       _menuListRowButton(AppDrawerMenu.settings, const Icon(Icons.settings), true, context),
                       // _.user.userRole != UserRole.subscriber
@@ -214,6 +213,9 @@ class AppDrawer extends StatelessWidget {
               break;
             case AppDrawerMenu.releaseUpload:
               Get.toNamed(AppRouteConstants.releaseUpload);
+              break;
+            case AppDrawerMenu.digitalLibrary:
+              // TODO: Handle this case.
               break;
           }
         }

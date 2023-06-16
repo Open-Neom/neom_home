@@ -87,9 +87,9 @@ class HomePage extends StatelessWidget {
                       ? AppTranslationConstants.directory.tr : AppTranslationConstants.inspiration.tr),
               CustomBottomAppBarItem(
                   iconData: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? FontAwesomeIcons.comments : FontAwesomeIcons.shop,
+                      ? FontAwesomeIcons.calendar : FontAwesomeIcons.shop,
                   text: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? AppTranslationConstants.inbox.tr : AppTranslationConstants.library.tr),
+                      ? AppTranslationConstants.events.tr : AppTranslationConstants.library.tr),
             ],
           ),
         ),

@@ -17,6 +17,7 @@ import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
 
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
@@ -160,14 +161,16 @@ class HomeController extends GetxController implements HomeService {
         case HomeConstants.eventsIndex:
           break;
         case HomeConstants.inboxIndex:
-          Get.toNamed(AppRouteConstants.libraryHome);
-          // CoreUtilities.launchURL(AppFlavour.getECommerceUrl());
           break;
       }
 
-      if(pageController.hasClients && index != HomeConstants.inboxIndex) {
-        pageController.jumpToPage(index);
-        currentIndex = index;
+      if(pageController.hasClients) {
+        if(AppFlavour.appInUse == AppInUse.emxi && index == HomeConstants.inboxIndex) {
+          Get.toNamed(AppRouteConstants.libraryHome);
+        } else {
+          pageController.jumpToPage(index);
+          currentIndex = index;
+        }
       }
 
 
