@@ -15,7 +15,6 @@ import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
-import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -39,18 +38,20 @@ class AppDrawer extends StatelessWidget {
                     children: <Widget>[
                       Obx(()=>_menuHeader(context, _)),
                       const Divider(),
-                      _menuListRowButton(AppDrawerMenu.profile,  const Icon(Icons.person), true, context),
-                      _.appProfile.type != ProfileType.instrumentist ? Container() :
-                      _menuListRowButton(AppDrawerMenu.instruments, Icon(
-                          AppFlavour.getInstrumentIcon()), true, context),
+                      drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
+                      AppFlavour.appInUse == AppInUse.cyberneom ? drawerRowOption(AppDrawerMenu.frequencies, Icon(
+                          AppFlavour.getInstrumentIcon()), context) : Container(),
+                      _.appProfile.type != ProfileType.instrumentist  ? Container() :
+                      drawerRowOption(AppDrawerMenu.instruments, Icon(
+                          AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
                       AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
-                       ? _menuListRowButton(AppDrawerMenu.bands, const Icon(Icons.people), true, context)
+                       ? drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context)
                       : Container(),
                       AppFlavour.appInUse == AppInUse.emxi ?
-                      _menuListRowButton(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), true, context) : Container(),
-                      _menuListRowButton(AppDrawerMenu.requests, const Icon(Icons.email), true, context),
+                      drawerRowOption(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), context) : Container(),
+                      drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
                       //TODO To enable when users create events.
                       // AppFlavour.appInUse == AppInUse.gigmeout
                       //     ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
@@ -59,21 +60,21 @@ class AppDrawer extends StatelessWidget {
                           ? Column(
                         children: [
                           const Divider(),
-                          _menuListRowButton(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), true, context),
-                          _menuListRowButton(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), true, context),
-                          _menuListRowButton(AppDrawerMenu.services, const Icon(Icons.room_service), true, context),
-                          _menuListRowButton(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), true, context),
+                          drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
+                          drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
+                          drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
+                          drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                       ],) : Container(),
                       const Divider(),
-                      _menuListRowButton(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), true, context),
+                      drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
                       const Divider(),
-                      _menuListRowButton(AppDrawerMenu.settings, const Icon(Icons.settings), true, context),
+                      drawerRowOption(AppDrawerMenu.settings, const Icon(Icons.settings), context),
                       // _.user.userRole != UserRole.subscriber
                       //     ? _menuListRowButton('Admin Center', const Icon(Icons.admin_panel_settings), true, context)
                       //     : Container(),
                       const Divider(),
-                      _menuListRowButton(AppDrawerMenu.logout, const Icon(Icons.logout), true, context),
+                      drawerRowOption(AppDrawerMenu.logout, const Icon(Icons.logout), context),
                     ],
                   ),
                 ),
@@ -159,7 +160,7 @@ class AppDrawer extends StatelessWidget {
     }
   }
 
-  ListTile _menuListRowButton(AppDrawerMenu selectedMenu, Icon icon, bool isEnabled, BuildContext context) {
+  ListTile drawerRowOption(AppDrawerMenu selectedMenu, Icon icon, BuildContext context, {bool isEnabled = true}) {
     return ListTile(
       onTap: () {
         if(isEnabled) {
@@ -216,6 +217,9 @@ class AppDrawer extends StatelessWidget {
               break;
             case AppDrawerMenu.digitalLibrary:
               // TODO: Handle this case.
+              break;
+            case AppDrawerMenu.frequencies:
+              Get.toNamed(AppRouteConstants.frequencyFav);
               break;
           }
         }

@@ -16,7 +16,6 @@ import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
 
@@ -153,19 +152,19 @@ class HomeController extends GetxController implements HomeService {
 
     try {
       switch(index) {
-        case HomeConstants.timelineIndex:
+        case HomeConstants.firstTabIndex:
           await setInitialTimeline();
           break;
-        case HomeConstants.itemlistsIndex:
+        case HomeConstants.secondTabIndex:
           break;
-        case HomeConstants.eventsIndex:
+        case HomeConstants.thirdTabIndex:
           break;
-        case HomeConstants.inboxIndex:
+        case HomeConstants.forthTabIndex:
           break;
       }
 
       if(pageController.hasClients) {
-        if(AppFlavour.appInUse == AppInUse.emxi && index == HomeConstants.inboxIndex) {
+        if(AppFlavour.appInUse == AppInUse.emxi && index == HomeConstants.forthTabIndex) {
           Get.toNamed(AppRouteConstants.libraryHome);
         } else {
           pageController.jumpToPage(index);
@@ -238,15 +237,14 @@ class HomeController extends GetxController implements HomeService {
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                               break;
                             case AppTranslationConstants.organizeEvent:
-                              Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                              if(AppFlavour.appInUse == AppInUse.cyberneom) {
+                                Get.toNamed(AppRouteConstants.createNeomEventType);
+                              } else {
+                                Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                              }
                               break;
                             case AppTranslationConstants.shareComment:
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                              break;
-                            case AppTranslationConstants.uploadYourBook:
-                              Get.snackbar(AppTranslationConstants.underConstruction.tr,
-                                  AppTranslationConstants.underConstructionMsg.tr,
-                                  snackPosition: SnackPosition.bottom);
                               break;
                             case AppTranslationConstants.startPoll:
                               Get.snackbar(AppTranslationConstants.underConstruction.tr,

@@ -15,7 +15,10 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/constants/message_translation_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/search_type.dart';
+
+import '../ui/home_controller.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
@@ -64,7 +67,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}");
           }
       ),
-      actionsIconTheme: IconThemeData(
+      actionsIconTheme: const IconThemeData(
         size: 20
       ),
       actions: <Widget>[
@@ -123,6 +126,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Get.toNamed(AppRouteConstants.search, arguments: SearchType.profile)
             }
         ),
+        AppFlavour.appInUse == AppInUse.cyberneom
+        ? IconButton(
+            padding: EdgeInsets.zero,
+            icon: const Icon(Icons.add_box_outlined, size: 25,),
+            color: Colors.white70,
+            onPressed: ()=> {
+              Get.find<HomeController>().modalBottomSheetMenu(context)
+            }
+        ) :
         IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(FontAwesomeIcons.comments),

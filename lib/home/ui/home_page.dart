@@ -1,5 +1,4 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -8,10 +7,10 @@ import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
+import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import '../drawer/app_drawer.dart';
-import '../utils/constants/home_constants.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/custom_bottom_bar_item.dart';
@@ -41,9 +40,7 @@ class HomePage extends StatelessWidget {
         ) : PageView(          
           physics: const NeverScrollableScrollPhysics(),
           controller: _.pageController,
-          children: AppFlavour.appInUse == AppInUse.gigmeout
-              ? HomeConstants.gigHomePages
-              : HomeConstants.emxiHomePages
+          children: AppFlavour.getHomePages()
         ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(canvasColor: Colors.grey[900]),
@@ -57,9 +54,8 @@ class HomePage extends StatelessWidget {
             items: [
               CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
               CustomBottomAppBarItem(
-                  iconData: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? Icons.library_music : FontAwesomeIcons.bookOpen,
-                  text: AppTranslationConstants.itemlists.tr,
+                  iconData: AppFlavour.getSecondTabIcon(),
+                  text: AppFlavour.getSecondTabTitle().tr,
                   animation: _.hasItems ? null : Column(
                     children: [
                       SizedBox(
@@ -81,28 +77,29 @@ class HomePage extends StatelessWidget {
                 ],
               )),
               CustomBottomAppBarItem(
-                  iconData: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? FontAwesomeIcons.building : FontAwesomeIcons.filePen,
-                  text: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? AppTranslationConstants.directory.tr : AppTranslationConstants.inspiration.tr),
+                  iconData: AppFlavour.getThirdTabIcon(),
+                  text: AppFlavour.getThirdTabTitle().tr
+              ),
               CustomBottomAppBarItem(
-                  iconData: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? FontAwesomeIcons.calendar : FontAwesomeIcons.shop,
-                  text: AppFlavour.appInUse == AppInUse.gigmeout
-                      ? AppTranslationConstants.events.tr : AppTranslationConstants.library.tr),
+                  iconData: AppFlavour.getForthTabIcon(),
+                  text: AppFlavour.getFortTabTitle().tr,
+              )
             ],
           ),
         ),
         floatingActionButtonLocation: AppFlavour.appInUse == AppInUse.emxi
             && _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
-        floatingActionButton:  AppFlavour.appInUse == AppInUse.emxi
+        floatingActionButton: AppFlavour.appInUse == AppInUse.emxi
             && _.currentIndex == 2 ? Container()
             : FloatingActionButton(
-          tooltip: AppTranslationConstants.createPost.tr,
+          tooltip: AppFlavour.appInUse == AppInUse.gigmeout
+              ? AppTranslationConstants.createPost.tr : AppTranslationConstants.session,
           splashColor: Colors.white,
-          onPressed: () => _.modalBottomSheetMenu(context),
+          onPressed: () => AppFlavour.appInUse != AppInUse.cyberneom
+              ? _.modalBottomSheetMenu(context)
+              : Get.toNamed(AppRouteConstants.generator),
           elevation: 0,
-          child: const Icon(CupertinoIcons.add),
+          child: Icon(AppFlavour.getHomeActionBtnIcon()),
         ),
       ),
     );

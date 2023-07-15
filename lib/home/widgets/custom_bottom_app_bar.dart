@@ -24,7 +24,7 @@ class CustomBottomAppBar extends StatefulWidget {
     required this.notchedShape,
     required this.onTabSelected,
   }) : super(key: key) {
-    assert(items.length == 2 || items.length == 4);
+    assert(items.length == 2 || items.length == 3 || items.length == 4);
   }
 
   @override
@@ -57,15 +57,14 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
       color: widget.backgroundColor,
       child: Row(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: items,
       ),
     );
   }
 
   Widget _buildMiddleTabItem() {
-    return Expanded(
-      child: SizedBox(
+    return SizedBox(
         height: widget.height,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -78,7 +77,6 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
             ),
           ],
         ),
-      ),
     );
   }
 

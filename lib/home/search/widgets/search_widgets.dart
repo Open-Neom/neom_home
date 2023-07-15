@@ -1,9 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/domain/model/app_profile.dart';
+import 'package:neom_commons/core/ui/widgets/custom_image.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
-import 'package:neom_commons/core/utils/core_utilities.dart';
 import '../app_search_controller.dart';
 
 
@@ -18,19 +17,7 @@ Widget buildMateSearchList(AppSearchController _) {
           onTap: () => mate.id.isNotEmpty ? Get.toNamed(AppRouteConstants.mateDetails, arguments: mate.id) : {},
           leading: Hero(
             tag: mate.photoUrl,
-            child: FutureBuilder<CachedNetworkImageProvider>(
-              future: CoreUtilities.handleCachedImageProvider(mate.photoUrl),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return CircleAvatar(backgroundImage: snapshot.data);
-                } else {
-                  return const CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      child: CircularProgressIndicator()
-                  );
-                }
-              },
-            )
+            child: CircleAvatar(backgroundImage: customCachedNetworkImageProvider(mate.photoUrl))
           ),
           title: Text(mate.name.capitalize!),
           subtitle: Row(
