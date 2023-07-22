@@ -41,7 +41,7 @@ class AppDrawer extends StatelessWidget {
                       drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
                       AppFlavour.appInUse == AppInUse.cyberneom ? drawerRowOption(AppDrawerMenu.frequencies, Icon(
                           AppFlavour.getInstrumentIcon()), context) : Container(),
-                      _.appProfile.type != ProfileType.instrumentist  ? Container() :
+                      AppFlavour.appInUse == AppInUse.cyberneom || _.appProfile.type != ProfileType.instrumentist  ? Container() :
                       drawerRowOption(AppDrawerMenu.instruments, Icon(
                           AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
