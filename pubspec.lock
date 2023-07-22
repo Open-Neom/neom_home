@@ -109,10 +109,10 @@ packages:
     dependency: transitive
     description:
       name: awesome_notifications
-      sha256: "2b430c75cc879d6cfd52bb6eb2b5c1591ed425347816408cdcbd3f6916bba14c"
+      sha256: "6ba98d73553c8a54e7b77f8dd8b95ce9d32a7839ef182b28cf2ad54ec28b1821"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.4+1"
+    version: "0.7.5-dev.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -1039,7 +1039,7 @@ packages:
       path: "../neom_commons"
       relative: true
     source: path
-    version: "1.0.7"
+    version: "1.0.8"
   neom_events:
     dependency: "direct main"
     description:
@@ -1665,10 +1665,10 @@ packages:
     dependency: transitive
     description:
       name: video_player
-      sha256: de95f0e9405f29b5582573d4166132e71f83b3158aac14e8ee5767a54f4f1fbd
+      sha256: "3fd106c74da32f336dc7feb65021da9b0207cb3124392935f1552834f7cce822"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.1"
+    version: "2.7.0"
   video_player_android:
     dependency: transitive
     description:

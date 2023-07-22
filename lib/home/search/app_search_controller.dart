@@ -44,6 +44,17 @@ class AppSearchController extends GetxController implements SearchService {
     logger.i("Search Controller Init");
     try {
       searchType = Get.arguments as SearchType;
+      switch(searchType) {
+        case SearchType.profile:
+          await loadProfiles();
+          break;
+        case SearchType.band:
+          break;
+        case SearchType.event:
+          break;
+        case SearchType.any:
+          break;
+      }
     } catch (e) {
       logger.e(e.toString());
     }
@@ -54,22 +65,11 @@ class AppSearchController extends GetxController implements SearchService {
   void onReady() async {
     super.onReady();
     try {
-      switch(searchType) {
-        case SearchType.profile:
-          await loadProfiles();
-          setSearchParam("");
-          break;
-        case SearchType.band:
-          break;
-        case SearchType.event:
-          break;
-        case SearchType.any:
-          break;
-      }
-
+      setSearchParam("");
     } catch (e) {
       logger.e(e.toString());
     }
+
     isLoading = false;
     update([AppPageIdConstants.search]);
   }
@@ -92,6 +92,7 @@ class AppSearchController extends GetxController implements SearchService {
     filteredProfiles.addAll(mateController.followerProfiles);
     await mateController.loadMates();
     filteredProfiles.addAll(mateController.mates);
+    await mateController.loadProfiles();
     filteredProfiles.addAll(mateController.profiles);
     sortByLocation();
     update([AppPageIdConstants.search]);

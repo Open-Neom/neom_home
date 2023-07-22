@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/ui/widgets/custom_image.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
@@ -17,7 +18,9 @@ Widget buildMateSearchList(AppSearchController _) {
           onTap: () => mate.id.isNotEmpty ? Get.toNamed(AppRouteConstants.mateDetails, arguments: mate.id) : {},
           leading: Hero(
             tag: mate.photoUrl,
-            child: CircleAvatar(backgroundImage: customCachedNetworkImageProvider(mate.photoUrl))
+            child: CircleAvatar(
+                backgroundImage: customCachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl : AppFlavour.getNoImageUrl())
+            ),
           ),
           title: Text(mate.name.capitalize!),
           subtitle: Row(
