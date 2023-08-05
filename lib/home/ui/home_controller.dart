@@ -56,6 +56,7 @@ class HomeController extends GetxController implements HomeService {
     logger.i("Home Controller Init");
 
     try {
+
       pageController.addListener(() {
         currentIndex = pageController.page!.toInt();
       });
@@ -76,6 +77,15 @@ class HomeController extends GetxController implements HomeService {
         selectPageView(toIndex);
       }
 
+      if(userController.user!.fcmToken.isEmpty
+          || userController.user!.fcmToken != userController.fcmToken) {
+        UserFirestore().updateFcmToken(userController.user!.id, userController.fcmToken);
+      }
+
+      hasItems = (userController.profile.appItems?.length ?? 0) > 1;
+      await verifyLocation();
+      UserFirestore().updateLastTimeOn(userController.user!.id);
+
     } catch (e) {
       logger.e(e.toString());
     }
@@ -92,36 +102,6 @@ class HomeController extends GetxController implements HomeService {
     startingHome = false;
     isLoading = false;
     update([AppPageIdConstants.home]);
-
-    if(event.id.isNotEmpty) {
-      logger.i("Coming from payment event processed successfully Event: ${event.id}");
-      Get.snackbar(
-          AppTranslationConstants.paymentProcessed.tr,
-          AppTranslationConstants.paymentProcessedMsg.tr,
-          snackPosition: SnackPosition.bottom,
-      );
-
-      await timelineController.gotoEventDetails(event);
-    }
-
-    if(toRoute.isNotEmpty) {
-      logger.i("Coming from payment for appCoins processed successfully");
-      Get.snackbar(
-        AppTranslationConstants.paymentProcessed.tr,
-        AppTranslationConstants.paymentProcessedMsg.tr,
-        snackPosition: SnackPosition.bottom,
-      );
-      await Get.toNamed(toRoute);
-    }
-
-    if(userController.user!.fcmToken.isEmpty
-        || userController.user!.fcmToken != userController.fcmToken) {
-      UserFirestore().updateFcmToken(userController.user!.id, userController.fcmToken);
-    }
-
-    hasItems = (userController.profile.appItems?.length ?? 0) > 1;
-    verifyLocation();
-    UserFirestore().updateLastTimeOn(userController.user!.id);
 
     try {
       bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
@@ -140,6 +120,21 @@ class HomeController extends GetxController implements HomeService {
       }
     } catch(e) {
       logger.e('Failed to get badge support.');
+    }
+
+    if(event.id.isNotEmpty) {
+      logger.i("Coming from payment event processed successfully Event: ${event.id}");
+      Get.snackbar(
+        AppTranslationConstants.paymentProcessed.tr,
+        AppTranslationConstants.paymentProcessedMsg.tr,
+        snackPosition: SnackPosition.bottom,
+      );
+
+      await timelineController.gotoEventDetails(event);
+    }
+
+    if(toRoute.isNotEmpty) {
+      await Get.toNamed(toRoute);
     }
 
     update([AppPageIdConstants.home]);

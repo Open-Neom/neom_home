@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -64,7 +65,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
           onTap: () async {
             AppUtilities.showAlert(context,
                 AppFlavour.appInUse.value,
-                "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}");
+                "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
           }
       ),
       actionsIconTheme: const IconThemeData(

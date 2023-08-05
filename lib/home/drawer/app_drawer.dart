@@ -15,6 +15,7 @@ import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -51,34 +52,36 @@ class AppDrawer extends StatelessWidget {
                       : Container(),
                       AppFlavour.appInUse == AppInUse.emxi ?
                       drawerRowOption(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), context) : Container(),
-                      drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
+                      AppFlavour.appInUse != AppInUse.cyberneom
+                          ? drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context) : Container(),
                       //TODO To enable when users create events.
-                      // AppFlavour.appInUse == AppInUse.gigmeout
-                      //     ? _menuListRowButton(AppConstants.eventsCalendar, const Icon(FontAwesomeIcons.calendarCheck), true, context)
+                      // AppFlavour.appInUse == AppInUse.cyberneom
+                      //     ? drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendarCheck), context)
                       //     : Container(),
-                      AppFlavour.appInUse == AppInUse.emxi
-                          ? Column(
-                        children: [
-                          const Divider(),
-                          drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
-                          drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
-                          drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
-                          drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
-                          // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
-                      ],) : Container(),
                       AppFlavour.appInUse != AppInUse.cyberneom
                           ? Column(
                         children: [
                           const Divider(),
+                          drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
+                          AppFlavour.appInUse == AppInUse.emxi ? Column(
+                            children: [
+                              drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
+                              drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
+                              drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
+                            ],
+                          ) : Container()
+                          // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
+                      ],) : Container(),
+                      Column(
+                        children: [
+                          const Divider(),
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
+                          //TODO
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                         ],
-                      ) : Container(),
+                      ),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.settings, const Icon(Icons.settings), context),
-                      // _.user.userRole != UserRole.subscriber
-                      //     ? _menuListRowButton('Admin Center', const Icon(Icons.admin_panel_settings), true, context)
-                      //     : Container(),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.logout, const Icon(Icons.logout), context),
                     ],

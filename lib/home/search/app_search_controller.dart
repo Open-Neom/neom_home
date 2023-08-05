@@ -70,7 +70,7 @@ class AppSearchController extends GetxController implements SearchService {
       logger.e(e.toString());
     }
 
-    isLoading = false;
+    // isLoading = false;
     update([AppPageIdConstants.search]);
   }
 
@@ -86,15 +86,22 @@ class AppSearchController extends GetxController implements SearchService {
 
   @override
   Future<void> loadProfiles() async {
-    await mateController.loadFollowingProfiles();
-    filteredProfiles.addAll(mateController.followingProfiles);
-    await mateController.loadFollowersProfiles();
-    filteredProfiles.addAll(mateController.followerProfiles);
-    await mateController.loadMates();
-    filteredProfiles.addAll(mateController.mates);
-    await mateController.loadProfiles();
-    filteredProfiles.addAll(mateController.profiles);
-    sortByLocation();
+    try {
+      await mateController.loadFollowingProfiles();
+      filteredProfiles.addAll(mateController.followingProfiles);
+      await mateController.loadFollowersProfiles();
+      filteredProfiles.addAll(mateController.followerProfiles);
+      await mateController.loadMates();
+      filteredProfiles.addAll(mateController.mates);
+      await mateController.loadProfiles();
+      filteredProfiles.addAll(mateController.profiles);
+      sortByLocation();
+    } catch (e) {
+      AppUtilities.logger.e(e.toString());
+    }
+
+
+    isLoading = false;
     update([AppPageIdConstants.search]);
   }
 
