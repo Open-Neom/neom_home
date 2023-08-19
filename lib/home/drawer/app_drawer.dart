@@ -15,7 +15,6 @@ import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
-import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -50,7 +49,7 @@ class AppDrawer extends StatelessWidget {
                       AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
                        ? drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context)
                       : Container(),
-                      AppFlavour.appInUse == AppInUse.emxi ?
+                      AppFlavour.appInUse != AppInUse.cyberneom ?
                       drawerRowOption(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), context) : Container(),
                       AppFlavour.appInUse != AppInUse.cyberneom
                           ? drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context) : Container(),
@@ -76,8 +75,6 @@ class AppDrawer extends StatelessWidget {
                         children: [
                           const Divider(),
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
-                          //TODO
-                          // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                         ],
                       ),
                       const Divider(),

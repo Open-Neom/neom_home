@@ -18,6 +18,7 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
+import 'package:neom_music_player/neom_music_player_app.dart';
 
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
@@ -95,7 +96,7 @@ class HomeController extends GetxController implements HomeService {
   @override
   void onReady() async {
     super.onReady();
-    logger.d("Home Controller Ready");
+    logger.v("Home Controller Ready");
 
     loginController.authStatus = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
@@ -142,7 +143,7 @@ class HomeController extends GetxController implements HomeService {
 
 
   @override
-  void selectPageView(int index) async {
+  void selectPageView(int index, {BuildContext? context}) async {
     logger.d("Changing page view to index: $index");
 
     try {
@@ -161,6 +162,13 @@ class HomeController extends GetxController implements HomeService {
       if(pageController.hasClients) {
         if(AppFlavour.appInUse == AppInUse.emxi && index == HomeConstants.forthTabIndex) {
           Get.toNamed(AppRouteConstants.libraryHome);
+        } else if(AppFlavour.appInUse == AppInUse.gigmeout && index == HomeConstants.forthTabIndex) {
+          // Get.delete<NeomMusicPlayerApp>();
+          await Get.toNamed(AppRouteConstants.musicPlayerHome);
+          // if(context != null) {
+          //   Navigator.pushNamed(context, AppRouteConstants.musicPlayerHome);
+          // }
+
         } else {
           pageController.jumpToPage(index);
           currentIndex = index;
@@ -178,7 +186,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   Future<void> verifyLocation() async {
-    logger.d("Verifying location");
+    logger.v("Verifying location");
     try {
       userController.profile.position = await GeoLocatorController()
           .updateLocation(userController.profile.id, userController.profile.position);

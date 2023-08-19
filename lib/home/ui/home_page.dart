@@ -10,6 +10,7 @@ import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
+import 'package:neom_music_player/ui/player/miniplayer.dart';
 import '../drawer/app_drawer.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_bottom_app_bar.dart';
@@ -36,12 +37,21 @@ class HomePage extends StatelessWidget {
             decoration: AppTheme.appBoxDecoration,
             child: const Center(
                 child: CircularProgressIndicator()
-            )
-        ) : PageView(          
-          physics: const NeverScrollableScrollPhysics(),
-          controller: _.pageController,
-          children: AppFlavour.getHomePages()
-        ),
+            )) : Stack(children: [PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _.pageController,
+            children: AppFlavour.getHomePages()
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
+            child: Container(
+              decoration: AppTheme.appBoxDecoration,
+              child: MiniPlayer()
+            ),
+          ),
+        ],),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(canvasColor: Colors.grey[900]),
           child: CustomBottomAppBar(
@@ -50,7 +60,7 @@ class HomePage extends StatelessWidget {
             selectedColor: Theme.of(context).colorScheme.secondary,
             notchedShape: const CircularNotchedRectangle(),
             iconSize: 20.0,
-            onTabSelected:(int index) => _.selectPageView(index),
+            onTabSelected:(int index) => _.selectPageView(index, context: context),
             items: [
               CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
               CustomBottomAppBarItem(

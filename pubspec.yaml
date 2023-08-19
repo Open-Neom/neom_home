@@ -42,6 +42,9 @@ dependencies:
   neom_jobs:
     git:
       url: https://github.com/emmanuel-montoya/neom_jobs.git
+  neom_music_player:
+    git:
+      url: https://github.com/Cyberneom/neom_music_player.git
 
   package_info_plus: ^4.0.2
 
@@ -53,6 +56,8 @@ dev_dependencies:
 dependency_overrides:
   neom_commons:
     path: ../neom_commons
+  neom_music_player:
+    path: ../neom_music_player
   intl: 0.18.1
 
 # The following section is specific to Flutter packages.
