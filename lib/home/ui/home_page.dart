@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
                         child: DefaultTextStyle(
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            fontSize: 8,
+                            fontSize: 6,
                           ),
                           child: AnimatedTextKit(
                             repeatForever: true,
@@ -101,16 +101,19 @@ class HomePage extends StatelessWidget {
             && _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
         floatingActionButton: AppFlavour.appInUse == AppInUse.emxi
             && _.currentIndex == 2 ? Container()
-            : FloatingActionButton(
-          tooltip: AppFlavour.appInUse == AppInUse.gigmeout
-              ? AppTranslationConstants.createPost.tr : AppTranslationConstants.session,
-          splashColor: Colors.white,
+            : Container(
+          width: 50,
+          height: 50,
+          child: FloatingActionButton(
+          tooltip: AppFlavour.appInUse != AppInUse.cyberneom
+              ? AppTranslationConstants.createPost.tr : AppTranslationConstants.session.tr,
+          splashColor: AppColor.white,
           onPressed: () => AppFlavour.appInUse != AppInUse.cyberneom
               ? _.modalBottomSheetMenu(context)
               : Get.toNamed(AppRouteConstants.generator),
           elevation: 0,
           child: Icon(AppFlavour.getHomeActionBtnIcon()),
-        ),
+        ),),
       ),
     );
   }
