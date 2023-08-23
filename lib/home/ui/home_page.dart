@@ -77,7 +77,7 @@ class HomePage extends StatelessWidget {
                           child: AnimatedTextKit(
                             repeatForever: true,
                             animatedTexts: [
-                              FlickerAnimatedText(AppTranslationConstants.addItems.tr),
+                              FlickerAnimatedText(AppFlavour.appInUse != AppInUse.gigmeout ? AppTranslationConstants.addItems.tr : ''),
                         ],
                         onTap: () {},
                       ),
@@ -101,7 +101,7 @@ class HomePage extends StatelessWidget {
             && _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
         floatingActionButton: AppFlavour.appInUse == AppInUse.emxi
             && _.currentIndex == 2 ? Container()
-            : Container(
+            : SizedBox(
           width: 50,
           height: 50,
           child: FloatingActionButton(

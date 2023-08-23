@@ -18,7 +18,6 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
-import 'package:neom_music_player/neom_music_player_app.dart';
 
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
@@ -83,7 +82,7 @@ class HomeController extends GetxController implements HomeService {
         UserFirestore().updateFcmToken(userController.user!.id, userController.fcmToken);
       }
 
-      hasItems = (userController.profile.appItems?.length ?? 0) > 1;
+      hasItems = (userController.profile.favoriteItems?.length ?? 0) > 1;
       await verifyLocation();
       UserFirestore().updateLastTimeOn(userController.user!.id);
 

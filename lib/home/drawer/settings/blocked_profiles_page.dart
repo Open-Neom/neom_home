@@ -104,7 +104,7 @@ class BlockedProfilesPage extends StatelessWidget {
                 title: Text(mate.name),
                 subtitle: Row(
                   children: [
-                    Text(mate.appItems?.length.toString() ?? ""),
+                    Text(mate.favoriteItems?.length.toString() ?? ""),
                     const Icon(Icons.book, color: Colors.blueGrey, size: 20,),
                     Text(mate.mainFeature.tr.capitalize!),
                   ]),
