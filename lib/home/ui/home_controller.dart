@@ -143,7 +143,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
-    logger.d("Changing page view to index: $index");
+    logger.v("Changing page view to index: $index");
 
     try {
       switch(index) {

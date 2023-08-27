@@ -26,7 +26,7 @@ Widget buildMateSearchList(AppSearchController _) {
           subtitle: Row(
               children: [
                 Text(mate.favoriteItems?.isNotEmpty ?? false ? (mate.favoriteItems?.length.toString() ?? ""): ""),
-                const Icon(Icons.book, color: Colors.blueGrey, size: 15),
+                Icon(AppFlavour.getAppItemIcon(), color: Colors.blueGrey, size: 15),
                 Text(mate.mainFeature.tr.capitalize!),
                 Text(" - $distanceBetween KM"),
               ]
