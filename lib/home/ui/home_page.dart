@@ -10,6 +10,7 @@ import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_music_player/ui/player/miniplayer.dart';
 import '../drawer/app_drawer.dart';
 import '../widgets/custom_appbar.dart';
@@ -42,7 +43,8 @@ class HomePage extends StatelessWidget {
             controller: _.pageController,
             children: AppFlavour.getHomePages()
           ),
-          Positioned(
+          if(AppFlavour.appInUse == AppInUse.gigmeout || _.userController.user!.userRole != UserRole.subscriber)
+            Positioned(
             left: 0,
             right: 0,
             bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height

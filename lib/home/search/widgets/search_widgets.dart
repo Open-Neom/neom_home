@@ -3,7 +3,9 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/ui/widgets/custom_image.dart';
+import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
+import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import '../app_search_controller.dart';
 
 
@@ -24,11 +26,13 @@ Widget buildMateSearchList(AppSearchController _) {
           ),
           title: Text(mate.name.capitalize!),
           subtitle: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(mate.favoriteItems?.isNotEmpty ?? false ? (mate.favoriteItems?.length.toString() ?? ""): ""),
                 Icon(AppFlavour.getAppItemIcon(), color: Colors.blueGrey, size: 15),
+                AppTheme.widthSpace10,
                 Text(mate.mainFeature.tr.capitalize!),
-                Text(" - $distanceBetween KM"),
+                Text(" - ${int.parse(distanceBetween) <= 2 ? AppTranslationConstants.aroundYou.tr : '$distanceBetween KM'}"),
               ]
           ),
         ),

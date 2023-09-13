@@ -15,6 +15,7 @@ import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -53,14 +54,21 @@ class AppDrawer extends StatelessWidget {
                       drawerRowOption(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), context) : Container(),
                       AppFlavour.appInUse != AppInUse.cyberneom
                           ? drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context) : Container(),
+                      (AppFlavour.appInUse == AppInUse.cyberneom && _.userController.user!.userRole != UserRole.subscriber) ?
+                      Column(
+                        children: [
+                          const Divider(),
+                          drawerRowOption(AppDrawerMenu.inbox, const Icon(FontAwesomeIcons.comments), context),
+                        ],
+                      ) : Container(),
                       //TODO To enable when users create events.
                       // AppFlavour.appInUse == AppInUse.cyberneom
                       //     ? drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendarCheck), context)
                       //     : Container(),
-                      AppFlavour.appInUse != AppInUse.cyberneom
-                          ? Column(
+                      Column(
                         children: [
                           const Divider(),
+                          if(AppFlavour.appInUse != AppInUse.cyberneom || _.userController.user!.userRole != UserRole.subscriber)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           AppFlavour.appInUse == AppInUse.emxi ? Column(
                             children: [
@@ -70,7 +78,7 @@ class AppDrawer extends StatelessWidget {
                             ],
                           ) : Container()
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
-                      ],) : Container(),
+                      ],),
                       Column(
                         children: [
                           const Divider(),
@@ -157,7 +165,15 @@ class AppDrawer extends StatelessWidget {
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                _.user.isVerified ? const Icon(Icons.verified) : const Icon(Icons.verified_outlined, color: Colors.white70)
+                _.user.isVerified ? const Icon(Icons.verified) : const Icon(Icons.verified_outlined, color: Colors.white70),
+                  if(_.userController.user?.userRole != UserRole.subscriber)
+                    Row(
+                      children: [
+                        AppTheme.widthSpace5,
+                        Text(_.userController.user!.userRole.name.tr),
+                        AppTheme.widthSpace5,
+                      ],
+                    ),
               ]),
             ),
           ],
@@ -185,6 +201,9 @@ class AppDrawer extends StatelessWidget {
               break;
             case AppDrawerMenu.events:
               Get.toNamed(AppRouteConstants.events);
+              break;
+            case AppDrawerMenu.inbox:
+              Get.toNamed(AppRouteConstants.inbox);
               break;
             case AppDrawerMenu.calendar:
               Get.toNamed(AppRouteConstants.calendar);

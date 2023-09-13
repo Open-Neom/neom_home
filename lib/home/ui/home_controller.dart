@@ -18,6 +18,7 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
@@ -161,7 +162,9 @@ class HomeController extends GetxController implements HomeService {
       if(pageController.hasClients) {
         if(AppFlavour.appInUse == AppInUse.emxi && index == HomeConstants.forthTabIndex) {
           Get.toNamed(AppRouteConstants.libraryHome);
-        } else if(AppFlavour.appInUse == AppInUse.gigmeout && index == HomeConstants.forthTabIndex) {
+        } else if((AppFlavour.appInUse == AppInUse.gigmeout
+            || userController.user!.userRole != UserRole.subscriber)
+            && index == HomeConstants.forthTabIndex) {
           // Get.delete<NeomMusicPlayerApp>();
           await Get.toNamed(AppRouteConstants.musicPlayerHome);
           // if(context != null) {
