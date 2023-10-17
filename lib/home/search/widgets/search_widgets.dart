@@ -11,10 +11,10 @@ import '../app_search_controller.dart';
 
 Widget buildMateSearchList(AppSearchController _) {
   return ListView.builder(
-    itemCount: _.sortedProfileLocation.length,
+    itemCount: _.sortedProfileLocation.value.length,
     itemBuilder: (context, index) {
-      String distanceBetween = _.sortedProfileLocation.keys.elementAt(index).round().toString();
-      AppProfile mate = _.sortedProfileLocation.values.elementAt(index);
+      String distanceBetween = _.sortedProfileLocation.value.keys.elementAt(index).round().toString();
+      AppProfile mate = _.sortedProfileLocation.value.values.elementAt(index);
       return mate.name.isNotEmpty && mate.isActive ? GestureDetector(
         child: ListTile(
           onTap: () => mate.id.isNotEmpty ? Get.toNamed(AppRouteConstants.mateDetails, arguments: mate.id) : {},
@@ -24,14 +24,14 @@ Widget buildMateSearchList(AppSearchController _) {
                 backgroundImage: customCachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl : AppFlavour.getNoImageUrl())
             ),
           ),
-          title: Text(mate.name.capitalize!),
+          title: Text(mate.name.capitalize),
           subtitle: Row(
             mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(mate.favoriteItems?.isNotEmpty ?? false ? (mate.favoriteItems?.length.toString() ?? ""): ""),
                 Icon(AppFlavour.getAppItemIcon(), color: Colors.blueGrey, size: 15),
                 AppTheme.widthSpace10,
-                Text(mate.mainFeature.tr.capitalize!),
+                Text(mate.mainFeature.tr.capitalize),
                 Text(" - ${int.parse(distanceBetween) <= 2 ? AppTranslationConstants.aroundYou.tr : '$distanceBetween KM'}"),
               ]
           ),

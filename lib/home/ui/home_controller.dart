@@ -216,7 +216,7 @@ class HomeController extends GetxController implements HomeService {
                 padding: const EdgeInsets.only(top: 10),
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                    color: AppColor.main50,
+                    color: AppColor.main75,
                     borderRadius: const BorderRadius.all(Radius.circular(10.0))),
                 child: ListView.separated(
                     separatorBuilder:  (context, index) => const Divider(),
@@ -250,11 +250,6 @@ class HomeController extends GetxController implements HomeService {
                               break;
                             case AppTranslationConstants.shareComment:
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                              break;
-                            case AppTranslationConstants.startPoll:
-                              Get.snackbar(AppTranslationConstants.underConstruction.tr,
-                                  AppTranslationConstants.underConstructionMsg.tr,
-                                  snackPosition: SnackPosition.bottom);
                               break;
                           }
                         },

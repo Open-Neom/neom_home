@@ -28,7 +28,7 @@ class AppDrawer extends StatelessWidget {
     builder: (_) {
       return Drawer(
         child: Container(
-          color: AppColor.drawer,
+          decoration: AppTheme.appBoxDecoration,
           child: SafeArea(
             child: Stack(
               children: <Widget>[
@@ -50,7 +50,7 @@ class AppDrawer extends StatelessWidget {
                       AppFlavour.appInUse == AppInUse.gigmeout && _.appProfile.type == ProfileType.instrumentist
                        ? drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context)
                       : Container(),
-                      AppFlavour.appInUse != AppInUse.cyberneom ?
+                      AppFlavour.appInUse == AppInUse.emxi ?
                       drawerRowOption(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), context) : Container(),
                       AppFlavour.appInUse != AppInUse.cyberneom
                           ? drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context) : Container(),
@@ -160,7 +160,7 @@ class AppDrawer extends StatelessWidget {
               ),
               subtitle: Row(
                 children: [
-                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize!,
+                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
                     style: AppTheme.primarySubtitleText.copyWith(
                         color: Colors.white70, fontSize: 15),
                     context: context),
@@ -254,7 +254,7 @@ class AppDrawer extends StatelessWidget {
           child: icon
       ),
       title: customText(
-        selectedMenu.name.tr.capitalize!,
+        selectedMenu.name.tr.capitalize,
         textAlign: TextAlign.start,
         style: TextStyle(
           fontSize: 20,

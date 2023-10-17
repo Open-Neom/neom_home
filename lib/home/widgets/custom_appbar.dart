@@ -153,7 +153,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 return AppConstants.choices.map((String choice){
                   return PopupMenuItem<String>(
                     value: choice,
-                    child: Text(choice.tr.capitalizeFirst!),
+                    child: Text(choice.tr.capitalizeFirst),
                   );
                 }).toList();
               },

@@ -28,6 +28,7 @@ class HomePage extends StatelessWidget {
       id: AppPageIdConstants.home,
       init: HomeController(),
       builder: (_) => Scaffold(
+        backgroundColor: AppColor.main50,
         appBar: CustomAppBar(
             title: AppConstants.appTitle,
             profileImg: _.userController.profile.photoUrl.isNotEmpty
@@ -35,25 +36,28 @@ class HomePage extends StatelessWidget {
             profileId: _.userController.profile.id),
         drawer: const AppDrawer(),
         body: _.isLoading ? Container(
-            decoration: AppTheme.appBoxDecoration,
-            child: const Center(
-                child: CircularProgressIndicator()
-            )) : Stack(children: [PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _.pageController,
-            children: AppFlavour.getHomePages()
-          ),
-          if(AppFlavour.appInUse == AppInUse.gigmeout || _.userController.user!.userRole != UserRole.subscriber)
-            Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
-            child: Container(
-              decoration: AppTheme.appBoxDecoration,
-              child: MiniPlayer()
+          decoration: AppTheme.appBoxDecoration,
+          child: const Center(
+            child: CircularProgressIndicator()
+          )
+        ) : Stack(
+          children: [
+            PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _.pageController,
+              children: AppFlavour.getHomePages()
             ),
-          ),
-        ],),
+            if(AppFlavour.appInUse == AppInUse.gigmeout || _.userController.user!.userRole == UserRole.superAdmin)
+            Positioned(
+              left: 0, right: 0,
+              bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
+              child: Container(
+                decoration: AppTheme.appBoxDecoration,
+                child: MiniPlayer()
+              ),
+            ),
+          ],
+        ),
         bottomNavigationBar: Theme(
           data: Theme.of(context).copyWith(canvasColor: Colors.grey[900]),
           child: CustomBottomAppBar(
@@ -66,9 +70,10 @@ class HomePage extends StatelessWidget {
             items: [
               CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
               CustomBottomAppBarItem(
-                  iconData: AppFlavour.getSecondTabIcon(),
-                  text: AppFlavour.getSecondTabTitle().tr,
-                  animation: _.hasItems ? null : Column(
+                iconData: AppFlavour.getSecondTabIcon(),
+                text: AppFlavour.getSecondTabTitle().tr,
+                animation: AppFlavour.appInUse == AppInUse.gigmeout
+                    || _.hasItems ? null : Column(
                     children: [
                       SizedBox(
                         child: DefaultTextStyle(
@@ -86,15 +91,15 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   AppTheme.widthSpace10,
-                ],
-              )),
-              CustomBottomAppBarItem(
-                  iconData: AppFlavour.getThirdTabIcon(),
-                  text: AppFlavour.getThirdTabTitle().tr
+                ],),
               ),
               CustomBottomAppBarItem(
-                  iconData: AppFlavour.getForthTabIcon(),
-                  text: AppFlavour.getFortTabTitle().tr,
+                iconData: AppFlavour.getThirdTabIcon(),
+                text: AppFlavour.getThirdTabTitle().tr
+              ),
+              CustomBottomAppBarItem(
+                iconData: AppFlavour.getForthTabIcon(),
+                text: AppFlavour.getFortTabTitle().tr,
               )
             ],
           ),

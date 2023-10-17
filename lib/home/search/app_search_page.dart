@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 
@@ -19,10 +20,12 @@ class AppSearchPage extends StatelessWidget {
       builder: (_) => Scaffold(
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(50),
-        child: AppBarSearch(_)),
+        child: AppBarSearch(_)
+      ),
+      backgroundColor: AppColor.main50,
       body: Obx(() => Container(
         decoration: AppTheme.appBoxDecoration,
-        child: _.isLoading ? const Center(child: CircularProgressIndicator())
+        child: _.isLoading.value ? const Center(child: CircularProgressIndicator())
             : buildMateSearchList(_)
         ),
       )

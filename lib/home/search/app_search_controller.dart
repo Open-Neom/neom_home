@@ -17,24 +17,12 @@ class AppSearchController extends GetxController implements SearchService {
   final userController = Get.find<UserController>();
 
   MateController mateController = Get.put(MateController());
-
   ScrollController scrollController = ScrollController();
 
-  final RxBool _isLoading = true.obs;
-  bool get isLoading => _isLoading.value;
-  set isLoading(bool isLoading) => _isLoading.value = isLoading;
-
-  final RxString _searchParam = "".obs;
-  String get searchParam => _searchParam.value;
-  set searchParam(String param) => _searchParam.value = param;
-
-  final RxMap<String, AppProfile> _filteredProfiles = <String, AppProfile>{}.obs;
-  Map<String, AppProfile> get filteredProfiles => _filteredProfiles;
-  set filteredProfiles(Map<String, AppProfile> filteredProfiles) => _filteredProfiles.value = filteredProfiles;
-
-  final Rx<SplayTreeMap<double, AppProfile>> _sortedProfileLocation = SplayTreeMap<double, AppProfile>().obs;
-  SplayTreeMap<double, AppProfile> get sortedProfileLocation => _sortedProfileLocation.value;
-  set sortedProfileLocation(SplayTreeMap<double, AppProfile> sortedProfileLocation) => _sortedProfileLocation.value = sortedProfileLocation;
+  final RxBool isLoading = true.obs;
+  final RxString searchParam = "".obs;
+  final RxMap<String, AppProfile> filteredProfiles = <String, AppProfile>{}.obs;
+  final Rx<SplayTreeMap<double, AppProfile>> sortedProfileLocation = SplayTreeMap<double, AppProfile>().obs;
 
   SearchType searchType = SearchType.profile;
 
@@ -70,15 +58,14 @@ class AppSearchController extends GetxController implements SearchService {
       logger.e(e.toString());
     }
 
-    // isLoading = false;
     update([AppPageIdConstants.search]);
   }
 
   @override
   void setSearchParam(String param) {
-    searchParam = param;
-    filteredProfiles = searchParam.isEmpty ? mateController.totalProfiles
-        : mateController.filterByNameOrInstrument(searchParam);
+    searchParam.value = param;
+    filteredProfiles.value = searchParam.isEmpty ? mateController.totalProfiles
+        : mateController.filterByNameOrInstrument(searchParam.value);
 
     sortByLocation();
     update([AppPageIdConstants.search]);
@@ -88,37 +75,37 @@ class AppSearchController extends GetxController implements SearchService {
   Future<void> loadProfiles() async {
     try {
       await mateController.loadFollowingProfiles();
-      filteredProfiles.addAll(mateController.followingProfiles);
+      filteredProfiles.value.addAll(mateController.followingProfiles);
       await mateController.loadFollowersProfiles();
-      filteredProfiles.addAll(mateController.followerProfiles);
+      filteredProfiles.value.addAll(mateController.followerProfiles);
       await mateController.loadMates();
-      filteredProfiles.addAll(mateController.mates);
+      filteredProfiles.value.addAll(mateController.mates);
       await mateController.loadProfiles();
-      filteredProfiles.addAll(mateController.profiles);
+      filteredProfiles.value.addAll(mateController.profiles);
       sortByLocation();
     } catch (e) {
       AppUtilities.logger.e(e.toString());
     }
 
 
-    isLoading = false;
+    isLoading.value = false;
     update([AppPageIdConstants.search]);
   }
 
   @override
   void sortByLocation() {
-    sortedProfileLocation.clear();
-    filteredProfiles.forEach((key, mate) {
+    sortedProfileLocation.value.clear();
+    filteredProfiles.value.forEach((key, mate) {
       double distanceBetweenProfiles = AppUtilities.distanceBetweenPositions(
           userController.profile.position!,
           mate.position!);
 
       distanceBetweenProfiles = distanceBetweenProfiles + Random().nextDouble();
-      sortedProfileLocation[distanceBetweenProfiles] = mate;
+      sortedProfileLocation.value[distanceBetweenProfiles] = mate;
     });
 
-    logger.i("Filtered Profiles ${filteredProfiles.length}");
-    logger.i("Sortered Profiles ${sortedProfileLocation.length}");
+    logger.i("Filtered Profiles ${filteredProfiles.value.length}");
+    logger.i("Sortered Profiles ${sortedProfileLocation.value.length}");
     update([AppPageIdConstants.search]);
   }
 
