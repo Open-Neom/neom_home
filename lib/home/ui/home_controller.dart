@@ -131,7 +131,8 @@ class HomeController extends GetxController implements HomeService {
         snackPosition: SnackPosition.bottom,
       );
 
-      await timelineController.gotoEventDetails(event);
+      //TODO
+      // await timelineController.gotoEventDetails(event);
     }
 
     if(toRoute.isNotEmpty) {
