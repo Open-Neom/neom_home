@@ -96,7 +96,7 @@ class HomeController extends GetxController implements HomeService {
   @override
   void onReady() async {
     super.onReady();
-    logger.v("Home Controller Ready");
+    logger.t("Home Controller Ready");
 
     loginController.authStatus = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
@@ -144,7 +144,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
-    logger.v("Changing page view to index: $index");
+    logger.t("Changing page view to index: $index");
 
     try {
       switch(index) {
@@ -188,7 +188,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   Future<void> verifyLocation() async {
-    logger.v("Verifying location");
+    logger.t("Verifying location");
     try {
       userController.profile.position = await GeoLocatorController()
           .updateLocation(userController.profile.id, userController.profile.position);
