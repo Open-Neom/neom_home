@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
 import 'package:neom_commons/core/app_flavour.dart';
-import 'package:neom_commons/core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_commons/core/data/firestore/user_firestore.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
-import 'package:neom_commons/core/domain/model/activity_feed.dart';
 import 'package:neom_commons/core/domain/model/event.dart';
 import 'package:neom_commons/core/domain/use_cases/home_service.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
@@ -54,7 +51,7 @@ class HomeController extends GetxController implements HomeService {
   @override
   void onInit() async {
     super.onInit();
-    logger.i("Home Controller Init");
+    logger.t("Home Controller Init");
 
     try {
 
@@ -105,20 +102,21 @@ class HomeController extends GetxController implements HomeService {
     update([AppPageIdConstants.home]);
 
     try {
-      bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
-      if (isAppBadgeSupported) {
-        logger.i('App Badger supported.');
-        List<ActivityFeed> unreadActivityFeed = [];
-        unreadActivityFeed = await ActivityFeedFirestore().retrieve(userController.profile.id);
-        unreadActivityFeed.removeWhere((element) => element.unread == false);
-        if (unreadActivityFeed.isNotEmpty) {
-          FlutterAppBadger.updateBadgeCount(unreadActivityFeed.length + 10);
-        } else {
-          FlutterAppBadger.removeBadge();
-        }
-      } else {
-        logger.i('App Badger not supported.');
-      }
+      ///DEPRECATED
+      // bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
+      // if (isAppBadgeSupported) {
+      //   logger.i('App Badger supported.');
+      //   List<ActivityFeed> unreadActivityFeed = [];
+      //   unreadActivityFeed = await ActivityFeedFirestore().retrieve(userController.profile.id);
+      //   unreadActivityFeed.removeWhere((element) => element.unread == false);
+      //   if (unreadActivityFeed.isNotEmpty) {
+      //     FlutterAppBadger.updateBadgeCount(unreadActivityFeed.length + 10);
+      //   } else {
+      //     FlutterAppBadger.removeBadge();
+      //   }
+      // } else {
+      //   logger.i('App Badger not supported.');
+      // }
     } catch(e) {
       logger.e('Failed to get badge support.');
     }
@@ -161,9 +159,9 @@ class HomeController extends GetxController implements HomeService {
       }
 
       if(pageController.hasClients) {
-        if(AppFlavour.appInUse == AppInUse.emxi && index == HomeConstants.forthTabIndex) {
+        if(AppFlavour.appInUse == AppInUse.e && index == HomeConstants.forthTabIndex) {
           Get.toNamed(AppRouteConstants.libraryHome);
-        } else if((AppFlavour.appInUse == AppInUse.gigmeout
+        } else if((AppFlavour.appInUse == AppInUse.g
             || userController.user!.userRole != UserRole.subscriber)
             && index == HomeConstants.forthTabIndex) {
           // Get.delete<NeomMusicPlayerApp>();
@@ -243,7 +241,7 @@ class HomeController extends GetxController implements HomeService {
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                               break;
                             case AppTranslationConstants.organizeEvent:
-                              if(AppFlavour.appInUse == AppInUse.cyberneom) {
+                              if(AppFlavour.appInUse == AppInUse.c) {
                                 Get.toNamed(AppRouteConstants.createNeomEventType);
                               } else {
                                 Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);

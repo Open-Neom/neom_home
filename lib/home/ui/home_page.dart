@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
               controller: _.pageController,
               children: AppFlavour.getHomePages()
             ),
-            if(AppFlavour.appInUse == AppInUse.gigmeout || _.userController.user!.userRole == UserRole.superAdmin)
+            if(AppFlavour.appInUse == AppInUse.g || _.userController.user!.userRole == UserRole.superAdmin)
             Positioned(
               left: 0, right: 0,
               bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
@@ -72,7 +72,7 @@ class HomePage extends StatelessWidget {
               CustomBottomAppBarItem(
                 iconData: AppFlavour.getSecondTabIcon(),
                 text: AppFlavour.getSecondTabTitle().tr,
-                animation: AppFlavour.appInUse == AppInUse.gigmeout
+                animation: AppFlavour.appInUse == AppInUse.g
                     || _.hasItems ? null : Column(
                     children: [
                       SizedBox(
@@ -84,7 +84,7 @@ class HomePage extends StatelessWidget {
                           child: AnimatedTextKit(
                             repeatForever: true,
                             animatedTexts: [
-                              FlickerAnimatedText(AppFlavour.appInUse != AppInUse.gigmeout ? AppTranslationConstants.addItems.tr : ''),
+                              FlickerAnimatedText(AppFlavour.appInUse != AppInUse.g ? AppTranslationConstants.addItems.tr : ''),
                         ],
                         onTap: () {},
                       ),
@@ -104,18 +104,18 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButtonLocation: AppFlavour.appInUse == AppInUse.emxi
+        floatingActionButtonLocation: AppFlavour.appInUse == AppInUse.e
             && _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: AppFlavour.appInUse == AppInUse.emxi
+        floatingActionButton: AppFlavour.appInUse == AppInUse.e
             && _.currentIndex == 2 ? Container()
             : SizedBox(
           width: 50,
           height: 50,
           child: FloatingActionButton(
-          tooltip: AppFlavour.appInUse != AppInUse.cyberneom
+          tooltip: AppFlavour.appInUse != AppInUse.c
               ? AppTranslationConstants.createPost.tr : AppTranslationConstants.session.tr,
           splashColor: AppColor.white,
-          onPressed: () => AppFlavour.appInUse != AppInUse.cyberneom
+          onPressed: () => AppFlavour.appInUse != AppInUse.c
               ? _.modalBottomSheetMenu(context)
               : Get.toNamed(AppRouteConstants.generator),
           elevation: 0,

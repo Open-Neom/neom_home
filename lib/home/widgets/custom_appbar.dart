@@ -63,14 +63,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             ],
           ),
           onTap: () async {
-            AppUtilities.showAlert(context,
-                AppFlavour.appInUse.value,
-                "${AppTranslationConstants.version.tr} ${AppFlavour.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
+            AppUtilities.showAlert(context, message: "${AppTranslationConstants.version.tr} "
+                "${AppFlavour.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
           }
       ),
-      actionsIconTheme: const IconThemeData(
-        size: 20
-      ),
+      actionsIconTheme: const IconThemeData(size: 20),
       actions: <Widget>[
         Stack(
           children: [
@@ -127,7 +124,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
               Get.toNamed(AppRouteConstants.search, arguments: SearchType.profile)
             }
         ),
-        AppFlavour.appInUse == AppInUse.cyberneom
+        AppFlavour.appInUse == AppInUse.c
         ? IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(Icons.add_box_outlined, size: 25,),

@@ -1,13 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/domain/model/app_profile.dart';
-import 'package:neom_commons/core/ui/widgets/custom_image.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import '../app_search_controller.dart';
 
+import '../app_search_controller.dart';
 
 Widget buildMateSearchList(AppSearchController _) {
   return ListView.builder(
@@ -21,7 +21,7 @@ Widget buildMateSearchList(AppSearchController _) {
           leading: Hero(
             tag: mate.photoUrl,
             child: CircleAvatar(
-                backgroundImage: customCachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl : AppFlavour.getNoImageUrl())
+                backgroundImage: CachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl : AppFlavour.getNoImageUrl())
             ),
           ),
           title: Text(mate.name.capitalize),
