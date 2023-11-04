@@ -22,36 +22,28 @@ import '../utils/constants/home_constants.dart';
 
 class HomeController extends GetxController implements HomeService {
 
-  var logger = AppUtilities.logger;
+
   final loginController = Get.find<LoginController>();
   final userController = Get.find<UserController>();
   final timelineController = Get.put(TimelineController());
 
-  int currentIndex = 0;
-
   bool startingHome = true;
   bool hasItems = false;
 
-  final RxBool _isLoading = true.obs;
-  bool get isLoading => _isLoading.value;
-  set isLoading(bool isLoading) => _isLoading.value = isLoading;
-
-  final RxBool _isPressed = false.obs;
-  bool get isPressed => _isPressed.value;
-  set isPressed(bool isPressed) => _isPressed.value = isPressed;
+  final RxBool isLoading = true.obs;
+  final RxBool isPressed = false.obs;
+  final Rx<Event> event = Event().obs;
 
   final PageController pageController = PageController();
   final ScrollController scrollController = ScrollController();
 
-  final Rx<Event> _event = Event().obs;
-  Event get event => _event.value;
-  set event(Event event) => _event.value = event;
-
+  int currentIndex = 0;
   String toRoute = "";
+
   @override
   void onInit() async {
     super.onInit();
-    logger.t("Home Controller Init");
+    AppUtilities.logger.t("Home Controller Init");
 
     try {
 
@@ -65,7 +57,7 @@ class HomeController extends GetxController implements HomeService {
         if (Get.arguments[0] is int) {
           toIndex = Get.arguments[0] as int;
         } else if (Get.arguments[0] is Event) {
-          event = Get.arguments[0] as  Event;
+          event.value = Get.arguments[0] as  Event;
         } else if (Get.arguments[0] is String) {
           toRoute = Get.arguments[0] as String;
         }
@@ -85,7 +77,7 @@ class HomeController extends GetxController implements HomeService {
       UserFirestore().updateLastTimeOn(userController.user!.id);
 
     } catch (e) {
-      logger.e(e.toString());
+      AppUtilities.logger.e(e.toString());
     }
 
   }
@@ -93,19 +85,19 @@ class HomeController extends GetxController implements HomeService {
   @override
   void onReady() async {
     super.onReady();
-    logger.t("Home Controller Ready");
+    AppUtilities.logger.t("Home Controller Ready");
 
     loginController.authStatus = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
     startingHome = false;
-    isLoading = false;
+    isLoading.value = false;
     update([AppPageIdConstants.home]);
 
     try {
       ///DEPRECATED
       // bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
       // if (isAppBadgeSupported) {
-      //   logger.i('App Badger supported.');
+      //   AppUtilities.logger.i('App Badger supported.');
       //   List<ActivityFeed> unreadActivityFeed = [];
       //   unreadActivityFeed = await ActivityFeedFirestore().retrieve(userController.profile.id);
       //   unreadActivityFeed.removeWhere((element) => element.unread == false);
@@ -115,14 +107,14 @@ class HomeController extends GetxController implements HomeService {
       //     FlutterAppBadger.removeBadge();
       //   }
       // } else {
-      //   logger.i('App Badger not supported.');
+      //   AppUtilities.logger.i('App Badger not supported.');
       // }
     } catch(e) {
-      logger.e('Failed to get badge support.');
+      AppUtilities.logger.e('Failed to get badge support.');
     }
 
-    if(event.id.isNotEmpty) {
-      logger.i("Coming from payment event processed successfully Event: ${event.id}");
+    if(event.value.id.isNotEmpty) {
+      AppUtilities.logger.i("Coming from payment event processed successfully Event: ${event.value.id}");
       Get.snackbar(
         AppTranslationConstants.paymentProcessed.tr,
         AppTranslationConstants.paymentProcessedMsg.tr,
@@ -143,7 +135,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
-    logger.t("Changing page view to index: $index");
+    AppUtilities.logger.t("Changing page view to index: $index");
 
     try {
       switch(index) {
@@ -178,7 +170,7 @@ class HomeController extends GetxController implements HomeService {
 
 
     } catch (e) {
-      logger.e(e.toString());
+      AppUtilities.logger.e(e.toString());
     }
 
     update([AppPageIdConstants.home]);
@@ -187,13 +179,13 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   Future<void> verifyLocation() async {
-    logger.t("Verifying location");
+    AppUtilities.logger.t("Verifying location");
     try {
       userController.profile.position = await GeoLocatorController()
           .updateLocation(userController.profile.id, userController.profile.position);
-      isLoading = false;
+      isLoading.value = false;
     } catch (e) {
-      logger.e(e.toString());
+      AppUtilities.logger.e(e.toString());
     }
 
     update([AppPageIdConstants.home, AppPageIdConstants.timeline]);
@@ -202,7 +194,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   Future<void> modalBottomSheetMenu(BuildContext context) async {
-    isPressed = true;
+    isPressed.value = true;
     final result = await showModalBottomSheet(
         elevation: 0,
         backgroundColor: AppTheme.canvasColor75(context),

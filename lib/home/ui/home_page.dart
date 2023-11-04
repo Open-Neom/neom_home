@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
             ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
             profileId: _.userController.profile.id),
         drawer: const AppDrawer(),
-        body: _.isLoading ? Container(
+        body: _.isLoading.value ? Container(
           decoration: AppTheme.appBoxDecoration,
           child: const Center(
             child: CircularProgressIndicator()
