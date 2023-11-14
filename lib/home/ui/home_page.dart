@@ -27,7 +27,7 @@ class HomePage extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
       init: HomeController(),
-      builder: (_) => Scaffold(
+      builder: (_) => Obx(()=> Scaffold(
         backgroundColor: AppColor.main50,
         appBar: CustomAppBar(
             title: AppConstants.appTitle,
@@ -53,7 +53,7 @@ class HomePage extends StatelessWidget {
               bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
               child: Container(
                 decoration: AppTheme.appBoxDecoration,
-                child: MiniPlayer()
+                child: const MiniPlayer()
               ),
             ),
           ],
@@ -121,7 +121,7 @@ class HomePage extends StatelessWidget {
           elevation: 0,
           child: Icon(AppFlavour.getHomeActionBtnIcon()),
         ),),
-      ),
+      ),),
     );
   }
 

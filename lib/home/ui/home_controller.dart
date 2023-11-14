@@ -195,11 +195,11 @@ class HomeController extends GetxController implements HomeService {
   @override
   Future<void> modalBottomSheetMenu(BuildContext context) async {
     isPressed.value = true;
-    final result = await showModalBottomSheet(
+    await showModalBottomSheet(
         elevation: 0,
-        backgroundColor: AppTheme.canvasColor75(context),
+        backgroundColor: AppTheme.canvasColor25(context),
         context: context,
-        builder: (BuildContext context) {
+        builder: (BuildContext ctx) {
           return Column(
             children: <Widget>[
               Container(
@@ -207,8 +207,9 @@ class HomeController extends GetxController implements HomeService {
                 padding: const EdgeInsets.only(top: 10),
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                    color: AppColor.main75,
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0))),
+                    color: AppColor.main95,
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0))
+                ),
                 child: ListView.separated(
                     separatorBuilder:  (context, index) => const Divider(),
                     itemCount: HomeConstants.bottomMenuItems.length,
@@ -228,6 +229,7 @@ class HomeController extends GetxController implements HomeService {
                         ),
                         subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr),
                         onTap: () {
+                          Navigator.pop(ctx);
                           switch (HomeConstants.bottomMenuItems[index].title) {
                             case AppTranslationConstants.createPost:
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
@@ -255,15 +257,13 @@ class HomeController extends GetxController implements HomeService {
                       borderRadius: BorderRadius.all(Radius.circular(30))),
                   margin: const EdgeInsets.symmetric(vertical: 10),
                   child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
+                      onTap: () => Navigator.pop(ctx),
                       child: Icon(Icons.close, size: 25, color: Colors.grey[900])
                   )
               ),
             ],
           );
-        }).whenComplete(() => Get.back());
-
-    if(result != null && result == true) Get.back();
+        });
   }
 
   void gotoEvent(Event event) {

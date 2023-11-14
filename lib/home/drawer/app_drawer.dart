@@ -26,7 +26,7 @@ class AppDrawer extends StatelessWidget {
     id: AppPageIdConstants.appDrawer,
     init: AppDrawerController(),
     builder: (_) {
-      return Drawer(
+      return Obx(()=> Drawer(
         child: Container(
           decoration: AppTheme.appBoxDecoration,
           child: SafeArea(
@@ -37,7 +37,7 @@ class AppDrawer extends StatelessWidget {
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     children: <Widget>[
-                      Obx(()=>_menuHeader(context, _)),
+                      _menuHeader(context, _),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
                       AppFlavour.appInUse == AppInUse.c ? drawerRowOption(AppDrawerMenu.frequencies, Icon(
@@ -96,7 +96,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ),);
     });
   }
 
