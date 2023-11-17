@@ -1,2 +1,2 @@
 # neom_home
-Home for Cybernom
+Home for Cyberneom
