@@ -68,24 +68,24 @@ class AppDrawer extends StatelessWidget {
                       Column(
                         children: [
                           const Divider(),
-                          if(AppFlavour.appInUse != AppInUse.c || _.userController.user!.userRole != UserRole.subscriber)
+                          if(_.userController.user!.isVerified || _.userController.user!.userRole != UserRole.subscriber)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           AppFlavour.appInUse == AppInUse.e ? Column(
                             children: [
                               drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
                               drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
                               drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
+                              const Divider(),
                             ],
                           ) : Container()
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                       ],),
                       Column(
                         children: [
-                          const Divider(),
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
+                          const Divider(),
                         ],
                       ),
-                      const Divider(),
                       drawerRowOption(AppDrawerMenu.settings, const Icon(Icons.settings), context),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.logout, const Icon(Icons.logout), context),

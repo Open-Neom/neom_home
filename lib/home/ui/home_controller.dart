@@ -87,7 +87,7 @@ class HomeController extends GetxController implements HomeService {
     super.onReady();
     AppUtilities.logger.t("Home Controller Ready");
 
-    loginController.authStatus = AuthStatus.loggedIn;
+    loginController.authStatus.value = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
     startingHome = false;
     isLoading.value = false;
