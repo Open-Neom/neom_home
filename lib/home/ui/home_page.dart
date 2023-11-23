@@ -72,8 +72,8 @@ class HomePage extends StatelessWidget {
               CustomBottomAppBarItem(
                 iconData: AppFlavour.getSecondTabIcon(),
                 text: AppFlavour.getSecondTabTitle().tr,
-                animation: AppFlavour.appInUse == AppInUse.g
-                    || _.hasItems ? null : Column(
+                animation: AppFlavour.appInUse != AppInUse.c
+                    ? null : Column(
                     children: [
                       SizedBox(
                         child: DefaultTextStyle(
@@ -104,13 +104,8 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
-        floatingActionButtonLocation: AppFlavour.appInUse == AppInUse.e
-            && _.currentIndex == 2 ? null : FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: AppFlavour.appInUse == AppInUse.e
-            && _.currentIndex == 2 ? Container()
-            : SizedBox(
-          width: 50,
-          height: 50,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: SizedBox(width: 50, height: 50,
           child: FloatingActionButton(
           tooltip: AppFlavour.appInUse != AppInUse.c
               ? AppTranslationConstants.createPost.tr : AppTranslationConstants.session.tr,

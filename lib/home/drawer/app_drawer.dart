@@ -40,27 +40,26 @@ class AppDrawer extends StatelessWidget {
                       _menuHeader(context, _),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
-                      AppFlavour.appInUse == AppInUse.c ? drawerRowOption(AppDrawerMenu.frequencies, Icon(
-                          AppFlavour.getInstrumentIcon()), context) : Container(),
+                      if(AppFlavour.appInUse == AppInUse.c) drawerRowOption(AppDrawerMenu.frequencies, Icon(
+                          AppFlavour.getInstrumentIcon()), context),
+                      if(AppFlavour.appInUse == AppInUse.e)
+                        drawerRowOption(AppDrawerMenu.inspiration, const Icon(FontAwesomeIcons.filePen), context),
                       AppFlavour.appInUse == AppInUse.c || _.appProfile.type != ProfileType.instrumentist  ? Container() :
                       drawerRowOption(AppDrawerMenu.instruments, Icon(
                           AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
-                      AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.instrumentist
-                       ? drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context)
-                      : Container(),
-                      AppFlavour.appInUse == AppInUse.e ?
-                      drawerRowOption(AppDrawerMenu.events, const Icon(FontAwesomeIcons.calendar), context) : Container(),
-                      AppFlavour.appInUse != AppInUse.c
-                          ? drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context) : Container(),
-                      (AppFlavour.appInUse == AppInUse.c && _.userController.user!.userRole != UserRole.subscriber) ?
+                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.instrumentist)
+                        drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
+                      if(AppFlavour.appInUse != AppInUse.c)
+                        drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
+                      if(AppFlavour.appInUse == AppInUse.c && _.userController.user!.userRole != UserRole.subscriber)
                       Column(
                         children: [
                           const Divider(),
                           drawerRowOption(AppDrawerMenu.inbox, const Icon(FontAwesomeIcons.comments), context),
                         ],
-                      ) : Container(),
+                      ),
                       //TODO To enable when users create events.
                       // AppFlavour.appInUse == AppInUse.c
                       //     ? drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendarCheck), context)
@@ -70,16 +69,18 @@ class AppDrawer extends StatelessWidget {
                           const Divider(),
                           if(_.userController.user!.isVerified || _.userController.user!.userRole != UserRole.subscriber)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
-                          AppFlavour.appInUse == AppInUse.e ? Column(
-                            children: [
-                              drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
-                              drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
-                              drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
-                              const Divider(),
-                            ],
-                          ) : Container()
+                          if(AppFlavour.appInUse == AppInUse.e)
+                            Column(
+                              children: [
+                                drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
+                                drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
+                                ///DEPRECATED
+                                const Divider(),
+                              ],
+                            )
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
-                      ],),
+                        ],
+                      ),
                       Column(
                         children: [
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
@@ -246,6 +247,9 @@ class AppDrawer extends StatelessWidget {
             case AppDrawerMenu.frequencies:
               Get.toNamed(AppRouteConstants.frequencyFav);
               break;
+            case AppDrawerMenu.inspiration:
+              Get.toNamed(AppRouteConstants.blog);
+              // TODO: Handle this case.
           }
         }
       },
