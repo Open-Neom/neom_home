@@ -1,6 +1,6 @@
 name: neom_home
 description: Home for Cyberneom.
-version: 1.1.0
+version: 1.1.1
 homepage: https://github.com/Cyberneom/neom_home
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
@@ -36,7 +36,6 @@ dependencies:
   neom_timeline:
     git:
       url: https://github.com/Cyberneom/neom_timeline.git
-
   neom_booking:
     git:
       url: https://github.com/emmanuel-montoya/neom_booking.git
@@ -46,7 +45,7 @@ dependencies:
   neom_jobs:
     git:
       url: https://github.com/emmanuel-montoya/neom_jobs.git
-  package_info_plus: ^4.0.2
+#  package_info_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:
@@ -76,10 +75,10 @@ dependency_overrides:
     path: ../neom_profile
   neom_timeline:
     path: ../neom_timeline
-  http: 1.1.0
   uuid: 4.1.0
   logger: 2.0.2+1
-  google_api_headers: 2.0.3
+#  http: 1.1.0
+#  google_api_headers: 2.0.3
 
 # The following section is specific to Flutter packages.
 flutter:
