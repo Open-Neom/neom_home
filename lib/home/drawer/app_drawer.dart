@@ -67,7 +67,7 @@ class AppDrawer extends StatelessWidget {
                       Column(
                         children: [
                           const Divider(),
-                          if(_.userController.user!.isVerified || _.userController.user!.userRole != UserRole.subscriber)
+                          if(_.userController.user!.isVerified)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
@@ -145,18 +145,25 @@ class AppDrawer extends StatelessWidget {
               onTap: () {
                 Get.toNamed(AppRouteConstants.profile);
               },
-              title: Row(
+              title: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    _.appProfile.name.length > AppConstants.maxArtistNameLength
-              ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.name,
-                    style: AppTheme.primaryTitleText,
-                    overflow: TextOverflow.fade,
+                  Row(
+                    children: [
+                      Text(
+                        _.appProfile.name.length > AppConstants.maxArtistNameLength
+                            ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.name,
+                        style: AppTheme.primaryTitleText,
+                        overflow: TextOverflow.fade,
+                      ),
+                      IconButton(
+                          constraints: const BoxConstraints(),
+                          icon: const Icon(Icons.keyboard_arrow_down_outlined),
+                          onPressed: ()=> _.isButtonDisabled ? {} : _.selectProfileModal(context))
+                    ],
                   ),
-                  IconButton(
-                    constraints: const BoxConstraints(),
-                    icon: const Icon(Icons.keyboard_arrow_down_outlined),
-                    onPressed: ()=> _.isButtonDisabled ? {} : _.selectProfileModal(context))
+                  if(_.userController.user?.userRole != UserRole.subscriber)
+                    Text(_.userController.user!.userRole.name.tr, style: const TextStyle(fontSize: 14)),
                 ],
               ),
               subtitle: Row(
@@ -166,15 +173,12 @@ class AppDrawer extends StatelessWidget {
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                _.user.isVerified ? const Icon(Icons.verified) : const Icon(Icons.verified_outlined, color: Colors.white70),
-                  if(_.userController.user?.userRole != UserRole.subscriber)
-                    Row(
-                      children: [
-                        AppTheme.widthSpace5,
-                        Text(_.userController.user!.userRole.name.tr),
-                        AppTheme.widthSpace5,
-                      ],
-                    ),
+                !_.user.isVerified ? const Icon(Icons.verified)
+                : Row(children: [const Icon(Icons.verified_outlined, color: Colors.white70),
+                  TextButton(
+                      onPressed: () => CoreUtilities.launchURL(AppFlavour.getSubscriptionPlansUrl()),
+                      child: Text(AppTranslationConstants.verifyProfile.tr, style: const TextStyle(decoration: TextDecoration.underline),))],),
+
               ]),
             ),
           ],

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
 import 'package:neom_commons/core/app_flavour.dart';
+import 'package:neom_commons/core/data/firestore/app_info_firestore.dart';
 import 'package:neom_commons/core/data/firestore/user_firestore.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
+import 'package:neom_commons/core/domain/model/app_info.dart';
 import 'package:neom_commons/core/domain/model/event.dart';
 import 'package:neom_commons/core/domain/use_cases/home_service.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
@@ -32,6 +34,7 @@ class HomeController extends GetxController implements HomeService {
 
   final RxBool isLoading = true.obs;
   final RxBool isPressed = false.obs;
+  final RxBool mediaPlayerEnabled = true.obs;
   final Rx<Event> event = Event().obs;
 
   final PageController pageController = PageController();
@@ -94,6 +97,9 @@ class HomeController extends GetxController implements HomeService {
     update([AppPageIdConstants.home]);
 
     try {
+      AppInfo appInfo = await AppInfoFirestore().retrieve();
+      mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
+
       ///DEPRECATED
       // bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
       // if (isAppBadgeSupported) {

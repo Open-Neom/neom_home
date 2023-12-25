@@ -47,7 +47,7 @@ class HomePage extends StatelessWidget {
               controller: _.pageController,
               children: AppFlavour.getHomePages()
             ),
-            if(AppFlavour.appInUse == AppInUse.g || _.userController.user!.userRole == UserRole.superAdmin)
+            if(AppFlavour.appInUse == AppInUse.g || (_.userController.user!.userRole == UserRole.superAdmin && _.mediaPlayerEnabled.value))
             Positioned(
               left: 0, right: 0,
               bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
@@ -113,7 +113,9 @@ class HomePage extends StatelessWidget {
           onPressed: () => AppFlavour.appInUse != AppInUse.c
               ? _.modalBottomSheetMenu(context)
               : Get.toNamed(AppRouteConstants.generator),
-          elevation: 0,
+          elevation: 10,
+          backgroundColor: Colors.white70,
+          foregroundColor: Colors.black87,
           child: Icon(AppFlavour.getHomeActionBtnIcon()),
         ),),
       ),),
