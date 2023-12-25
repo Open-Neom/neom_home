@@ -173,7 +173,7 @@ class AppDrawer extends StatelessWidget {
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                !_.user.isVerified ? const Icon(Icons.verified)
+                _.appProfile.isVerified ? const Icon(Icons.verified)
                 : Row(children: [const Icon(Icons.verified_outlined, color: Colors.white70),
                   TextButton(
                       onPressed: () => CoreUtilities.launchURL(AppFlavour.getSubscriptionPlansUrl()),
