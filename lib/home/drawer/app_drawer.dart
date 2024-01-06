@@ -16,6 +16,7 @@ import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
+import 'package:neom_commons/core/utils/enums/verification_level.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -67,7 +68,7 @@ class AppDrawer extends StatelessWidget {
                       Column(
                         children: [
                           const Divider(),
-                          if(_.userController.user!.isVerified)
+                          if(_.appProfile.verificationLevel != VerificationLevel.none)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
@@ -173,12 +174,18 @@ class AppDrawer extends StatelessWidget {
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                _.appProfile.isVerified ? const Icon(Icons.verified)
-                : Row(children: [const Icon(Icons.verified_outlined, color: Colors.white70),
-                  TextButton(
-                      onPressed: () => CoreUtilities.launchURL(AppFlavour.getSubscriptionPlansUrl()),
-                      child: Text(AppTranslationConstants.verifyProfile.tr, style: const TextStyle(decoration: TextDecoration.underline),))],),
-
+                _.appProfile.verificationLevel != VerificationLevel.none ? const Icon(Icons.verified)
+                : Row(
+                  children: [
+                    const Icon(Icons.verified_outlined, color: Colors.white70),
+                    TextButton(
+                        onPressed: () => CoreUtilities.launchURL(AppFlavour.getSubscriptionPlansUrl()),
+                        child: Text(AppTranslationConstants.verifyProfile.tr,
+                          style: const TextStyle(decoration: TextDecoration.underline),
+                        )
+                    )
+                  ],
+                ),
               ]),
             ),
           ],

@@ -1387,7 +1387,7 @@ packages:
       path: "../neom_inbox"
       relative: true
     source: path
-    version: "1.1.0"
+    version: "1.1.1"
   neom_instruments:
     dependency: transitive
     description:
@@ -1410,7 +1410,7 @@ packages:
       path: "../neom_jobs"
       relative: true
     source: path
-    version: "1.0.2"
+    version: "1.0.3"
   neom_maps_services:
     dependency: transitive
     description:
