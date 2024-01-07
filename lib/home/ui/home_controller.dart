@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/data/firestore/app_info_firestore.dart';
+import 'package:neom_commons/core/data/firestore/profile_firestore.dart';
 import 'package:neom_commons/core/data/firestore/user_firestore.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
@@ -47,7 +48,6 @@ class HomeController extends GetxController implements HomeService {
     AppUtilities.logger.t("Home Controller Init");
 
     try {
-
       pageController.addListener(() {
         currentIndex = pageController.page!.toInt();
       });
@@ -90,12 +90,18 @@ class HomeController extends GetxController implements HomeService {
 
     loginController.authStatus.value = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
-    startingHome = false;
     isLoading.value = false;
     update([AppPageIdConstants.home]);
 
     try {
       AppInfo appInfo = await AppInfoFirestore().retrieve();
+      if(startingHome) {
+        if(userController.user!.profiles.isNotEmpty && userController.user!.profiles.first.id.isNotEmpty) {
+          userController.user!.profiles.first = await ProfileFirestore().getProfileFeatures(userController.user!.profiles.first);
+          userController.profile = userController.user!.profiles.first;
+          // userController.profile =
+        }
+      }
       mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
 
       ///DEPRECATED
@@ -116,6 +122,8 @@ class HomeController extends GetxController implements HomeService {
     } catch(e) {
       AppUtilities.logger.e('Failed to get badge support.');
     }
+
+    startingHome = false;
 
     if(event.value.id.isNotEmpty) {
       AppUtilities.logger.i("Coming from payment event processed successfully Event: ${event.value.id}");
