@@ -68,7 +68,7 @@ class AppDrawer extends StatelessWidget {
                       Column(
                         children: [
                           const Divider(),
-                          if(_.appProfile.verificationLevel != VerificationLevel.none)
+                          if(_.appProfile.verificationLevel != VerificationLevel.none || AppFlavour.appInUse != AppInUse.e)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
