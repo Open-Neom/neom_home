@@ -10,7 +10,7 @@ import 'widgets/search_widgets.dart';
 
 class AppSearchPage extends StatelessWidget {
 
-  const AppSearchPage({Key? key}) : super(key: key);
+  const AppSearchPage({super.key});
 
   @override
   Widget build(BuildContext context) {

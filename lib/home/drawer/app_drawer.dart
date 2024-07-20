@@ -19,7 +19,7 @@ import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_commons/core/utils/enums/verification_level.dart';
 
 class AppDrawer extends StatelessWidget {
-  const AppDrawer({Key? key}) : super(key: key);
+  const AppDrawer({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class AppDrawer extends StatelessWidget {
           child: SafeArea(
             child: Stack(
               children: <Widget>[
-                Container(
+                Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
@@ -41,34 +41,38 @@ class AppDrawer extends StatelessWidget {
                       _menuHeader(context, _),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
-                      if(AppFlavour.appInUse == AppInUse.c) drawerRowOption(AppDrawerMenu.frequencies, Icon(
-                          AppFlavour.getInstrumentIcon()), context),
+                      if(AppFlavour.appInUse == AppInUse.c)
+                        drawerRowOption(AppDrawerMenu.frequencies, Icon(AppFlavour.getInstrumentIcon()), context),
                       if(AppFlavour.appInUse == AppInUse.e)
                         drawerRowOption(AppDrawerMenu.inspiration, const Icon(FontAwesomeIcons.filePen), context),
-                      AppFlavour.appInUse == AppInUse.c || _.appProfile.type != ProfileType.instrumentist  ? Container() :
-                      drawerRowOption(AppDrawerMenu.instruments, Icon(
-                          AppFlavour.getInstrumentIcon()), context),
+                      ///DEPRECATED
+                      // if(AppFlavour.appInUse != AppInUse.c && _.appProfile.value.type == ProfileType.instrumentist)
+                      //   drawerRowOption(AppDrawerMenu.instruments, Icon(AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
-                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.instrumentist)
+                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.value.type == ProfileType.instrumentist)
                         drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
-                      if(AppFlavour.appInUse != AppInUse.c)
+                      if(AppFlavour.appInUse != AppInUse.c) ///Not implemented on "C" app yet
                         drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
                       if(AppFlavour.appInUse == AppInUse.c && _.userController.user!.userRole != UserRole.subscriber)
+                        Column(
+                          children: [
+                            const Divider(),
+                            drawerRowOption(AppDrawerMenu.inbox, const Icon(FontAwesomeIcons.comments), context),
+                          ],
+                        ),
+                      drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendarCheck), context),
+                      if(AppFlavour.appInUse == AppInUse.e)
+                        Column(
+                          children: [
+                            const Divider(),
+                            drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
+                          ],
+                        ),
                       Column(
                         children: [
                           const Divider(),
-                          drawerRowOption(AppDrawerMenu.inbox, const Icon(FontAwesomeIcons.comments), context),
-                        ],
-                      ),
-                      //TODO To enable when users create events.
-                      // AppFlavour.appInUse == AppInUse.c
-                      //     ? drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendarCheck), context)
-                      //     : Container(),
-                      Column(
-                        children: [
-                          const Divider(),
-                          if(_.appProfile.verificationLevel != VerificationLevel.none || AppFlavour.appInUse != AppInUse.e)
+                          if(_.appProfile.value.verificationLevel != VerificationLevel.none)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
@@ -134,8 +138,8 @@ class AppDrawer extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(_.appProfile.photoUrl.isNotEmpty
-                      ? _.appProfile.photoUrl : AppFlavour.getNoImageUrl()),
+                  image: CachedNetworkImageProvider(_.appProfile.value.photoUrl.isNotEmpty
+                      ? _.appProfile.value.photoUrl : AppFlavour.getNoImageUrl()),
                   fit: BoxFit.cover,
                   ),
                 ),
@@ -152,15 +156,15 @@ class AppDrawer extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        _.appProfile.name.length > AppConstants.maxArtistNameLength
-                            ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.name,
+                        _.appProfile.value.name.length > AppConstants.maxArtistNameLength
+                            ? "${_.appProfile.value.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.value.name,
                         style: AppTheme.primaryTitleText,
                         overflow: TextOverflow.fade,
                       ),
                       IconButton(
                           constraints: const BoxConstraints(),
                           icon: const Icon(Icons.keyboard_arrow_down_outlined),
-                          onPressed: ()=> _.isButtonDisabled ? {} : _.selectProfileModal(context))
+                          onPressed: ()=> _.isButtonDisabled.value ? {} : _.selectProfileModal(context))
                     ],
                   ),
                   if(_.userController.user?.userRole != UserRole.subscriber)
@@ -169,12 +173,12 @@ class AppDrawer extends StatelessWidget {
               ),
               subtitle: Row(
                 children: [
-                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
+                  customText(CoreUtilities.getProfileMainFeature(_.appProfile.value).tr.capitalize,
                     style: AppTheme.primarySubtitleText.copyWith(
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                _.appProfile.verificationLevel != VerificationLevel.none ? const Icon(Icons.verified)
+                _.appProfile.value.verificationLevel != VerificationLevel.none ? const Icon(Icons.verified)
                 : Row(
                   children: [
                     const Icon(Icons.verified_outlined, color: Colors.white70),
@@ -264,7 +268,7 @@ class AppDrawer extends StatelessWidget {
           }
         }
       },
-      leading: Container(
+      leading: Padding(
           padding: const EdgeInsets.only(top: 5),
           child: icon
       ),

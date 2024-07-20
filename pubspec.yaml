@@ -39,45 +39,21 @@ dependencies:
   neom_commerce:
     git:
       url: git@github.com:emmanuel-montoya/neom_commerce.git
-
   neom_music_player:
     git:
       url: https://github.com/Cyberneom/neom_music_player.git
   neom_jobs:
     git:
       url: https://github.com/emmanuel-montoya/neom_jobs.git
+  neom_generator:
+    git:
+      url: https://github.com/Cyberneom/neom_generator.git
 
 #  package_info_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
-
-dependency_overrides:
-#  neom_booking:
-#    path: ../neom_booking
-#  neom_commerce:
-#    path: ../neom_commerce
-  neom_commons:
-    path: ../neom_commons
-#  neom_events:
-#    path: ../neom_events
-#  neom_inbox:
-#    path: ../neom_inbox
-#  neom_jobs:
-#    path: ../neom_jobs
-#  neom_itemlists:
-#    path: ../neom_itemlists
-#  neom_music_player:
-#    path: ../neom_music_player
-#  neom_posts:
-#    path: ../neom_posts
-#  neom_profile:
-#    path: ../neom_profile
-#  neom_timeline:
-#    path: ../neom_timeline
-  uuid: 4.1.0
-  logger: 2.0.2+1
+  flutter_lints: ^4.0.0
 
 flutter:

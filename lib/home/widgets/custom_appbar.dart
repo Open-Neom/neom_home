@@ -31,8 +31,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     required this.profileImg,
     required this.profileId,
-    Key? key
-  }) : super(key: key);
+    super.key
+  });
 
   @override
   Size get preferredSize => AppTheme.appBarHeight;
@@ -53,69 +53,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         onPressed: ()=> Scaffold.of(context).openDrawer(),
       ),
       title: GestureDetector(
-          child: Row(
-            children: [
-              Image.asset(
-                AppAssets.logoCompanyWhite,
-                height: 60,
-                width: 150,
-              )
-            ],
-          ),
-          onTap: () async {
-            AppUtilities.showAlert(context, message: "${AppTranslationConstants.version.tr} "
-                "${AppFlavour.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
-          }
+        child: Image.asset(
+          AppAssets.logoCompanyWhite,
+          height: 22.5, ///previous height: 60, width: 150,
+          fit: BoxFit.fitHeight,
+        ),
+        onTap: () {
+          AppUtilities.showAlert(context, message: "${AppTranslationConstants.version.tr} "
+              "${AppFlavour.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
+        }
       ),
       actionsIconTheme: const IconThemeData(size: 20),
       actions: <Widget>[
-        Stack(
-          children: [
-            IconButton(
-              padding: EdgeInsets.zero,
-              icon: const Icon(FontAwesomeIcons.bell),
-              color: Colors.white70,
-              onPressed: ()=> {
-                Get.toNamed(AppRouteConstants.feedActivity)
-              }
-            ),
-            FutureBuilder<List<ActivityFeed>>(
-              future: ActivityFeedFirestore().retrieve(profileId),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  List<ActivityFeed> unreadActivityFeed = [];
-                  for (var activityFeed in snapshot.data!) {
-                      if(activityFeed.unread) {
-                        unreadActivityFeed.add(activityFeed);
-                      }
-                  }
-                  return unreadActivityFeed.isNotEmpty
-                      ? Positioned(
-                    right: 11, top: 11,
-                    child: Container(
-                      padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 15, minHeight: 15,
-                      ),
-                      child: Text(unreadActivityFeed.length.toString(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 8,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ) : Container();
-                } else {
-                  return Container();
-                }
-              },
-            )
-        ]),
+        buildNotificationFeed(),
         IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(FontAwesomeIcons.magnifyingGlass),
@@ -134,30 +84,28 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             }
         ) :
         IconButton(
-            padding: EdgeInsets.zero,
-            icon: const Icon(FontAwesomeIcons.comments),
-            color: Colors.white70,
-            onPressed: ()=>{
-              Get.toNamed(AppRouteConstants.inbox)
-            }
+          padding: EdgeInsets.zero,
+          icon: const Icon(FontAwesomeIcons.comments),
+          color: Colors.white70,
+          onPressed: () => Get.toNamed(AppRouteConstants.inbox)
         ),
-        Container(
-            padding: const EdgeInsets.only(right: 10),
-            child: PopupMenuButton<String>(
-              color: AppColor.getMain(),
-              onSelected: choiceAction,
-              itemBuilder: (BuildContext context){
-                return AppConstants.choices.map((String choice){
-                  return PopupMenuItem<String>(
-                    value: choice,
-                    child: Text(choice.tr.capitalizeFirst),
-                  );
-                }).toList();
-              },
-              child: const Icon(FontAwesomeIcons.ellipsisVertical,
-                color: Colors.white70,
-              ),
-            )
+        Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: PopupMenuButton<String>(
+            color: AppColor.getMain(),
+            onSelected: choiceAction,
+            itemBuilder: (BuildContext context) {
+              return AppConstants.choices.map((String choice){
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice.tr.capitalizeFirst),
+                );
+              }).toList();
+            },
+            child: const Icon(FontAwesomeIcons.ellipsisVertical,
+              color: Colors.white70,
+            ),
+          )
         ),
       ],
     );
@@ -175,6 +123,54 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
         await CoreUtilities().shareApp();
         break;
     }
+  }
+
+  Widget buildNotificationFeed() {
+    return Stack(
+        children: [
+          IconButton(
+            padding: EdgeInsets.zero,
+            icon: const Icon(FontAwesomeIcons.bell),
+            color: Colors.white70,
+            onPressed: () => Get.toNamed(AppRouteConstants.feedActivity),
+          ),
+          FutureBuilder<List<ActivityFeed>>(
+            future: ActivityFeedFirestore().retrieve(profileId),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<ActivityFeed> unreadActivityFeed = [];
+                for (var activityFeed in snapshot.data!) {
+                  if(activityFeed.unread) {
+                    unreadActivityFeed.add(activityFeed);
+                  }
+                }
+                return unreadActivityFeed.isNotEmpty
+                    ? Positioned(
+                  right: 11, top: 11,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 15, minHeight: 15,
+                    ),
+                    child: Text(unreadActivityFeed.length.toString(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ) : const SizedBox.shrink();
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          )
+        ]);
   }
 
 }

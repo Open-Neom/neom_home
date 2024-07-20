@@ -48,6 +48,14 @@ class HomeController extends GetxController implements HomeService {
     AppUtilities.logger.t("Home Controller Init");
 
     try {
+
+      if(userController.user?.id.isEmpty ?? true) {
+        Get.toNamed(AppRouteConstants.logout,
+            arguments: [AppRouteConstants.logout]
+        );
+        return;
+      }
+
       pageController.addListener(() {
         currentIndex = pageController.page!.toInt();
       });
@@ -95,44 +103,20 @@ class HomeController extends GetxController implements HomeService {
 
     try {
       AppInfo appInfo = await AppInfoFirestore().retrieve();
-      if(startingHome) {
-        if(userController.user!.profiles.isNotEmpty && userController.user!.profiles.first.id.isNotEmpty) {
-          userController.user!.profiles.first = await ProfileFirestore().getProfileFeatures(userController.user!.profiles.first);
-          userController.profile = userController.user!.profiles.first;
-          // userController.profile =
-        }
-      }
       mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
-
-      ///DEPRECATED
-      // bool isAppBadgeSupported = await FlutterAppBadger.isAppBadgeSupported();
-      // if (isAppBadgeSupported) {
-      //   AppUtilities.logger.i('App Badger supported.');
-      //   List<ActivityFeed> unreadActivityFeed = [];
-      //   unreadActivityFeed = await ActivityFeedFirestore().retrieve(userController.profile.id);
-      //   unreadActivityFeed.removeWhere((element) => element.unread == false);
-      //   if (unreadActivityFeed.isNotEmpty) {
-      //     FlutterAppBadger.updateBadgeCount(unreadActivityFeed.length + 10);
-      //   } else {
-      //     FlutterAppBadger.removeBadge();
-      //   }
-      // } else {
-      //   AppUtilities.logger.i('App Badger not supported.');
-      // }
+      if(startingHome) _loadUserProfileFeatures();
     } catch(e) {
-      AppUtilities.logger.e('Failed to get badge support.');
+      AppUtilities.logger.e(e.toString());
     }
 
     startingHome = false;
 
     if(event.value.id.isNotEmpty) {
       AppUtilities.logger.i("Coming from payment event processed successfully Event: ${event.value.id}");
-      Get.snackbar(
-        AppTranslationConstants.paymentProcessed.tr,
-        AppTranslationConstants.paymentProcessedMsg.tr,
-        snackPosition: SnackPosition.bottom,
+      AppUtilities.showSnackBar(
+        title: AppTranslationConstants.paymentProcessed.tr,
+        message: AppTranslationConstants.paymentProcessedMsg.tr,
       );
-
       //TODO
       // await timelineController.gotoEventDetails(event);
     }
@@ -144,6 +128,12 @@ class HomeController extends GetxController implements HomeService {
     update([AppPageIdConstants.home]);
   }
 
+  Future<void> _loadUserProfileFeatures() async {
+    if(userController.user!.profiles.isNotEmpty && userController.user!.profiles.first.id.isNotEmpty) {
+      userController.user!.profiles.first = await ProfileFirestore().getProfileFeatures(userController.user!.profiles.first);
+      userController.profile = userController.user!.profiles.first;
+    }
+  }
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
@@ -152,6 +142,7 @@ class HomeController extends GetxController implements HomeService {
     try {
       switch(index) {
         case HomeConstants.firstTabIndex:
+          timelineController.scrollOffset.value = 0;
           await setInitialTimeline();
           break;
         case HomeConstants.secondTabIndex:
@@ -163,21 +154,45 @@ class HomeController extends GetxController implements HomeService {
       }
 
       if(pageController.hasClients) {
-        if(index != HomeConstants.forthTabIndex) {
-          pageController.jumpToPage(index);
-          currentIndex = index;
-        } else {
-          if(AppFlavour.appInUse == AppInUse.e) {
-            Get.toNamed(AppRouteConstants.libraryHome);
-          } else {
-            await Get.toNamed(AppRouteConstants.musicPlayerHome);
-          }
+        switch(index) {
+          case 0:
+            pageController.jumpToPage(index);
+            currentIndex = index;
+            break;
+          case 1:
+            pageController.jumpToPage(index);
+            currentIndex = index;
+            break;
+          case 2:
+            if(AppFlavour.appInUse == AppInUse.e) {
+              Get.toNamed(AppRouteConstants.libraryHome);
+            } else {
+              pageController.jumpToPage(index);
+              currentIndex = index;
+            }
+            break;
+          case 3:
+            Get.toNamed(AppRouteConstants.musicPlayerHome);
+            break;
         }
+
+        ///DEPRECATED
+        // if(index != HomeConstants.forthTabIndex) {
+        //   pageController.jumpToPage(index);
+        //   currentIndex = index;
+        // } else {
+        //   if(AppFlavour.appInUse == AppInUse.e) {
+        //     Get.toNamed(AppRouteConstants.libraryHome);
+        //   } else {
+        //     await Get.toNamed(AppRouteConstants.musicPlayerHome);
+        //   }
+        // }
       }
 
     } catch (e) {
       AppUtilities.logger.e(e.toString());
     }
+
 
     update([AppPageIdConstants.home]);
   }
@@ -209,8 +224,7 @@ class HomeController extends GetxController implements HomeService {
           return Column(
             children: <Widget>[
               Container(
-                height: 280,
-                padding: const EdgeInsets.only(top: 10),
+                height: 260,
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
                     color: AppColor.main95,
@@ -229,11 +243,11 @@ class HomeController extends GetxController implements HomeService {
                           child: Icon(HomeConstants.bottomMenuItems[index].icon, color: Colors.white),
                         ),
                         trailing: const Icon(Icons.arrow_forward_ios, size: 15,),
-                        title: Text(
-                          HomeConstants.bottomMenuItems[index].title.tr,
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
+                        title: Text(HomeConstants.bottomMenuItems[index].title.tr,
+                          style: const TextStyle(color: Colors.white, fontSize: 15),
                         ),
-                        subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr),
+                        subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr,
+                          style: const TextStyle(fontSize: 13),),
                         onTap: () {
                           Navigator.pop(ctx);
                           switch (HomeConstants.bottomMenuItems[index].title) {
@@ -257,15 +271,16 @@ class HomeController extends GetxController implements HomeService {
                 ),
               ),
               Container(
-                  height: 60, width: 60,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(30))),
-                  margin: const EdgeInsets.symmetric(vertical: 10),
-                  child: GestureDetector(
-                      onTap: () => Navigator.pop(ctx),
-                      child: Icon(Icons.close, size: 25, color: Colors.grey[900])
-                  )
+                height: 43, width: 43,
+                decoration: const BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(Radius.circular(30))
+                ),
+                margin: const EdgeInsets.symmetric(vertical: 10),
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(ctx),
+                  child: Icon(Icons.close, size: 25, color: Colors.grey[900])
+                )
               ),
             ],
           );

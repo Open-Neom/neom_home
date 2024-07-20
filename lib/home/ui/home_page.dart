@@ -13,6 +13,7 @@ import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_music_player/ui/player/miniplayer.dart';
 import '../drawer/app_drawer.dart';
+import '../utils/home_utilities.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/custom_bottom_bar_item.dart';
@@ -20,7 +21,7 @@ import 'home_controller.dart';
 
 class HomePage extends StatelessWidget {
 
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context){
@@ -29,11 +30,13 @@ class HomePage extends StatelessWidget {
       init: HomeController(),
       builder: (_) => Obx(()=> Scaffold(
         backgroundColor: AppColor.main50,
-        appBar: CustomAppBar(
+        appBar: _.currentIndex != 0 ||  _.timelineController.scrollOffset.value < 250
+          ? CustomAppBar(
             title: AppConstants.appTitle,
             profileImg: _.userController.profile.photoUrl.isNotEmpty
             ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
-            profileId: _.userController.profile.id),
+            profileId: _.userController.profile.id
+        ) : null,
         drawer: const AppDrawer(),
         body: _.isLoading.value ? Container(
           decoration: AppTheme.appBoxDecoration,
@@ -45,79 +48,75 @@ class HomePage extends StatelessWidget {
             PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _.pageController,
-              children: AppFlavour.getHomePages()
+              children: HomeUtilities.getHomePages()
             ),
             if(AppFlavour.appInUse == AppInUse.g || (_.userController.user!.userRole == UserRole.superAdmin && _.mediaPlayerEnabled.value))
             Positioned(
               left: 0, right: 0,
-              bottom: 0.1, // Adjust this value according to your BottomNavigationBar's height
-              child: Container(
-                decoration: AppTheme.appBoxDecoration,
-                child: const MiniPlayer()
-              ),
+              bottom: 0, // Adjust this value according to your BottomNavigationBar's height
+              child: MiniPlayer(),
             ),
           ],
         ),
-        bottomNavigationBar: Theme(
-          data: Theme.of(context).copyWith(canvasColor: Colors.grey[900]),
-          child: CustomBottomAppBar(
-            backgroundColor: AppColor.bottomNavigationBar,
-            color: Colors.white54,
-            selectedColor: Theme.of(context).colorScheme.secondary,
-            notchedShape: const CircularNotchedRectangle(),
-            iconSize: 20.0,
-            onTabSelected:(int index) => _.selectPageView(index, context: context),
-            items: [
-              CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
-              CustomBottomAppBarItem(
-                iconData: AppFlavour.getSecondTabIcon(),
-                text: AppFlavour.getSecondTabTitle().tr,
-                animation: AppFlavour.appInUse != AppInUse.c
-                    ? null : Column(
-                    children: [
-                      SizedBox(
-                        child: DefaultTextStyle(
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            fontSize: 6,
-                          ),
-                          child: AnimatedTextKit(
-                            repeatForever: true,
-                            animatedTexts: [
-                              FlickerAnimatedText(AppFlavour.appInUse != AppInUse.g ? AppTranslationConstants.addItems.tr : ''),
-                        ],
-                        onTap: () {},
+        bottomNavigationBar: CustomBottomAppBar(
+          backgroundColor: AppColor.bottomNavigationBar,
+          color: Colors.white54,
+          selectedColor: Colors.white.withOpacity(0.9),
+          notchedShape: const CircularNotchedRectangle(),
+          height: 60,
+          iconSize: 20,
+          onTabSelected:(int index) => _.selectPageView(index, context: context),
+          items: [
+            CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
+            CustomBottomAppBarItem(
+              iconData: AppFlavour.getSecondTabIcon(),
+              text: AppFlavour.getSecondTabTitle().tr,
+              animation: AppFlavour.appInUse == AppInUse.c ?
+                Column(
+                  children: [
+                    SizedBox(
+                      child: DefaultTextStyle(
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 6,),
+                        child: AnimatedTextKit(
+                          repeatForever: true,
+                          animatedTexts: [
+                            FlickerAnimatedText(AppTranslationConstants.addItems.tr),
+                          ],
+                          onTap: () {},
+                        ),
                       ),
                     ),
-                  ),
-                  AppTheme.widthSpace10,
-                ],),
-              ),
-              CustomBottomAppBarItem(
-                iconData: AppFlavour.getThirdTabIcon(),
-                text: AppFlavour.getThirdTabTitle().tr
-              ),
-              CustomBottomAppBarItem(
-                iconData: AppFlavour.getForthTabIcon(),
-                text: AppFlavour.getFortTabTitle().tr,
-              )
-            ],
-          ),
+                    AppTheme.widthSpace10,
+                  ],
+                ) : null,
+            ),
+            CustomBottomAppBarItem(
+              iconData: AppFlavour.getThirdTabIcon(),
+              text: AppFlavour.getThirdTabTitle().tr
+            ),
+            CustomBottomAppBarItem(
+              iconData: AppFlavour.getForthTabIcon(),
+              text: AppFlavour.getFortTabTitle().tr,
+            )
+          ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: SizedBox(width: 50, height: 50,
+        floatingActionButton: SizedBox(
+          width: 43, height: 43,
           child: FloatingActionButton(
-          tooltip: AppFlavour.appInUse != AppInUse.c
+            tooltip: AppFlavour.appInUse != AppInUse.c
               ? AppTranslationConstants.createPost.tr : AppTranslationConstants.session.tr,
-          splashColor: AppColor.white,
-          onPressed: () => AppFlavour.appInUse != AppInUse.c
+            splashColor: AppColor.white,
+            onPressed: () => AppFlavour.appInUse != AppInUse.c
               ? _.modalBottomSheetMenu(context)
               : Get.toNamed(AppRouteConstants.generator),
-          elevation: 10,
-          backgroundColor: Colors.white70,
-          foregroundColor: Colors.black87,
-          child: Icon(AppFlavour.getHomeActionBtnIcon()),
-        ),),
+            elevation: 10,
+            backgroundColor: Colors.white.withOpacity(0.9),
+            foregroundColor: Colors.black87,
+            child: Icon(AppFlavour.getHomeActionBtnIcon()),
+          ),
+        ),
       ),),
     );
   }

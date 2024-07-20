@@ -37,7 +37,7 @@ Widget buildMateSearchList(AppSearchController _) {
           ),
         ),
         onLongPress: () => {},
-      ) : Container();
+      ) : const SizedBox.shrink();
     },
   );
 }

@@ -10,7 +10,7 @@ import '../app_search_controller.dart';
 class AppBarSearch extends StatelessWidget implements PreferredSizeWidget {
 
   final AppSearchController appSearchController;
-  const AppBarSearch(this.appSearchController, {Key? key}) : super(key: key);
+  const AppBarSearch(this.appSearchController, {super.key});
   
   @override
   Size get preferredSize => AppTheme.appBarHeight;
