@@ -31,10 +31,10 @@ class HomeController extends GetxController implements HomeService {
   bool startingHome = true;
   bool hasItems = false;
 
-  final RxBool isLoading = true.obs;
-  final RxBool isPressed = false.obs;
-  final RxBool mediaPlayerEnabled = true.obs;
-  final Rx<Event> event = Event().obs;
+  bool isLoading = true;
+  bool isPressed = false;
+  bool mediaPlayerEnabled = true;
+  Event event = Event();
 
   final PageController pageController = PageController();
   final ScrollController scrollController = ScrollController();
@@ -66,7 +66,7 @@ class HomeController extends GetxController implements HomeService {
         if (Get.arguments[0] is int) {
           toIndex = Get.arguments[0] as int;
         } else if (Get.arguments[0] is Event) {
-          event.value = Get.arguments[0] as  Event;
+          event = Get.arguments[0] as  Event;
         } else if (Get.arguments[0] is String) {
           toRoute = Get.arguments[0] as String;
         }
@@ -98,12 +98,12 @@ class HomeController extends GetxController implements HomeService {
 
     loginController.authStatus.value = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
-    isLoading.value = false;
+    isLoading = false;
     update([AppPageIdConstants.home]);
 
     try {
       AppInfo appInfo = await AppInfoFirestore().retrieve();
-      mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
+      mediaPlayerEnabled = appInfo.mediaPlayerEnabled;
       if(startingHome) _loadUserProfileFeatures();
     } catch(e) {
       AppUtilities.logger.e(e.toString());
@@ -111,8 +111,8 @@ class HomeController extends GetxController implements HomeService {
 
     startingHome = false;
 
-    if(event.value.id.isNotEmpty) {
-      AppUtilities.logger.i("Coming from payment event processed successfully Event: ${event.value.id}");
+    if(event.id.isNotEmpty) {
+      AppUtilities.logger.i("Coming from payment event processed successfully Event: ${event.id}");
       AppUtilities.showSnackBar(
         title: AppTranslationConstants.paymentProcessed.tr,
         message: AppTranslationConstants.paymentProcessedMsg.tr,
@@ -142,7 +142,7 @@ class HomeController extends GetxController implements HomeService {
     try {
       switch(index) {
         case HomeConstants.firstTabIndex:
-          timelineController.scrollOffset.value = 0;
+          timelineController.scrollOffset = 0;
           await setInitialTimeline();
           break;
         case HomeConstants.secondTabIndex:
@@ -204,7 +204,7 @@ class HomeController extends GetxController implements HomeService {
     try {
       userController.profile.position = await GeoLocatorController()
           .updateLocation(userController.profile.id, userController.profile.position);
-      isLoading.value = false;
+      isLoading = false;
     } catch (e) {
       AppUtilities.logger.e(e.toString());
     }
@@ -215,7 +215,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   Future<void> modalBottomSheetMenu(BuildContext context) async {
-    isPressed.value = true;
+    isPressed = true;
     await showModalBottomSheet(
         elevation: 0,
         backgroundColor: AppTheme.canvasColor25(context),

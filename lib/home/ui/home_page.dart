@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
+import 'package:neom_commons/core/ui/widgets/app_circular_progress_indicator.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_constants.dart';
@@ -10,7 +11,6 @@ import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
-import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_music_player/ui/player/miniplayer.dart';
 import '../drawer/app_drawer.dart';
 import '../utils/home_utilities.dart';
@@ -30,19 +30,17 @@ class HomePage extends StatelessWidget {
       init: HomeController(),
       builder: (_) => Obx(()=> Scaffold(
         backgroundColor: AppColor.main50,
-        appBar: _.currentIndex != 0 ||  _.timelineController.scrollOffset.value < 250
-          ? CustomAppBar(
+        appBar: _.currentIndex != 0 ||  _.timelineController.showAppBar.value
+            ? CustomAppBar(
             title: AppConstants.appTitle,
             profileImg: _.userController.profile.photoUrl.isNotEmpty
-            ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
+                ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
             profileId: _.userController.profile.id
         ) : null,
         drawer: const AppDrawer(),
-        body: _.isLoading.value ? Container(
-          decoration: AppTheme.appBoxDecoration,
-          child: const Center(
-            child: CircularProgressIndicator()
-          )
+        body: _.isLoading ? Container(
+            decoration: AppTheme.appBoxDecoration,
+            child: const AppCircularProgressIndicator(showLogo: false,)
         ) : Stack(
           children: [
             PageView(
@@ -50,10 +48,9 @@ class HomePage extends StatelessWidget {
               controller: _.pageController,
               children: HomeUtilities.getHomePages()
             ),
-            if(AppFlavour.appInUse == AppInUse.g || (_.userController.user!.userRole == UserRole.superAdmin && _.mediaPlayerEnabled.value))
-            Positioned(
+            const Positioned(
               left: 0, right: 0,
-              bottom: 0, // Adjust this value according to your BottomNavigationBar's height
+              bottom: 0,
               child: MiniPlayer(),
             ),
           ],
@@ -63,8 +60,6 @@ class HomePage extends StatelessWidget {
           color: Colors.white54,
           selectedColor: Colors.white.withOpacity(0.9),
           notchedShape: const CircularNotchedRectangle(),
-          height: 60,
-          iconSize: 20,
           onTabSelected:(int index) => _.selectPageView(index, context: context),
           items: [
             CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),

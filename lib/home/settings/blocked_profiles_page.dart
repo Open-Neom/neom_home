@@ -7,7 +7,6 @@ import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
-import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/core_utilities.dart';
@@ -68,10 +67,7 @@ class BlockedProfilesPage extends StatelessWidget {
                           DialogButton(
                             color: AppColor.bondiBlue75,
                             onPressed: () async {
-                              if(!itemmateDetailsController.isButtonDisabled.value) {
-                                await itemmateDetailsController.unblockProfile(mate);
-                                AppUtilities.showAlert(context, title: AppTranslationConstants.unblockProfile.tr, message: AppTranslationConstants.unblockedProfileMsg.tr);
-                              }
+                              await itemmateDetailsController.unblockProfile(mate);
                             },
                             child: Text(AppTranslationConstants.toUnblock.tr,
                               style: const TextStyle(fontSize: 15),
@@ -80,8 +76,8 @@ class BlockedProfilesPage extends StatelessWidget {
                         ]
                     ).show();
                   } else {
-                    itemmateDetailsController.isLoading.value = false;
-                    itemmateDetailsController.mate.value = mate;
+                    itemmateDetailsController.isLoading = false;
+                    itemmateDetailsController.mate = mate;
                     _.getMateDetails(mate);
                   }
 

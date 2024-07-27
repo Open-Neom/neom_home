@@ -7,6 +7,7 @@ class CustomBottomAppBar extends StatefulWidget {
   final String centerItemText;
   final double height;
   final double iconSize;
+  final double fontSize;
   final Color? backgroundColor;
   final Color color;
   final Color selectedColor;
@@ -17,7 +18,8 @@ class CustomBottomAppBar extends StatefulWidget {
     required this.items,
     this.centerItemText = "",
     this.height = 60,
-    this.iconSize = 20,
+    this.iconSize = 18,
+    this.fontSize = 12,
     this.backgroundColor,
     required this.color,
     required this.selectedColor,
@@ -51,7 +53,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
       );
     });
 
-    //TODO VERIFY IF NEEDED
+    ///DEPRECATED
     // items.insert(items.length >> 1, _buildMiddleTabItem());
 
     return BottomAppBar(
@@ -81,14 +83,14 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
           children: <Widget>[
             if(item?.animation != null) item!.animation!,
             Icon(item!.iconData, color: color, size: widget.iconSize),
-            Text(item.text, style: TextStyle(color: color, fontSize: 10),),
+            Text(item.text, style: TextStyle(color: color, fontSize: widget.fontSize),),
           ],
         ),
       ),
     );
   }
 
-//TODO VERIFY IF NEEDED
+///DEPRECATED
 // Widget _buildMiddleTabItem() {
 //   return SizedBox(
 //       height: widget.height,
