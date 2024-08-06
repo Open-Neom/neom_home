@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:neom_commons/core/app_flavour.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'custom_bottom_bar_item.dart';
 
 class CustomBottomAppBar extends StatefulWidget {
@@ -39,12 +41,30 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
   void _updateIndex(int index) {
     widget.onTabSelected(index);
     setState(() {
-      _selectedIndex = index;
+      switch(AppFlavour.appInUse) {
+        case AppInUse.c:
+          if(index < 3) _selectedIndex = index;
+          break;
+        case AppInUse.e:
+          if(index < 2) _selectedIndex = index;
+          break;
+        case AppInUse.g:
+          if(index < 3) _selectedIndex = index;
+          break;
+      }
+
     });
   }
 
+  void updateSelectedIndex(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+  
   @override
   Widget build(BuildContext context) {
+
     List<Widget> items = List.generate(widget.items.length, (int index) {
       return _buildTabItem(
         item: widget.items[index],
@@ -52,9 +72,6 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
         onPressed: _updateIndex,
       );
     });
-
-    ///DEPRECATED
-    // items.insert(items.length >> 1, _buildMiddleTabItem());
 
     return BottomAppBar(
       height: widget.height,
@@ -89,23 +106,5 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
       ),
     );
   }
-
-///DEPRECATED
-// Widget _buildMiddleTabItem() {
-//   return SizedBox(
-//       height: widget.height,
-//       child: Column(
-//         mainAxisSize: MainAxisSize.min,
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: <Widget>[
-//           SizedBox(height: widget.iconSize),
-//           Text(
-//             widget.centerItemText,
-//             style: TextStyle(color: widget.color),
-//           ),
-//         ],
-//       ),
-//   );
-// }
 
 }

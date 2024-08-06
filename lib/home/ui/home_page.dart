@@ -46,7 +46,7 @@ class HomePage extends StatelessWidget {
             PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _.pageController,
-              children: HomeUtilities.getHomePages()
+              children: HomeUtilities.getHomePages(),
             ),
             const Positioned(
               left: 0, right: 0,
