@@ -50,11 +50,11 @@ class AppDrawer extends StatelessWidget {
                       //   drawerRowOption(AppDrawerMenu.instruments, Icon(AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
-                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.value.type == ProfileType.instrumentist)
+                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.value.type == ProfileType.artist)
                         drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
-                      if(AppFlavour.appInUse != AppInUse.c) ///Not implemented on "C" app yet
+                      if(AppFlavour.appInUse != AppInUse.c) //TODO Not implemented on "C" app yet
                         drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
-                      if(AppFlavour.appInUse == AppInUse.c && _.userController.user!.userRole != UserRole.subscriber)
+                      if(AppFlavour.appInUse == AppInUse.c && _.userController.user.userRole != UserRole.subscriber)
                         Column(
                           children: [
                             const Divider(),
@@ -167,8 +167,8 @@ class AppDrawer extends StatelessWidget {
                           onPressed: ()=> _.isButtonDisabled.value ? {} : _.selectProfileModal(context))
                     ],
                   ),
-                  if(_.userController.user?.userRole != UserRole.subscriber)
-                    Text(_.userController.user!.userRole.name.tr, style: const TextStyle(fontSize: 14)),
+                  if(_.userController.user.userRole != UserRole.subscriber)
+                    Text(_.userController.user.userRole.name.tr, style: const TextStyle(fontSize: 14)),
                 ],
               ),
               subtitle: Row(

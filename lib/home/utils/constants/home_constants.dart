@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:neom_audio_player/neom_audio_player_app.dart';
 import 'package:neom_booking/booking/ui/booking_home_page.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_events/events/ui/events_page.dart';
 import 'package:neom_generator/neom_generator/ui/chamber/chamber_page.dart';
 import 'package:neom_inbox/inbox/ui/inbox_page.dart';
-import 'package:neom_music_player/neom_music_player_app.dart';
 import 'package:neom_timeline/neom_timeline.dart';
+
 import '../../../home/widgets/menu_model.dart';
 
 class HomeConstants {
 
-  static final eHomePages = [const TimelinePage(), const EventsPage(), const EventsPage(), const NeomMusicPlayerApp()];
-  static final gHomePages = [const TimelinePage(), const BookingHomePage(), const EventsPage(), const NeomMusicPlayerApp()];
+  static final eHomePages = [const TimelinePage(), const EventsPage(), const EventsPage(), const NeomAudioPlayerApp()];
+  static final gHomePages = [const TimelinePage(), const BookingHomePage(), const EventsPage(), const NeomAudioPlayerApp()];
   static final cHomePages = [const TimelinePage(), const ChamberPage(), const EventsPage(), const InboxPage()];
 
   static const int firstTabIndex = 0;

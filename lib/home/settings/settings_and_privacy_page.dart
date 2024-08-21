@@ -37,7 +37,7 @@ class SettingsPrivacyPage extends StatelessWidget {
               child: const AppCircularProgressIndicator()) :
           ListView(
           children: <Widget>[
-            HeaderWidget(_.userController.user!.name),
+            HeaderWidget(_.userController.user.name),
             TitleSubtitleRow(AppTranslationConstants.account.tr, navigateTo: AppRouteConstants.settingsAccount),
             TitleSubtitleRow(AppTranslationConstants.privacyAndPolicy.tr, navigateTo: AppRouteConstants.privacyAndTerms),
             TitleSubtitleRow(AppTranslationConstants.contentPreferences.tr, navigateTo: AppRouteConstants.contentPreferences),
@@ -184,7 +184,7 @@ class SettingsPrivacyPage extends StatelessWidget {
               },
             ),
             //TODO
-            if(_.userController.user!.userRole != UserRole.subscriber)
+            if(_.userController.user.userRole != UserRole.subscriber)
             Column(
               children: [
                 HeaderWidget(AppTranslationConstants.adminCenter.tr, secondHeader: true),
@@ -192,7 +192,7 @@ class SettingsPrivacyPage extends StatelessWidget {
                 TitleSubtitleRow(AppTranslationConstants.createSponsor.tr, navigateTo: AppRouteConstants.createSponsor),
                 TitleSubtitleRow(AppTranslationConstants.usersDirectory.tr, navigateTo: AppRouteConstants.directory, navigateArguments: const [true],),
                 TitleSubtitleRow(AppTranslationConstants.seeAnalytics.tr, navigateTo: AppRouteConstants.analytics),
-                if(_.userController.user!.userRole == UserRole.superAdmin)
+                if(_.userController.user.userRole == UserRole.superAdmin)
                   Column(
                     children: [
                       TitleSubtitleRow(AppTranslationConstants.runAnalyticsJobs.tr, onPressed: _.runAnalyticJobs),

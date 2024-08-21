@@ -49,7 +49,7 @@ class HomeController extends GetxController implements HomeService {
 
     try {
 
-      if(userController.user?.id.isEmpty ?? true) {
+      if(userController.user.id.isEmpty) {
         Get.toNamed(AppRouteConstants.logout,
             arguments: [AppRouteConstants.logout]
         );
@@ -76,14 +76,14 @@ class HomeController extends GetxController implements HomeService {
         selectPageView(toIndex);
       }
 
-      if(userController.user!.fcmToken.isEmpty
-          || userController.user!.fcmToken != userController.fcmToken) {
-        UserFirestore().updateFcmToken(userController.user!.id, userController.fcmToken);
+      if(userController.user.fcmToken.isEmpty
+          || userController.user.fcmToken != userController.fcmToken) {
+        UserFirestore().updateFcmToken(userController.user.id, userController.fcmToken);
       }
 
       hasItems = (userController.profile.favoriteItems?.length ?? 0) > 1;
       await verifyLocation();
-      UserFirestore().updateLastTimeOn(userController.user!.id);
+      UserFirestore().updateLastTimeOn(userController.user.id);
 
     } catch (e) {
       AppUtilities.logger.e(e.toString());
@@ -117,6 +117,7 @@ class HomeController extends GetxController implements HomeService {
         title: AppTranslationConstants.paymentProcessed.tr,
         message: AppTranslationConstants.paymentProcessedMsg.tr,
       );
+
       //TODO
       // await timelineController.gotoEventDetails(event);
     }
@@ -129,9 +130,9 @@ class HomeController extends GetxController implements HomeService {
   }
 
   Future<void> _loadUserProfileFeatures() async {
-    if(userController.user!.profiles.isNotEmpty && userController.user!.profiles.first.id.isNotEmpty) {
-      userController.user!.profiles.first = await ProfileFirestore().getProfileFeatures(userController.user!.profiles.first);
-      userController.profile = userController.user!.profiles.first;
+    if(userController.user.profiles.isNotEmpty && userController.user.profiles.first.id.isNotEmpty) {
+      userController.user.profiles.first = await ProfileFirestore().getProfileFeatures(userController.user.profiles.first);
+      userController.profile = userController.user.profiles.first;
     }
   }
 

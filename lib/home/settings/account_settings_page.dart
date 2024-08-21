@@ -27,19 +27,19 @@ class AccountSettingsPage extends StatelessWidget {
           HeaderWidget(AppTranslationConstants.loginAndSecurity.tr),
           TitleSubtitleRow(
             AppTranslationConstants.username.tr,
-            subtitle: _.userController.user!.name,
+            subtitle: _.userController.user.name,
           ),
           const Divider(height: 0),
           TitleSubtitleRow(
             AppTranslationConstants.phone.tr,
-            subtitle: _.userController.user!.phoneNumber.isEmpty ? AppTranslationConstants.notSpecified.tr : "${_.userController.user!.countryCode}${_.userController.user!.phoneNumber}",
+            subtitle: _.userController.user.phoneNumber.isEmpty ? AppTranslationConstants.notSpecified.tr : "${_.userController.user.countryCode}${_.userController.user.phoneNumber}",
           ),
           TitleSubtitleRow(
             AppTranslationConstants.emailAddress.tr,
-            subtitle: _.userController.user!.email,
+            subtitle: _.userController.user.email,
           ),
           const Divider(height: 0),
-          if(_.userController.user?.profiles.length != 1)
+          if(_.userController.user.profiles.length != 1)
             TitleSubtitleRow(AppTranslationConstants.removeProfile.tr,  textColor: AppColor.ceriseRed,
               onPressed: () {
                 showDialog(

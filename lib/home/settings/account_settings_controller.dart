@@ -14,7 +14,7 @@ class AccountSettingsController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-    AppUtilities.logger.d("AccountSettings Controller Init for userId ${userController.user?.id ?? ""}");
+    AppUtilities.logger.d("AccountSettings Controller Init for userId ${userController.user.id}");
     isLoading = false;
   }
 
