@@ -72,7 +72,9 @@ class AppDrawer extends StatelessWidget {
                       Column(
                         children: [
                           const Divider(),
-                          if(_.appProfile.value.verificationLevel != VerificationLevel.none)
+                          if(_.user.userRole != UserRole.subscriber
+                              //_.appProfile.value.verificationLevel != VerificationLevel.none
+                          )
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
@@ -161,7 +163,7 @@ class AppDrawer extends StatelessWidget {
                         style: AppTheme.primaryTitleText,
                         overflow: TextOverflow.fade,
                       ),
-                      IconButton(
+                      if(_.user.userRole != UserRole.subscriber) IconButton(
                           constraints: const BoxConstraints(),
                           icon: const Icon(Icons.keyboard_arrow_down_outlined),
                           onPressed: ()=> _.isButtonDisabled.value ? {} : _.selectProfileModal(context))

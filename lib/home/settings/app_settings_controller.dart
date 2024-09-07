@@ -2,6 +2,7 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/data/firestore/app_analytics_firestore.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
 import 'package:neom_commons/core/data/implementations/shared_preference_controller.dart';
@@ -9,6 +10,7 @@ import 'package:neom_commons/core/data/implementations/user_controller.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/app_locale.dart';
 import 'package:neom_jobs/jobs/jobs_firestore.dart';
 
@@ -59,17 +61,14 @@ class AppSettingsController extends GetxController {
     Get.back();
 
     switch(appLocale){
-      case AppLocale.english:
-        isAvailable = true;
-        break;
       case AppLocale.spanish:
         isAvailable = true;
         break;
+      case AppLocale.english:
       case AppLocale.french:
-        isAvailable = true;
+        if(AppFlavour.appInUse == AppInUse.g) isAvailable = true;
         break;
       case AppLocale.deutsch:
-        isAvailable = false;
         break;
     }
 

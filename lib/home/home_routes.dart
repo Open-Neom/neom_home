@@ -30,6 +30,7 @@ class HomeRoutes {
     GetPage(
       name: AppRouteConstants.settingsPrivacy,
       page: () => const SettingsPrivacyPage(),
+      transition: Transition.leftToRight,
     ),
     GetPage(
       name: AppRouteConstants.privacyAndTerms,

@@ -23,18 +23,17 @@ class AppBarSearch extends StatelessWidget implements PreferredSizeWidget {
         onChanged: (param) => appSearchController.setSearchParam(param.trim()),
         decoration: InputDecoration(
           suffixIcon: const Icon(CupertinoIcons.search),
-          contentPadding: const EdgeInsets.all(12),
-          hintText: AppTranslationConstants.searchPostProfileItemmates.tr,
+          contentPadding: const EdgeInsets.all(10),
+          hintText: AppTranslationConstants.searchProfileItemmates.tr,
           border: OutlineInputBorder(
             borderRadius: const BorderRadius.all(
-              Radius.circular(4.0),
+              Radius.circular(12.0),
             ),
             borderSide: BorderSide(color: Colors.grey[300]!, width: 0.5),
           ),
         ),
       ),
       backgroundColor: AppColor.appBar,
-      elevation: 0.0,
     );
   }
 
