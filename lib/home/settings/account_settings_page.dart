@@ -5,6 +5,7 @@ import 'package:neom_commons/core/ui/widgets/header_widget.dart';
 import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
+import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 
@@ -16,6 +17,7 @@ class AccountSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<AccountSettingsController>(
+      id: AppPageIdConstants.accountSettings,
       init: AccountSettingsController(),
       builder: (_) => Scaffold(
       appBar: AppBarChild(title: AppTranslationConstants.accountSettings.tr),
@@ -27,19 +29,56 @@ class AccountSettingsPage extends StatelessWidget {
           HeaderWidget(AppTranslationConstants.loginAndSecurity.tr),
           TitleSubtitleRow(
             AppTranslationConstants.username.tr,
-            subtitle: _.userController.user.name,
+            subtitle: _.user.name,
           ),
           const Divider(height: 0),
           TitleSubtitleRow(
+            AppTranslationConstants.subscription.tr,
+            subtitle: _.user.subscriptionId.isNotEmpty ? AppTranslationConstants.active.tr.capitalize : AppTranslationConstants.activateSubscription.tr,
+            onPressed: () => _.user.subscriptionId.isEmpty ? _.getSubscriptionAlert(context) : (),
+          ),
+          TitleSubtitleRow(
             AppTranslationConstants.phone.tr,
-            subtitle: _.userController.user.phoneNumber.isEmpty ? AppTranslationConstants.notSpecified.tr : "${_.userController.user.countryCode}${_.userController.user.phoneNumber}",
+            subtitle: _.user.phoneNumber.isEmpty ? AppTranslationConstants.notSpecified.tr : "+${_.user.countryCode} ${_.user.phoneNumber}",
           ),
           TitleSubtitleRow(
             AppTranslationConstants.emailAddress.tr,
-            subtitle: _.userController.user.email,
+            subtitle: _.user.email,
           ),
           const Divider(height: 0),
-          if(_.userController.user.profiles.length != 1)
+          if(_.user.subscriptionId.isNotEmpty)
+            TitleSubtitleRow(AppTranslationConstants.cancelSubscription.tr,  textColor: AppColor.ceriseRed,
+              onPressed: (){
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return SimpleDialog(
+                        backgroundColor: AppColor.getMain(),
+                        title: Text(AppTranslationConstants.cancelThisSubscription.tr),
+                        children: <Widget>[
+                          SimpleDialogOption(
+                            child: Text(
+                              AppTranslationConstants.yes.tr,
+                              style: const TextStyle(color: Colors.red),
+                            ),
+                            onPressed: () {
+                              _.subscriptionController.cancelSubscription();
+                            },
+                          ),
+                          SimpleDialogOption(
+                            child: Text(
+                              AppTranslationConstants.no.tr,
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ],
+                      );
+                    });
+                },
+            ),
+          if(_.user.profiles.length > 1)
             TitleSubtitleRow(AppTranslationConstants.removeProfile.tr,  textColor: AppColor.ceriseRed,
               onPressed: () {
                 showDialog(
@@ -79,7 +118,7 @@ class AccountSettingsPage extends StatelessWidget {
                 context: context,
                 builder: (context) {
                   return SimpleDialog(
-                    backgroundColor: AppColor.main50,
+                    backgroundColor: AppColor.getMain(),
                     title: Text(AppTranslationConstants.removeThisAccount.tr),
                     children: <Widget>[
                       SimpleDialogOption(

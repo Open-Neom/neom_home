@@ -18,6 +18,7 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/auth_status.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
 
@@ -138,7 +139,7 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
-    AppUtilities.logger.t("Changing page view to index: $index");
+    AppUtilities.logger.d("Changing page view to index: $index");
 
     try {
       switch(index) {
@@ -173,7 +174,11 @@ class HomeController extends GetxController implements HomeService {
             }
             break;
           case 3:
-            Get.toNamed(AppRouteConstants.musicPlayerHome);
+            if(AppFlavour.appInUse == AppInUse.e && userController.user.userRole == UserRole.subscriber) {
+              Get.toNamed(AppRouteConstants.inbox);
+            } else {
+              Get.toNamed(AppRouteConstants.musicPlayerHome);
+            }
             break;
         }
 

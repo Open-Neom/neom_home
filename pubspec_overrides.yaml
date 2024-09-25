@@ -7,8 +7,8 @@ dependency_overrides:
     path: ../neom_events
 #  neom_itemlists:
 #    path: ../neom_itemlists
-#  neom_audio_player:
-#    path: ../neom_audio_player
+  neom_audio_player:
+    path: ../neom_audio_player
 #  neom_posts:
 #    path: ../neom_posts
   neom_profile:

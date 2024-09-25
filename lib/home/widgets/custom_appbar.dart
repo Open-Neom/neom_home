@@ -82,13 +82,13 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             onPressed: ()=> {
               Get.find<HomeController>().modalBottomSheetMenu(context)
             }
-        ) :
+        ) : AppFlavour.appInUse == AppInUse.g ?
         IconButton(
           padding: EdgeInsets.zero,
           icon: const Icon(FontAwesomeIcons.comments),
           color: Colors.white70,
           onPressed: () => Get.toNamed(AppRouteConstants.inbox)
-        ),
+        ) : const SizedBox.shrink(),
         Padding(
           padding: const EdgeInsets.only(right: 10),
           child: PopupMenuButton<String>(

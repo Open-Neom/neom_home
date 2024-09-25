@@ -49,7 +49,7 @@ class HomePage extends StatelessWidget {
               controller: _.pageController,
               children: HomeUtilities.getHomePages(),
             ),
-            const Positioned(
+            if(AppFlavour.appInUse == AppInUse.g) const Positioned(
               left: 0, right: 0,
               bottom: 0,
               child: MiniPlayer(),

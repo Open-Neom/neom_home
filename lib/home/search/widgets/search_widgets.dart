@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
+import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 
 import '../app_search_controller.dart';
@@ -18,11 +19,14 @@ Widget buildMateSearchList(AppSearchController _) {
       return mate.name.isNotEmpty && mate.isActive ? GestureDetector(
         child: ListTile(
           onTap: () => mate.id.isNotEmpty ? Get.toNamed(AppRouteConstants.mateDetails, arguments: mate.id) : {},
-          leading: Hero(
-            tag: mate.photoUrl,
-            child: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl : AppFlavour.getAppLogoUrl())
-            ),
+          leading: CircleAvatar(
+                backgroundImage: CachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl
+                    : AppFlavour.getAppLogoUrl(),
+                  errorListener: (error) {
+                    // Si hay un error, puedes cargar una imagen por defecto
+                    AppUtilities.logger.e(error.toString());
+                  },
+                )
           ),
           title: Text(mate.name.capitalize),
           subtitle: Column(

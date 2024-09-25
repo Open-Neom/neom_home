@@ -27,7 +27,7 @@ class AppDrawer extends StatelessWidget {
     id: AppPageIdConstants.appDrawer,
     init: AppDrawerController(),
     builder: (_) {
-      return Obx(()=> Drawer(
+      return Drawer(
         child: Container(
           decoration: AppTheme.appBoxDecoration,
           child: SafeArea(
@@ -38,6 +38,7 @@ class AppDrawer extends StatelessWidget {
                   child: ListView(
                     physics: const BouncingScrollPhysics(),
                     children: <Widget>[
+                      AppTheme.heightSpace10,
                       _menuHeader(context, _),
                       const Divider(),
                       drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
@@ -46,11 +47,11 @@ class AppDrawer extends StatelessWidget {
                       if(AppFlavour.appInUse == AppInUse.e)
                         drawerRowOption(AppDrawerMenu.inspiration, const Icon(FontAwesomeIcons.filePen), context),
                       ///DEPRECATED
-                      // if(AppFlavour.appInUse != AppInUse.c && _.appProfile.value.type == ProfileType.instrumentist)
+                      // if(AppFlavour.appInUse != AppInUse.c && _.appProfile.type == ProfileType.instrumentist)
                       //   drawerRowOption(AppDrawerMenu.instruments, Icon(AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
-                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.value.type == ProfileType.artist)
+                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.artist)
                         drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
                       if(AppFlavour.appInUse != AppInUse.c) //TODO Not implemented on "C" app yet
                         drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
@@ -73,7 +74,7 @@ class AppDrawer extends StatelessWidget {
                         children: [
                           const Divider(),
                           if(_.user.userRole != UserRole.subscriber
-                              //_.appProfile.value.verificationLevel != VerificationLevel.none
+                              //_.appProfile.verificationLevel != VerificationLevel.none
                           )
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
@@ -104,7 +105,7 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
         ),
-      ),);
+      );
     });
   }
 
@@ -140,8 +141,8 @@ class AppDrawer extends StatelessWidget {
                 border: Border.all(color: Colors.white, width: 2),
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
-                  image: CachedNetworkImageProvider(_.appProfile.value.photoUrl.isNotEmpty
-                      ? _.appProfile.value.photoUrl : AppFlavour.getNoImageUrl()),
+                  image: CachedNetworkImageProvider(_.appProfile.photoUrl.isNotEmpty
+                      ? _.appProfile.photoUrl : AppFlavour.getNoImageUrl()),
                   fit: BoxFit.cover,
                   ),
                 ),
@@ -158,8 +159,8 @@ class AppDrawer extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        _.appProfile.value.name.length > AppConstants.maxArtistNameLength
-                            ? "${_.appProfile.value.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.value.name,
+                        _.appProfile.name.length > AppConstants.maxArtistNameLength
+                            ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.name,
                         style: AppTheme.primaryTitleText,
                         overflow: TextOverflow.fade,
                       ),
@@ -173,14 +174,14 @@ class AppDrawer extends StatelessWidget {
                     Text(_.userController.user.userRole.name.tr, style: const TextStyle(fontSize: 14)),
                 ],
               ),
-              subtitle: Row(
+              subtitle: (_.appProfile.type != ProfileType.casual) ? Row(
                 children: [
-                  customText(CoreUtilities.getProfileMainFeature(_.appProfile.value).tr.capitalize,
+                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
                     style: AppTheme.primarySubtitleText.copyWith(
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                _.appProfile.value.verificationLevel != VerificationLevel.none ? const Icon(Icons.verified)
+                (_.appProfile.verificationLevel != VerificationLevel.none ? const Icon(Icons.verified)
                 : Row(
                   children: [
                     const Icon(Icons.verified_outlined, color: Colors.white70),
@@ -191,8 +192,8 @@ class AppDrawer extends StatelessWidget {
                         )
                     )
                   ],
-                ),
-              ]),
+                ))
+              ]) : null,
             ),
           ],
         ),
