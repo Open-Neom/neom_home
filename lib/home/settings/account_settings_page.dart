@@ -8,6 +8,7 @@ import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
+import 'package:neom_commons/core/utils/enums/user_role.dart';
 
 import 'account_settings_controller.dart';
 
@@ -32,7 +33,7 @@ class AccountSettingsPage extends StatelessWidget {
             subtitle: _.user.name,
           ),
           const Divider(height: 0),
-          TitleSubtitleRow(
+          if(_.userController.user.userRole != UserRole.subscriber) TitleSubtitleRow(
             AppTranslationConstants.subscription.tr,
             subtitle: _.user.subscriptionId.isNotEmpty ? AppTranslationConstants.active.tr.capitalize : AppTranslationConstants.activateSubscription.tr,
             onPressed: () => _.user.subscriptionId.isEmpty ? _.getSubscriptionAlert(context) : (),

@@ -177,7 +177,7 @@ class HomeController extends GetxController implements HomeService {
             if(AppFlavour.appInUse == AppInUse.e && userController.user.userRole == UserRole.subscriber) {
               Get.toNamed(AppRouteConstants.inbox);
             } else {
-              Get.toNamed(AppRouteConstants.musicPlayerHome);
+              Get.toNamed(AppRouteConstants.audioPlayerHome);
             }
             break;
         }

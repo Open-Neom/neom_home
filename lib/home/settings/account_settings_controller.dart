@@ -9,7 +9,7 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 class AccountSettingsController extends GetxController {
 
   final userController = Get.find<UserController>();
-  SubscriptionController subscriptionController = SubscriptionController();
+  late SubscriptionController subscriptionController;
   AppUser user = AppUser();
 
   bool isLoading = true;
@@ -19,6 +19,7 @@ class AccountSettingsController extends GetxController {
     super.onInit();
     AppUtilities.logger.d("AccountSettings Controller Init for userId ${userController.user.id}");
     user = userController.user;
+    subscriptionController = Get.put(SubscriptionController());
     isLoading = false;
 
   }

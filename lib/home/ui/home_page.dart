@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
       id: AppPageIdConstants.home,
       init: HomeController(),
       builder: (_) => Obx(()=> Scaffold(
-        backgroundColor: AppColor.main50,
+        backgroundColor: AppFlavour.appInUse == AppInUse.g ? AppColor.getMain() : AppColor.main50,
         appBar: _.currentIndex != 0 ||  _.timelineController.showAppBar.value
             ? CustomAppBar(
             title: AppConstants.appTitle,
