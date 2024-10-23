@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
@@ -33,7 +34,7 @@ class AccountSettingsPage extends StatelessWidget {
             subtitle: _.user.name,
           ),
           const Divider(height: 0),
-          if(_.userController.user.userRole != UserRole.subscriber) TitleSubtitleRow(
+          if(_.userController.user.userRole != UserRole.subscriber || kDebugMode) TitleSubtitleRow(
             AppTranslationConstants.subscription.tr,
             subtitle: _.user.subscriptionId.isNotEmpty ? AppTranslationConstants.active.tr.capitalize : AppTranslationConstants.activateSubscription.tr,
             onPressed: () => _.user.subscriptionId.isEmpty ? _.getSubscriptionAlert(context) : (),
@@ -41,9 +42,10 @@ class AccountSettingsPage extends StatelessWidget {
           TitleSubtitleRow(
             AppTranslationConstants.phone.tr,
             subtitle: _.user.phoneNumber.isEmpty ? AppTranslationConstants.notSpecified.tr : "+${_.user.countryCode} ${_.user.phoneNumber}",
+            onPressed: () => _.getUpdatePhoneAlert(context),
           ),
           TitleSubtitleRow(
-            AppTranslationConstants.emailAddress.tr,
+            AppTranslationConstants.email.tr,
             subtitle: _.user.email,
           ),
           const Divider(height: 0),
