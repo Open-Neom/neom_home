@@ -62,7 +62,7 @@ class AppDrawer extends StatelessWidget {
                             drawerRowOption(AppDrawerMenu.inbox, const Icon(FontAwesomeIcons.comments), context),
                           ],
                         ),
-                      drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendarCheck), context),
+                      drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendar), context),
                       if(AppFlavour.appInUse == AppInUse.e)
                         Column(
                           children: [
@@ -73,9 +73,10 @@ class AppDrawer extends StatelessWidget {
                       Column(
                         children: [
                           const Divider(),
-                          if(_.user.userRole != UserRole.subscriber
-                              //_.appProfile.verificationLevel != VerificationLevel.none
-                          )
+                          if(
+                          // ((_.appProfile.type == ProfileType.artist || _.appProfile.type == ProfileType.facilitator)
+                          //     && (_.userController.userSubscription?.level?.value ?? 0) > 1) ||
+                              _.user.userRole != UserRole.subscriber)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
@@ -181,12 +182,12 @@ class AppDrawer extends StatelessWidget {
                         color: Colors.white70, fontSize: 15),
                     context: context),
                 AppTheme.widthSpace5,
-                (_.appProfile.verificationLevel != VerificationLevel.none ? const Icon(Icons.verified)
+                (_.appProfile.verificationLevel != VerificationLevel.none ? AppFlavour.getVerificationIcon(VerificationLevel.premium)
                 : Row(
                   children: [
                     const Icon(Icons.verified_outlined, color: Colors.white70),
                     TextButton(
-                        onPressed: () => CoreUtilities.launchURL(AppFlavour.getSubscriptionPlansUrl()),
+                        onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home, hideBasic: true),
                         child: Text(AppTranslationConstants.verifyProfile.tr,
                           style: const TextStyle(decoration: TextDecoration.underline),
                         )

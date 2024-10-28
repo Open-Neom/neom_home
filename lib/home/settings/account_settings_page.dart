@@ -51,13 +51,13 @@ class AccountSettingsPage extends StatelessWidget {
           const Divider(height: 0),
           if(_.user.subscriptionId.isNotEmpty)
             TitleSubtitleRow(AppTranslationConstants.cancelSubscription.tr,  textColor: AppColor.ceriseRed,
-              onPressed: (){
+              onPressed: () {
                 showDialog(
                     context: context,
                     builder: (context) {
                       return SimpleDialog(
                         backgroundColor: AppColor.getMain(),
-                        title: Text(AppTranslationConstants.cancelThisSubscription.tr),
+                        title: Text(AppTranslationConstants.cancelThisSubscription.tr,),
                         children: <Widget>[
                           SimpleDialogOption(
                             child: Text(

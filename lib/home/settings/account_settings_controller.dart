@@ -1,8 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:neom_commerce/commerce/ui/subscription/subscription_controller.dart';
+import 'package:intl_phone_field/countries.dart';
+import 'package:intl_phone_field/country_picker_dialog.dart';
+import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:neom_commons/core/data/implementations/subscription_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
 import 'package:neom_commons/core/domain/model/app_user.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
@@ -14,9 +16,7 @@ import 'package:neom_commons/core/utils/constants/app_translation_constants.dart
 import 'package:neom_commons/core/utils/constants/intl_countries_list.dart';
 import 'package:neom_commons/core/utils/constants/message_translation_constants.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:intl_phone_field/countries.dart';
-import 'package:intl_phone_field/country_picker_dialog.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
+
 class AccountSettingsController extends GetxController {
 
   final userController = Get.find<UserController>();
@@ -33,10 +33,11 @@ class AccountSettingsController extends GetxController {
     super.onInit();
     AppUtilities.logger.d("AccountSettings Controller Init for userId ${userController.user.id}");
     user = userController.user;
+
     subscriptionController = Get.put(SubscriptionController());
+
     controllerPhone.text = user.phoneNumber;
     isLoading = false;
-
   }
 
   @override
@@ -128,7 +129,7 @@ class AccountSettingsController extends GetxController {
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: InputDecoration(
             labelText: AppTranslationConstants.phoneNumber.tr,
-            labelStyle: TextStyle(fontSize: 12),
+            labelStyle: const TextStyle(fontSize: 12),
             alignLabelWithHint: true,
           ),
           pickerDialogStyle: PickerDialogStyle(
@@ -137,8 +138,8 @@ class AccountSettingsController extends GetxController {
                 labelText: AppTranslationConstants.searchByCountryName.tr,
               )
           ),
-          dropdownTextStyle: TextStyle(fontSize: 14),
-          style: TextStyle(fontSize: 14),
+          dropdownTextStyle: const TextStyle(fontSize: 14),
+          style: const TextStyle(fontSize: 14),
           initialCountryCode: IntlPhoneConstants.initialCountryCode,
           onChanged: (phone) {
             controllerPhone.text = phone.number;

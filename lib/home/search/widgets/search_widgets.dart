@@ -6,6 +6,7 @@ import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
+import 'package:neom_commons/core/utils/enums/verification_level.dart';
 
 import '../app_search_controller.dart';
 
@@ -26,9 +27,15 @@ Widget buildMateSearchList(AppSearchController _) {
                     // Si hay un error, puedes cargar una imagen por defecto
                     AppUtilities.logger.e(error.toString());
                   },
-                )
+                ),
           ),
-          title: Text(mate.name.capitalize),
+          title: Row(
+            children:[
+              Text(mate.name.capitalize),
+              AppTheme.widthSpace5,
+              if(mate.verificationLevel != VerificationLevel.none) AppFlavour.getVerificationIcon(mate.verificationLevel, size: 18)
+            ]
+          ),
           subtitle: Column(
             children: [
               Row(
