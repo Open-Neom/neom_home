@@ -15,8 +15,8 @@ dependency_overrides:
     path: ../neom_profile
   neom_timeline:
     path: ../neom_timeline
-  neom_generator:
-    path: ../neom_generator
+#  neom_generator:
+#    path: ../neom_generator
   #  neom_inbox:
   #    path: ../neom_inbox
   #  neom_booking:

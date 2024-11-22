@@ -161,7 +161,7 @@ class AppDrawer extends StatelessWidget {
                     children: [
                       Text(
                         _.appProfile.name.length > AppConstants.maxArtistNameLength
-                            ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength)}..." : _.appProfile.name,
+                            ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength).capitalizeFirst}..." : _.appProfile.name.capitalizeFirst,
                         style: AppTheme.primaryTitleText,
                         overflow: TextOverflow.fade,
                       ),
