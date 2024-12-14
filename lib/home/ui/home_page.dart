@@ -67,25 +67,26 @@ class HomePage extends StatelessWidget {
             CustomBottomAppBarItem(
               iconData: AppFlavour.getSecondTabIcon(),
               text: AppFlavour.getSecondTabTitle().tr,
-              animation: AppFlavour.appInUse == AppInUse.c ?
-                Column(
-                  children: [
-                    SizedBox(
-                      child: DefaultTextStyle(
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 6,),
-                        child: AnimatedTextKit(
-                          repeatForever: true,
-                          animatedTexts: [
-                            FlickerAnimatedText(AppTranslationConstants.addItems.tr),
-                          ],
-                          onTap: () {},
-                        ),
-                      ),
-                    ),
-                    AppTheme.widthSpace10,
-                  ],
-                ) : null,
+              ///DEPRECATED
+              // animation: AppFlavour.appInUse == AppInUse.c ?
+              //   Column(
+              //     children: [
+              //       SizedBox(
+              //         child: DefaultTextStyle(
+              //           textAlign: TextAlign.center,
+              //           style: const TextStyle(fontSize: 6,),
+              //           child: AnimatedTextKit(
+              //             repeatForever: true,
+              //             animatedTexts: [
+              //               FlickerAnimatedText(AppTranslationConstants.addItems.tr),
+              //             ],
+              //             onTap: () {},
+              //           ),
+              //         ),
+              //       ),
+              //       AppTheme.widthSpace10,
+              //     ],
+              //   ) : null,
             ),
             CustomBottomAppBarItem(
               iconData: AppFlavour.getThirdTabIcon(),

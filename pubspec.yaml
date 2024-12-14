@@ -45,6 +45,9 @@ dependencies:
   neom_jobs:
     git:
       url: https://github.com/emmanuel-montoya/neom_jobs.git
+  neom_generator:
+    git:
+      url: https://github.com/Cyberneom/neom_generator.git
 
 #  package_info_plus: ^5.0.1
 

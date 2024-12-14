@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/ui/widgets/appbar_child.dart';
 import 'package:neom_commons/core/ui/widgets/header_widget.dart';
 import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
@@ -9,6 +10,7 @@ import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
+import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 import 'package:neom_commons/core/utils/enums/subscription_status.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
 
@@ -35,7 +37,7 @@ class AccountSettingsPage extends StatelessWidget {
             subtitle: _.user.name,
           ),
           const Divider(height: 0),
-          if(_.userController.user.userRole != UserRole.subscriber || kDebugMode) TitleSubtitleRow(
+          if((_.userController.user.userRole != UserRole.subscriber || kDebugMode) && AppFlavour.appInUse != AppInUse.c) TitleSubtitleRow(
             AppTranslationConstants.subscription.tr,
             subtitle: (_.userController.userSubscription?.status == SubscriptionStatus.active) ? AppTranslationConstants.active.tr.capitalize : AppTranslationConstants.activateSubscription.tr,
             onPressed: () => _.user.subscriptionId.isEmpty ? _.getSubscriptionAlert(context) : (),

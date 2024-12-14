@@ -76,7 +76,7 @@ class AppDrawer extends StatelessWidget {
                           if(
                           // ((_.appProfile.type == ProfileType.artist || _.appProfile.type == ProfileType.facilitator)
                           //     && (_.userController.userSubscription?.level?.value ?? 0) > 1) ||
-                              _.user.userRole != UserRole.subscriber)
+                              _.user.userRole != UserRole.subscriber && AppFlavour.appInUse != AppInUse.c)
                           drawerRowOption(AppDrawerMenu.releaseUpload, Icon(AppFlavour.getAppItemIcon()), context),
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
@@ -87,10 +87,11 @@ class AppDrawer extends StatelessWidget {
                                 const Divider(),
                               ],
                             )
+                          ///NOT READY FOR THIS FUNCITONALITY OF CROWDFUNDING
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                         ],
                       ),
-                      Column(
+                      if(AppFlavour.appInUse != AppInUse.c) Column(
                         children: [
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
                           const Divider(),

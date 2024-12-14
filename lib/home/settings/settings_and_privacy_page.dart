@@ -43,7 +43,7 @@ class SettingsPrivacyPage extends StatelessWidget {
             TitleSubtitleRow(AppTranslationConstants.contentPreferences.tr, navigateTo: AppRouteConstants.contentPreferences),
             const HeaderWidget(AppTranslationConstants.general, secondHeader: true,),
             TitleSubtitleRow(AppTranslationConstants.aboutApp.tr, navigateTo: AppRouteConstants.about),
-            TitleSubtitleRow(AppTranslationConstants.likeMyWork.tr, subtitle: AppTranslationConstants.buyCoffee.tr,
+            if(AppFlavour.appInUse != AppInUse.c) TitleSubtitleRow(AppTranslationConstants.likeMyWork.tr, subtitle: AppTranslationConstants.buyCoffee.tr,
               onPressed: () => launchUrl(Uri.parse(AppFlavour.getBuyMeACoffeeURL(),),)),
             TitleSubtitleRow(AppTranslationConstants.contactUs.tr, subtitle: AppTranslationConstants.contactUsSub.tr,
                 onPressed: () {
@@ -122,7 +122,7 @@ class SettingsPrivacyPage extends StatelessWidget {
                 );
               },
             ),
-            TitleSubtitleRow(AppTranslationConstants.joinWhats.tr, subtitle: AppTranslationConstants.joinWhatsSub.tr,
+            if(AppFlavour.appInUse != AppInUse.c) TitleSubtitleRow(AppTranslationConstants.joinWhats.tr, subtitle: AppTranslationConstants.joinWhatsSub.tr,
             onPressed: () {
               AppFlavour.appInUse == AppInUse.g ? showModalBottomSheet(
                   context: context,
