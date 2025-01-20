@@ -37,13 +37,13 @@ class SettingsPrivacyPage extends StatelessWidget {
               child: const AppCircularProgressIndicator()) :
           ListView(
           children: <Widget>[
-            HeaderWidget(_.userController.user.name),
+            HeaderWidget(_.userController.user.name.capitalize),
             TitleSubtitleRow(AppTranslationConstants.account.tr, navigateTo: AppRouteConstants.settingsAccount),
             TitleSubtitleRow(AppTranslationConstants.privacyAndPolicy.tr, navigateTo: AppRouteConstants.privacyAndTerms),
             TitleSubtitleRow(AppTranslationConstants.contentPreferences.tr, navigateTo: AppRouteConstants.contentPreferences),
             const HeaderWidget(AppTranslationConstants.general, secondHeader: true,),
             TitleSubtitleRow(AppTranslationConstants.aboutApp.tr, navigateTo: AppRouteConstants.about),
-            if(AppFlavour.appInUse != AppInUse.c) TitleSubtitleRow(AppTranslationConstants.likeMyWork.tr, subtitle: AppTranslationConstants.buyCoffee.tr,
+            if(AppFlavour.appInUse == AppInUse.c) TitleSubtitleRow(AppTranslationConstants.likeMyWork.tr, subtitle: AppTranslationConstants.buyCoffee.tr,
               onPressed: () => launchUrl(Uri.parse(AppFlavour.getBuyMeACoffeeURL(),),)),
             TitleSubtitleRow(AppTranslationConstants.contactUs.tr, subtitle: AppTranslationConstants.contactUsSub.tr,
                 onPressed: () {

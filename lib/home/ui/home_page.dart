@@ -1,4 +1,3 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
@@ -49,7 +48,7 @@ class HomePage extends StatelessWidget {
               controller: _.pageController,
               children: HomeUtilities.getHomePages(),
             ),
-            if(AppFlavour.appInUse == AppInUse.g) const Positioned(
+            if(AppFlavour.appInUse == AppInUse.g && _.timelineReady) const Positioned(
               left: 0, right: 0,
               bottom: 0,
               child: MiniPlayer(),

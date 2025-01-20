@@ -176,7 +176,7 @@ class AppDrawer extends StatelessWidget {
                     Text(_.userController.user.userRole.name.tr, style: const TextStyle(fontSize: 14)),
                 ],
               ),
-              subtitle: (_.appProfile.type != ProfileType.commonTarget) ? Row(
+              subtitle: (_.appProfile.type != ProfileType.general) ? Row(
                 children: [
                   customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
                     style: AppTheme.primarySubtitleText.copyWith(
