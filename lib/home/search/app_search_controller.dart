@@ -74,13 +74,14 @@ class AppSearchController extends GetxController implements SearchService {
   @override
   Future<void> loadProfiles() async {
     try {
-      await mateController.loadFollowingProfiles();
-      filteredProfiles.value.addAll(mateController.followingProfiles);
-      await mateController.loadFollowersProfiles();
-      filteredProfiles.value.addAll(mateController.followerProfiles);
-      await mateController.loadMates();
-      filteredProfiles.value.addAll(mateController.mates);
       await mateController.loadProfiles();
+      ///DEPRECATED
+      /// await mateController.loadFollowingProfiles();
+      /// await mateController.loadFollowersProfiles();
+      /// await mateController.loadMates();
+      filteredProfiles.value.addAll(mateController.followingProfiles);
+      filteredProfiles.value.addAll(mateController.followerProfiles);
+      filteredProfiles.value.addAll(mateController.mates);
       filteredProfiles.value.addAll(mateController.profiles);
       sortByLocation();
     } catch (e) {
@@ -108,5 +109,54 @@ class AppSearchController extends GetxController implements SearchService {
     logger.i("Sortered Profiles ${sortedProfileLocation.value.length}");
     update([AppPageIdConstants.search]);
   }
+
+  // @override
+  // void sortByLocation() {
+  //   AppUtilities.startStopwatch(reference: "sortByLocation");
+  //   if (userController.profile.position == null) {
+  //     logger.w("User position is null. Skipping sorting.");
+  //     return;
+  //   }
+  //
+  //   final Map<String, double> distanceCache = {};
+  //
+  //   // Convertimos el mapa a una lista de pares clave-valor y calculamos distancias
+  //   final List<MapEntry<double, AppProfile>> sortedList = filteredProfiles.value.entries
+  //       .map((entry) {
+  //     double distance;
+  //
+  //     // Usa una caché para evitar cálculos repetitivos
+  //     if (distanceCache.containsKey(entry.key)) {
+  //       distance = distanceCache[entry.key]!;
+  //     } else {
+  //       distance = AppUtilities.distanceBetweenPositions(
+  //         userController.profile.position!,
+  //         entry.value.position!,
+  //       );
+  //
+  //       distanceCache[entry.key] = distance; // Almacena la distancia calculada
+  //     }
+  //
+  //     return MapEntry(distance, entry.value);
+  //   })
+  //       .toList();
+  //
+  //   // Ordenar la lista por distancia
+  //   sortedList.sort((a, b) => a.key.compareTo(b.key));
+  //
+  //   // Limpiar el mapa observable y agregar los elementos ordenados
+  //   sortedProfileLocation.value.clear();
+  //   for (var entry in sortedList) {
+  //     sortedProfileLocation.value[entry.key] = entry.value;
+  //   }
+  //
+  //   logger.i("Filtered Profiles: ${filteredProfiles.value.length}");
+  //   logger.i("Sorted Profiles: ${sortedProfileLocation.value.length}");
+  //
+  //   AppUtilities.stopStopwatch();
+  //   update([AppPageIdConstants.search]);
+  // }
+
+
 
 }

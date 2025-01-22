@@ -20,15 +20,22 @@ Widget buildMateSearchList(AppSearchController _) {
       return mate.name.isNotEmpty && mate.isActive ? GestureDetector(
         child: ListTile(
           onTap: () => mate.id.isNotEmpty ? Get.toNamed(AppRouteConstants.mateDetails, arguments: mate.id) : {},
-          leading: CircleAvatar(
-                backgroundImage: CachedNetworkImageProvider(mate.photoUrl.isNotEmpty ? mate.photoUrl
-                    : AppFlavour.getAppLogoUrl(),
-                  errorListener: (error) {
-                    // Si hay un error, puedes cargar una imagen por defecto
-                    AppUtilities.logger.e(error.toString());
-                  },
-                ),
-          ),
+            leading: CachedNetworkImage(
+              imageUrl: mate.photoUrl.isNotEmpty ? mate.photoUrl : AppFlavour.getAppLogoUrl(),
+              placeholder: (context, url) => const CircleAvatar(
+                child: CircularProgressIndicator(),
+              ),
+              errorWidget: (context, url, error) {
+                AppUtilities.logger.w("Error loading image: $error");
+                return CircleAvatar(
+                  backgroundImage: CachedNetworkImageProvider(AppFlavour.getAppLogoUrl()),
+                );
+              },
+              imageBuilder: (context, imageProvider) => CircleAvatar(
+                backgroundImage: imageProvider,
+              ),
+            ),
+
           title: Row(
             children:[
               Text(mate.name.capitalize),
@@ -47,14 +54,6 @@ Widget buildMateSearchList(AppSearchController _) {
                     AppTheme.widthSpace5,
                     Text(mate.mainFeature.tr.capitalize),
                     AppTheme.widthSpace5,
-                    ///DEPRECATED - As its showing sensitive data
-                    /// Text(" - ${int.parse(distanceBetween) <= 2 ? AppTranslationConstants.aroundYou.tr : '$distanceBetween KM'}"),
-                    // if(mate.address.isNotEmpty) Icon(Icons.location_on, color: Colors.blueGrey, size: 15),
-                    // if(mate.address.isNotEmpty) AppTheme.widthSpace5,
-                    // if(mate.address.isNotEmpty) SizedBox(
-                    //   width: AppTheme.fullWidth(context)/3,
-                    //   child: Text(mate.address.split(',').first),
-                    // )
                   ]
               ),
               Row(
@@ -68,10 +67,6 @@ Widget buildMateSearchList(AppSearchController _) {
                     )
                   ]
               ),
-              // if(mate.address.isNotEmpty) SizedBox(
-              //   // width: AppTheme.fullWidth(context)*0.38,
-              //   child: Text(mate.address.split(',').first),
-              // )
             ],
           )
         ),
