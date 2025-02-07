@@ -110,6 +110,7 @@ class AppSearchController extends GetxController implements SearchService {
     update([AppPageIdConstants.search]);
   }
 
+  ///DEPRECATED 1224
   // @override
   // void sortByLocation() {
   //   AppUtilities.startStopwatch(reference: "sortByLocation");

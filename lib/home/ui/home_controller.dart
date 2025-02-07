@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_audio_player/utils/neom_audio_utilities.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/data/firestore/app_info_firestore.dart';
@@ -128,6 +129,11 @@ class HomeController extends GetxController implements HomeService {
     }
 
     update([AppPageIdConstants.home]);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      Future.delayed(const Duration(milliseconds: 1), () => NeomAudioUtilities.getAudioHandler());
+
+    });
   }
 
   Future<void> _loadUserProfileFeatures() async {
@@ -174,11 +180,7 @@ class HomeController extends GetxController implements HomeService {
             }
             break;
           case 3:
-            if(AppFlavour.appInUse != AppInUse.g) {
-              Get.toNamed(AppRouteConstants.inbox);
-            } else {
-              Get.toNamed(AppRouteConstants.audioPlayerHome);
-            }
+            Get.toNamed(AppRouteConstants.audioPlayerHome);
             break;
         }
 
@@ -310,9 +312,6 @@ class HomeController extends GetxController implements HomeService {
 
   void timelineIsReady({bool isReady = true}) {
     timelineReady = isReady;
-    update([AppPageIdConstants.home]);
   }
-
-
 
 }
