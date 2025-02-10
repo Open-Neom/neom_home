@@ -26,11 +26,20 @@ class AppSearchPage extends StatelessWidget {
       body: Obx(() => Container(
         decoration: AppTheme.appBoxDecoration,
         child: _.isLoading.value ? const Center(child: CircularProgressIndicator())
-            : buildMateSearchList(_)
+            : ListView(
+          children: buildCombinedSearchList(_, context)
+        )
         ),
       )
     ),
     );
+  }
+  List<Widget> buildCombinedSearchList(AppSearchController controller, BuildContext context) {
+    List<Widget> combined = [];
+    combined.addAll(buildMateTiles(controller, context));
+    combined.addAll(buildReleaseTiles(controller, context));
+    combined.addAll(buildMediaTiles(controller, context));
+    return combined;
   }
 
 }

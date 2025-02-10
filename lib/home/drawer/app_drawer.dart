@@ -51,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                       //   drawerRowOption(AppDrawerMenu.instruments, Icon(AppFlavour.getInstrumentIcon()), context),
                       //TODO To Implement
                       //_menuListRowButton(AppConstants.genres, const Icon(FontAwesomeIcons.music), true, context),
-                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.artist)
+                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.appArtist)
                         drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
                       if(AppFlavour.appInUse != AppInUse.c) //TODO Not implemented on "C" app yet
                         drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
@@ -176,26 +176,7 @@ class AppDrawer extends StatelessWidget {
                     Text(_.userController.user.userRole.name.tr, style: const TextStyle(fontSize: 14)),
                 ],
               ),
-              subtitle: (_.appProfile.type != ProfileType.general) ? Row(
-                children: [
-                  customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
-                    style: AppTheme.primarySubtitleText.copyWith(
-                        color: Colors.white70, fontSize: 15),
-                    context: context),
-                AppTheme.widthSpace5,
-                (_.appProfile.verificationLevel != VerificationLevel.none ? AppFlavour.getVerificationIcon(VerificationLevel.premium)
-                : Row(
-                  children: [
-                    const Icon(Icons.verified_outlined, color: Colors.white70),
-                    TextButton(
-                        onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home, hideBasic: true),
-                        child: Text(AppTranslationConstants.verifyProfile.tr,
-                          style: const TextStyle(decoration: TextDecoration.underline),
-                        )
-                    )
-                  ],
-                ))
-              ]) : null,
+              subtitle: buildVerifyProfile(_,context),
             ),
           ],
         ),
@@ -203,6 +184,41 @@ class AppDrawer extends StatelessWidget {
     }
   }
 
+  Widget buildVerifyProfile(AppDrawerController _, BuildContext context) {
+    List<Widget> widgets = [];
+    if(_.appProfile.type != ProfileType.general) {
+      widgets.add(customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
+          style: AppTheme.primarySubtitleText.copyWith(
+              color: Colors.white70, fontSize: 15),
+          context: context));
+      widgets.add(AppTheme.widthSpace5);
+      if(_.appProfile.verificationLevel != VerificationLevel.none) {
+        widgets.add(AppFlavour.getVerificationIcon(_.appProfile.verificationLevel));
+      } else {
+        widgets.add(const Icon(Icons.verified_outlined, color: Colors.white70));
+        widgets.add(TextButton(
+            onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home, hideBasic: true),
+            child: Text(AppTranslationConstants.verifyProfile.tr,
+              style: const TextStyle(decoration: TextDecoration.underline),
+            )
+        ));
+      }
+    } else if(_.userController.userSubscription?.subscriptionId.isEmpty ?? true) {
+      widgets.add(TextButton(
+        onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
+        style: TextButton.styleFrom(
+          padding: EdgeInsets.zero, // Remove padding here
+          textStyle: const TextStyle(decoration: TextDecoration.underline), // Keep your underline style
+        ),
+        child: Text(AppTranslationConstants.acquireSubscription.tr,),
+      ));
+    } else {
+      widgets.add(Text(AppTranslationConstants.activeSubscription.tr,));
+    }
+
+
+    return Row(children: widgets);
+  }
   ListTile drawerRowOption(AppDrawerMenu selectedMenu, Icon icon, BuildContext context, {bool isEnabled = true}) {
     return ListTile(
       onTap: () {
