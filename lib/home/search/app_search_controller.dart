@@ -81,8 +81,8 @@ class AppSearchController extends GetxController implements SearchService {
     filteredMediaItems.value = searchParam.isEmpty
         ? mediaItems
         : Map.fromEntries(
-        mediaItems.entries.where((entry) =>
-            entry.value.name.toLowerCase().contains(searchParam.value.toLowerCase())
+        mediaItems.entries.where((entry) => entry.value.name.toLowerCase().contains(searchParam.value.toLowerCase())
+            || entry.value.artist.toLowerCase().contains(searchParam.value.toLowerCase())
         )
     );
 
@@ -91,6 +91,7 @@ class AppSearchController extends GetxController implements SearchService {
         : Map.fromEntries(
         releaseItems.entries.where((entry) =>
             entry.value.name.toLowerCase().contains(searchParam.value.toLowerCase())
+                || entry.value.ownerName.toLowerCase().contains(searchParam.value.toLowerCase())
         )
     );
 

@@ -186,23 +186,22 @@ class AppDrawer extends StatelessWidget {
 
   Widget buildVerifyProfile(AppDrawerController _, BuildContext context) {
     List<Widget> widgets = [];
-    if(_.appProfile.type != ProfileType.general) {
+
+    if(_.appProfile.verificationLevel != VerificationLevel.none) {
+      widgets.add(AppFlavour.getVerificationIcon(_.appProfile.verificationLevel));
+    } else if(_.appProfile.type != ProfileType.general) {
       widgets.add(customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
           style: AppTheme.primarySubtitleText.copyWith(
               color: Colors.white70, fontSize: 15),
           context: context));
       widgets.add(AppTheme.widthSpace5);
-      if(_.appProfile.verificationLevel != VerificationLevel.none) {
-        widgets.add(AppFlavour.getVerificationIcon(_.appProfile.verificationLevel));
-      } else {
-        widgets.add(const Icon(Icons.verified_outlined, color: Colors.white70));
-        widgets.add(TextButton(
-            onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home, hideBasic: true),
-            child: Text(AppTranslationConstants.verifyProfile.tr,
-              style: const TextStyle(decoration: TextDecoration.underline),
-            )
-        ));
-      }
+      widgets.add(const Icon(Icons.verified_outlined, color: Colors.white70));
+      widgets.add(TextButton(
+          onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home, hideBasic: true),
+          child: Text(AppTranslationConstants.verifyProfile.tr,
+            style: const TextStyle(decoration: TextDecoration.underline),
+          )
+      ));
     } else if(_.userController.userSubscription?.subscriptionId.isEmpty ?? true) {
       widgets.add(TextButton(
         onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
@@ -219,6 +218,7 @@ class AppDrawer extends StatelessWidget {
 
     return Row(children: widgets);
   }
+
   ListTile drawerRowOption(AppDrawerMenu selectedMenu, Icon icon, BuildContext context, {bool isEnabled = true}) {
     return ListTile(
       onTap: () {
