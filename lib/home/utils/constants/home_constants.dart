@@ -14,7 +14,7 @@ class HomeConstants {
 
   static List<Widget> eHomePages = [const TimelinePage(), const EventsPage(), const EventsPage(), const NeomAudioPlayerApp()];
   static List<Widget> gHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const NeomAudioPlayerApp()];
-  static List<Widget> cHomePages = [const TimelinePage(), const ChamberPage(), const EventsPage(), const InboxPage()]; ///FOR Next Release must be AUDIOPLAYER
+  static List<Widget> cHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const NeomAudioPlayerApp()];
 
   static const int firstTabIndex = 0;
   static const int secondTabIndex = 1;

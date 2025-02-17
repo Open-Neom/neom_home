@@ -44,6 +44,8 @@ class AppDrawer extends StatelessWidget {
                       drawerRowOption(AppDrawerMenu.profile,  const Icon(Icons.person), context),
                       if(AppFlavour.appInUse == AppInUse.c)
                         drawerRowOption(AppDrawerMenu.frequencies, Icon(AppFlavour.getInstrumentIcon()), context),
+                      if(AppFlavour.appInUse == AppInUse.c)
+                        drawerRowOption(AppDrawerMenu.presets, const Icon(Icons.surround_sound_outlined), context),
                       if(AppFlavour.appInUse == AppInUse.e)
                         drawerRowOption(AppDrawerMenu.inspiration, const Icon(FontAwesomeIcons.filePen), context),
                       ///DEPRECATED
@@ -176,7 +178,7 @@ class AppDrawer extends StatelessWidget {
                     Text(_.userController.user.userRole.name.tr, style: const TextStyle(fontSize: 14)),
                 ],
               ),
-              subtitle: buildVerifyProfile(_,context),
+              subtitle: AppFlavour.appInUse != AppInUse.c ? buildVerifyProfile(_,context) : null,
             ),
           ],
         ),
@@ -282,6 +284,9 @@ class AppDrawer extends StatelessWidget {
               break;
             case AppDrawerMenu.frequencies:
               Get.toNamed(AppRouteConstants.frequencyFav);
+              break;
+            case AppDrawerMenu.presets:
+              Get.toNamed(AppRouteConstants.chamber);
               break;
             case AppDrawerMenu.inspiration:
               Get.toNamed(AppRouteConstants.blog);
