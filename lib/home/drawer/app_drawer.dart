@@ -191,28 +191,30 @@ class AppDrawer extends StatelessWidget {
 
     if(_.appProfile.verificationLevel != VerificationLevel.none) {
       widgets.add(AppFlavour.getVerificationIcon(_.appProfile.verificationLevel));
-    } else if(_.appProfile.type != ProfileType.general) {
-      widgets.add(customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
-          style: AppTheme.primarySubtitleText.copyWith(
-              color: Colors.white70, fontSize: 15),
-          context: context));
-      widgets.add(AppTheme.widthSpace5);
-      widgets.add(const Icon(Icons.verified_outlined, color: Colors.white70));
-      widgets.add(TextButton(
-          onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home, hideBasic: true),
-          child: Text(AppTranslationConstants.verifyProfile.tr,
-            style: const TextStyle(decoration: TextDecoration.underline),
-          )
-      ));
     } else if(_.userController.userSubscription?.subscriptionId.isEmpty ?? true) {
-      widgets.add(TextButton(
-        onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
-        style: TextButton.styleFrom(
-          padding: EdgeInsets.zero, // Remove padding here
-          textStyle: const TextStyle(decoration: TextDecoration.underline), // Keep your underline style
-        ),
-        child: Text(AppTranslationConstants.acquireSubscription.tr,),
-      ));
+      if(_.appProfile.type == ProfileType.general) {
+        widgets.add(TextButton(
+          onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
+          style: TextButton.styleFrom(
+            padding: EdgeInsets.zero, // Remove padding here
+            textStyle: const TextStyle(decoration: TextDecoration.underline), // Keep your underline style
+          ),
+          child: Text(AppTranslationConstants.acquireSubscription.tr,),
+        ));
+      } else {
+        widgets.add(customText(CoreUtilities.getProfileMainFeature(_.appProfile).tr.capitalize,
+            style: AppTheme.primarySubtitleText.copyWith(
+                color: Colors.white70, fontSize: 15),
+            context: context));
+        widgets.add(AppTheme.widthSpace5);
+        widgets.add(const Icon(Icons.verified_outlined, color: Colors.white70));
+        widgets.add(TextButton(
+            onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
+            child: Text(AppTranslationConstants.verifyProfile.tr,
+              style: const TextStyle(decoration: TextDecoration.underline),
+            )
+        ));
+      }
     } else {
       widgets.add(Text(AppTranslationConstants.activeSubscription.tr,));
     }
