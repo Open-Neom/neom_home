@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:neom_audio_player/neom_audio_player_app.dart';
+import 'package:neom_audio_player/audio_player_root_page.dart';
 import 'package:neom_booking/booking/ui/booking_home_page.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_events/events/ui/events_page.dart';
-import 'package:neom_generator/neom_generator/ui/chamber/chamber_page.dart';
-import 'package:neom_inbox/inbox/ui/inbox_page.dart';
 import 'package:neom_timeline/neom_timeline.dart';
 
 import '../../../home/widgets/menu_model.dart';
 
 class HomeConstants {
 
-  static List<Widget> eHomePages = [const TimelinePage(), const EventsPage(), const EventsPage(), const NeomAudioPlayerApp()];
-  static List<Widget> gHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const NeomAudioPlayerApp()];
-  static List<Widget> cHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const NeomAudioPlayerApp()];
+  static List<Widget> eHomePages = [const TimelinePage(), const EventsPage(), const EventsPage(), const AudioPlayerRootPage()];
+  static List<Widget> gHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const AudioPlayerRootPage()];
+  static List<Widget> cHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const AudioPlayerRootPage()];
 
   static const int firstTabIndex = 0;
   static const int secondTabIndex = 1;
