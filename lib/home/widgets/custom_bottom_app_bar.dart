@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
+import '../ui/home_controller.dart';
 import 'custom_bottom_bar_item.dart';
+import 'package:get/get.dart';
 
 class CustomBottomAppBar extends StatefulWidget {
 
@@ -36,53 +38,44 @@ class CustomBottomAppBar extends StatefulWidget {
 }
 
 class CustomBottomAppBarState extends State<CustomBottomAppBar> {
-  int _selectedIndex = 0;
 
-  void _updateIndex(int index) {
+  final HomeController homeController = Get.find<HomeController>();
+
+  void updateIndex(int index) {
     widget.onTabSelected(index);
     setState(() {
       switch(AppFlavour.appInUse) {
         case AppInUse.c:
-          if(index < 3) _selectedIndex = index;
+          if(index < 3) homeController.currentIndex.value = index;
           break;
         case AppInUse.e:
-          if(index < 2) _selectedIndex = index;
+          if(index < 2) homeController.currentIndex.value = index;
           break;
         case AppInUse.g:
-          if(index < 3) _selectedIndex = index;
+          if(index < 3) homeController.currentIndex.value = index;
           break;
       }
-
     });
   }
 
-  void updateSelectedIndex(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-  
   @override
   Widget build(BuildContext context) {
-
-    List<Widget> items = List.generate(widget.items.length, (int index) {
-      return _buildTabItem(
-        item: widget.items[index],
-        index: index,
-        onPressed: _updateIndex,
-      );
-    });
-
-    return BottomAppBar(
+    return Obx(()=> BottomAppBar(
       height: widget.height,
       shape: widget.notchedShape,
       color: widget.backgroundColor,
       notchMargin: 0,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: items,
+        children: List.generate(widget.items.length, (int index) {
+          return _buildTabItem(
+            item: widget.items[index],
+            index: index,
+            onPressed: updateIndex,
+          );
+        }),
       ),
-    );
+    ));
   }
 
   Widget _buildTabItem({
@@ -90,7 +83,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
     int index = 0,
     ValueChanged<int>? onPressed,
   }) {
-    Color color = _selectedIndex == index ? widget.selectedColor : widget.color;
+    Color color = homeController.currentIndex.value == index ? widget.selectedColor : widget.color;
     return Expanded(
       child: GestureDetector(
         onTap: () => onPressed!(index),

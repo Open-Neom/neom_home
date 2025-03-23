@@ -1,24 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_audio_player/utils/neom_audio_utilities.dart';
-import 'package:neom_commons/auth/ui/login/login_controller.dart';
-import 'package:neom_commons/core/app_flavour.dart';
-import 'package:neom_commons/core/data/firestore/app_info_firestore.dart';
-import 'package:neom_commons/core/data/firestore/profile_firestore.dart';
-import 'package:neom_commons/core/data/firestore/user_firestore.dart';
-import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
-import 'package:neom_commons/core/data/implementations/user_controller.dart';
-import 'package:neom_commons/core/domain/model/app_info.dart';
-import 'package:neom_commons/core/domain/model/event.dart';
-import 'package:neom_commons/core/domain/use_cases/home_service.dart';
-import 'package:neom_commons/core/utils/app_color.dart';
-import 'package:neom_commons/core/utils/app_theme.dart';
-import 'package:neom_commons/core/utils/app_utilities.dart';
+import 'package:neom_commons/core/data/implementations/app_hive_controller.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
-import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
-import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/enums/app_in_use.dart';
-import 'package:neom_commons/core/utils/enums/auth_status.dart';
+import 'package:neom_commons/neom_commons.dart';
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
 
@@ -32,20 +17,19 @@ class HomeController extends GetxController implements HomeService {
   bool startingHome = true;
   bool hasItems = false;
 
-  bool isLoading = true;
-  bool isPressed = false;
-  bool mediaPlayerEnabled = true;
+  RxBool isLoading = true.obs;
+  RxBool mediaPlayerEnabled = true.obs;
   Event event = Event();
 
   final PageController pageController = PageController();
-  final ScrollController scrollController = ScrollController();
+  // final ScrollController scrollController = ScrollController();
 
-  int currentIndex = 0;
+  RxInt currentIndex = 0.obs;
   String toRoute = "";
-  bool timelineReady = false;
+  RxBool timelineReady = false.obs;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
     AppUtilities.logger.t("Home Controller Init");
 
@@ -59,7 +43,7 @@ class HomeController extends GetxController implements HomeService {
       }
 
       pageController.addListener(() {
-        currentIndex = pageController.page!.toInt();
+        currentIndex.value = pageController.page!.toInt();
       });
 
       int toIndex =  0;
@@ -74,19 +58,11 @@ class HomeController extends GetxController implements HomeService {
         }
       }
 
-      if(!currentIndex.isEqual(toIndex) || currentIndex == 0) {
+      if(!currentIndex.value.isEqual(toIndex) || currentIndex == 0) {
         selectPageView(toIndex);
       }
 
-      if(userController.user.fcmToken.isEmpty
-          || userController.user.fcmToken != userController.fcmToken) {
-        UserFirestore().updateFcmToken(userController.user.id, userController.fcmToken);
-      }
-
       hasItems = (userController.profile.favoriteItems?.length ?? 0) > 1;
-      await verifyLocation();
-      UserFirestore().updateLastTimeOn(userController.user.id);
-
     } catch (e) {
       AppUtilities.logger.e(e.toString());
     }
@@ -94,19 +70,20 @@ class HomeController extends GetxController implements HomeService {
   }
 
   @override
-  void onReady() async {
+  void onReady() {
     super.onReady();
     AppUtilities.logger.t("Home Controller Ready");
 
     loginController.authStatus.value = AuthStatus.loggedIn;
     loginController.setIsLoading(false);
-    isLoading = false;
-    update([AppPageIdConstants.home]);
+    isLoading.value = false;
+    // update([AppPageIdConstants.home]);
 
     try {
-      AppInfo appInfo = await AppInfoFirestore().retrieve();
-      mediaPlayerEnabled = appInfo.mediaPlayerEnabled;
-      if(startingHome) _loadUserProfileFeatures();
+      ///DEPRECAGTED
+      // AppInfo appInfo = await AppInfoFirestore().retrieve();
+      // mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
+      // if(startingHome) _loadUserProfileFeatures();
     } catch(e) {
       AppUtilities.logger.e(e.toString());
     }
@@ -125,14 +102,13 @@ class HomeController extends GetxController implements HomeService {
     }
 
     if(toRoute.isNotEmpty) {
-      await Get.toNamed(toRoute);
+      Get.toNamed(toRoute);
     }
 
-    update([AppPageIdConstants.home]);
+    // update([AppPageIdConstants.home]);
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       Future.delayed(const Duration(milliseconds: 1), () => NeomAudioUtilities.getAudioHandler());
-
     });
   }
 
@@ -163,38 +139,26 @@ class HomeController extends GetxController implements HomeService {
 
       if(pageController.hasClients) {
         switch(index) {
-          case 0:
+          case HomeConstants.firstTabIndex:
             pageController.jumpToPage(index);
-            currentIndex = index;
+            currentIndex.value = index;
             break;
-          case 1:
+          case HomeConstants.secondTabIndex:
             pageController.jumpToPage(index);
-            currentIndex = index;
+            currentIndex.value = index;
             break;
-          case 2:
+          case HomeConstants.thirdTabIndex:
             if(AppFlavour.appInUse == AppInUse.e) {
               Get.toNamed(AppRouteConstants.libraryHome);
             } else {
               pageController.jumpToPage(index);
-              currentIndex = index;
+              currentIndex.value = index;
             }
             break;
-          case 3:
+          case HomeConstants.forthTabIndex:
             Get.toNamed(AppRouteConstants.audioPlayerHome);
             break;
         }
-
-        ///DEPRECATED
-        // if(index != HomeConstants.forthTabIndex) {
-        //   pageController.jumpToPage(index);
-        //   currentIndex = index;
-        // } else {
-        //   if(AppFlavour.appInUse == AppInUse.e) {
-        //     Get.toNamed(AppRouteConstants.libraryHome);
-        //   } else {
-        //     await Get.toNamed(AppRouteConstants.musicPlayerHome);
-        //   }
-        // }
       }
 
     } catch (e) {
@@ -202,28 +166,12 @@ class HomeController extends GetxController implements HomeService {
     }
 
 
-    update([AppPageIdConstants.home]);
+    // update([AppPageIdConstants.home]);
   }
-
-
-  @override
-  Future<void> verifyLocation() async {
-    AppUtilities.logger.t("Verifying location");
-    try {
-      userController.profile.position = await GeoLocatorController()
-          .updateLocation(userController.profile.id, userController.profile.position);
-      isLoading = false;
-    } catch (e) {
-      AppUtilities.logger.e(e.toString());
-    }
-
-    update([AppPageIdConstants.home, AppPageIdConstants.timeline]);
-  }
-
 
   @override
   Future<void> modalBottomSheetMenu(BuildContext context) async {
-    isPressed = true;
+    // isPressed.value = true;
     await showModalBottomSheet(
         elevation: 0,
         backgroundColor: AppTheme.canvasColor25(context),
@@ -310,8 +258,37 @@ class HomeController extends GetxController implements HomeService {
     }
   }
 
-  void timelineIsReady({bool isReady = true}) {
-    timelineReady = isReady;
+  void timelineIsReady({bool isReady = true}) async {
+
+    AppInfo appInfo = await AppInfoFirestore().retrieve();
+    mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
+    if(startingHome) _loadUserProfileFeatures();
+
+    timelineReady.value = isReady;
+
+    userController.getUserSubscription();
+    Future.microtask(() => UserFirestore().updateLastTimeOn(userController.user.id));
+    Future.microtask(() => AppHiveController().fetchCachedData());
+    Future.microtask(() => AppHiveController().fetchSettingsData());
+
+    if(userController.user.fcmToken.isEmpty
+        || userController.user.fcmToken != userController.fcmToken) {
+      Future.microtask(() => UserFirestore().updateFcmToken(userController.user.id, userController.fcmToken));
+    }
+    // Inicialización de las notificaciones
+    Future.microtask(() => verifyLocation());
+    Future.microtask(() => PushNotificationService.init());
+    Future.microtask(() => AppHiveController().setFirstTime(false));
+  }
+
+  @override
+  Future<void> verifyLocation() async {
+    AppUtilities.logger.t("Verifying location");
+    try {
+      userController.profile.position = await GeoLocatorController().updateLocation(userController.profile.id, userController.profile.position);
+    } catch (e) {
+      AppUtilities.logger.e(e.toString());
+    }
   }
 
 }

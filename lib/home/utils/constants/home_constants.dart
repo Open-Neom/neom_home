@@ -10,9 +10,7 @@ import '../../../home/widgets/menu_model.dart';
 
 class HomeConstants {
 
-  static List<Widget> eHomePages = [const TimelinePage(), const EventsPage(), const EventsPage(), const AudioPlayerRootPage()];
-  static List<Widget> gHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const AudioPlayerRootPage()];
-  static List<Widget> cHomePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const AudioPlayerRootPage()];
+  static List<Widget> homePages = [const TimelinePage(), const EventsPage(), const BookingHomePage(), const AudioPlayerRootPage()];
 
   static const int firstTabIndex = 0;
   static const int secondTabIndex = 1;
@@ -21,6 +19,7 @@ class HomeConstants {
 
   static final List<MenuModel> bottomMenuItems = [
     MenuModel(AppTranslationConstants.createPost, AppTranslationConstants.createPostMsg, Icons.colorize, AppRouteConstants.postUpload),
+    // MenuModel(AppTranslationConstants.videoUpload, AppTranslationConstants.uploadVideoMsg, Icons.colorize, AppRouteConstants.videoUpload),
     MenuModel(AppTranslationConstants.organizeEvent, AppTranslationConstants.organizeEventMsg, Icons.event, AppRouteConstants.createEventType),
     MenuModel(AppTranslationConstants.shareComment, AppTranslationConstants.shareCommentMsg, Icons.info, AppRouteConstants.createPostText),
   ];

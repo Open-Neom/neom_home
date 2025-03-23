@@ -13,6 +13,7 @@ import 'package:neom_commons/core/utils/constants/app_translation_constants.dart
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 
 import '../drawer/app_drawer.dart';
+import '../utils/constants/home_constants.dart';
 import '../utils/home_utilities.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_bottom_app_bar.dart';
@@ -28,17 +29,21 @@ class HomePage extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
       init: HomeController(),
-      builder: (_) => Obx(()=> Scaffold(
+      builder: (_) =>
+    // Obx(()=>
+    Scaffold(
         backgroundColor: AppFlavour.appInUse == AppInUse.g ? AppColor.getMain() : AppColor.main50,
-        appBar: _.currentIndex != 0 ||  _.timelineController.showAppBar.value
+        appBar: PreferredSize(
+    preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
+    child: Obx(()=> _.currentIndex != 0 ||  _.timelineController.showAppBar.value
             ? CustomAppBar(
             title: AppConstants.appTitle,
             profileImg: _.userController.profile.photoUrl.isNotEmpty
                 ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
             profileId: _.userController.profile.id
-        ) : null,
+        ) : const SizedBox.shrink(),),),
         drawer: const AppDrawer(),
-        body: _.isLoading ? Container(
+        body: Obx(()=>  _.isLoading.value ? Container(
             decoration: AppTheme.appBoxDecoration,
             child: const AppCircularProgressIndicator(showLogo: false,)
         ) : Stack(
@@ -46,15 +51,15 @@ class HomePage extends StatelessWidget {
             PageView(
               physics: const NeverScrollableScrollPhysics(),
               controller: _.pageController,
-              children: HomeUtilities.getHomePages(),
+              children: HomeConstants.homePages,
             ),
-            if(_.mediaPlayerEnabled && _.timelineReady) const Positioned(
+            if(_.mediaPlayerEnabled.value && _.timelineReady.value) const Positioned(
               left: 0, right: 0,
               bottom: 0,
               child: MiniPlayer(),
             ),
           ],
-        ),
+        ),),
         bottomNavigationBar: CustomBottomAppBar(
           backgroundColor: AppColor.bottomNavigationBar,
           color: Colors.white54,
@@ -63,18 +68,9 @@ class HomePage extends StatelessWidget {
           onTabSelected:(int index) => _.selectPageView(index, context: context),
           items: [
             CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
-            CustomBottomAppBarItem(
-              iconData: AppFlavour.getSecondTabIcon(),
-              text: AppFlavour.getSecondTabTitle().tr,
-            ),
-            CustomBottomAppBarItem(
-              iconData: AppFlavour.getThirdTabIcon(),
-              text: AppFlavour.getThirdTabTitle().tr
-            ),
-            CustomBottomAppBarItem(
-              iconData: AppFlavour.getForthTabIcon(),
-              text: AppFlavour.getFortTabTitle().tr,
-            )
+            CustomBottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: AppFlavour.getSecondTabTitle().tr,),
+            CustomBottomAppBarItem(iconData: AppFlavour.getThirdTabIcon(), text: AppFlavour.getThirdTabTitle().tr),
+            CustomBottomAppBarItem(iconData: AppFlavour.getForthTabIcon(), text: AppFlavour.getFortTabTitle().tr,)
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -93,7 +89,8 @@ class HomePage extends StatelessWidget {
             child: Icon(AppFlavour.getHomeActionBtnIcon()),
           ),
         ),
-      ),),
+      ),
+      // ),
     );
   }
 

@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:neom_commons/auth/ui/login/login_controller.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/data/firestore/app_analytics_firestore.dart';
+import 'package:neom_commons/core/data/implementations/app_hive_controller.dart';
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
-import 'package:neom_commons/core/data/implementations/shared_preference_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
@@ -73,7 +73,7 @@ class AppSettingsController extends GetxController {
     }
 
     try {
-      isAvailable ? Get.find<SharedPreferenceController>().updateLocale(appLocale)
+      isAvailable ? AppHiveController().updateLocale(appLocale)
           : Get.snackbar(AppTranslationConstants.underConstruction.tr,
           AppTranslationConstants.underConstructionMsg.tr,
           snackPosition: SnackPosition.bottom);
