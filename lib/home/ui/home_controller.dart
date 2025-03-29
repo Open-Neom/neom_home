@@ -43,7 +43,10 @@ class HomeController extends GetxController implements HomeService {
       }
 
       pageController.addListener(() {
-        currentIndex.value = pageController.page!.toInt();
+        int newIndex = pageController.page!.toInt();
+        if (currentIndex.value != newIndex) {
+          currentIndex.value = newIndex;
+        }
       });
 
       int toIndex =  0;
@@ -140,11 +143,21 @@ class HomeController extends GetxController implements HomeService {
       if(pageController.hasClients) {
         switch(index) {
           case HomeConstants.firstTabIndex:
-            pageController.jumpToPage(index);
+            // pageController.jumpToPage(index);
+            pageController.animateToPage(
+              index,
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeInOutBack,
+            );
             currentIndex.value = index;
             break;
           case HomeConstants.secondTabIndex:
-            pageController.jumpToPage(index);
+            // pageController.jumpToPage(index);
+            pageController.animateToPage(
+              index,
+              duration: Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+            );
             currentIndex.value = index;
             break;
           case HomeConstants.thirdTabIndex:
@@ -152,6 +165,11 @@ class HomeController extends GetxController implements HomeService {
               Get.toNamed(AppRouteConstants.libraryHome);
             } else {
               pageController.jumpToPage(index);
+              pageController.animateToPage(
+                index,
+                duration: Duration(milliseconds: 200),
+                curve: Curves.easeIn,
+              );
               currentIndex.value = index;
             }
             break;
