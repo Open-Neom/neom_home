@@ -76,8 +76,8 @@ class BlockedProfilesPage extends StatelessWidget {
                         ]
                     ).show();
                   } else {
-                    itemmateDetailsController.isLoading = false;
-                    itemmateDetailsController.mate = mate;
+                    itemmateDetailsController.isLoading.value = false;
+                    itemmateDetailsController.mate.value = mate;
                     _.getMateDetails(mate);
                   }
 

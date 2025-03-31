@@ -6,6 +6,7 @@ import 'package:neom_commons/core/domain/model/app_media_item.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
+import 'package:neom_commons/core/utils/enums/profile_type.dart';
 import 'package:neom_commons/core/utils/enums/verification_level.dart';
 import 'package:neom_itemlists/itemlists/ui/widgets/app_item_widgets.dart';
 
@@ -48,7 +49,7 @@ List<Widget> buildMateTiles(AppSearchController controller, BuildContext context
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            if(mate.mainFeature != ProfileType.general.name) Row(
               children: [
                 Icon(AppFlavour.getAppItemIcon(), color: Colors.blueGrey, size: 15),
                 AppTheme.widthSpace5,
