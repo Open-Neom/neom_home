@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_audio_player/utils/neom_audio_utilities.dart';
 import 'package:neom_commons/core/data/implementations/app_hive_controller.dart';
-import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/neom_commons.dart';
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
@@ -146,7 +145,7 @@ class HomeController extends GetxController implements HomeService {
             // pageController.jumpToPage(index);
             pageController.animateToPage(
               index,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOutBack,
             );
             currentIndex.value = index;
@@ -155,7 +154,7 @@ class HomeController extends GetxController implements HomeService {
             // pageController.jumpToPage(index);
             pageController.animateToPage(
               index,
-              duration: Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
             );
             currentIndex.value = index;
@@ -167,7 +166,7 @@ class HomeController extends GetxController implements HomeService {
               pageController.jumpToPage(index);
               pageController.animateToPage(
                 index,
-                duration: Duration(milliseconds: 200),
+                duration: const Duration(milliseconds: 200),
                 curve: Curves.easeIn,
               );
               currentIndex.value = index;

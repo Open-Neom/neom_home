@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
+
 import '../ui/home_controller.dart';
 import 'custom_bottom_bar_item.dart';
-import 'package:get/get.dart';
 
 class CustomBottomAppBar extends StatefulWidget {
 

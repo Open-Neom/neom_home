@@ -14,7 +14,6 @@ import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 
 import '../drawer/app_drawer.dart';
 import '../utils/constants/home_constants.dart';
-import '../utils/home_utilities.dart';
 import '../widgets/custom_appbar.dart';
 import '../widgets/custom_bottom_app_bar.dart';
 import '../widgets/custom_bottom_bar_item.dart';

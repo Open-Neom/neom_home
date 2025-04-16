@@ -95,7 +95,7 @@ class AppSettingsController extends GetxController {
     update([AppPageIdConstants.settingsPrivacy]);
 
     try {
-      await AppAnalyticsFirestore().setUserAnalytics();
+      await AppAnalyticsFirestore().setUserLocations();
     } catch(e) {
       AppUtilities.logger.e(e.toString());
     }
