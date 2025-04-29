@@ -14,6 +14,7 @@ import 'package:neom_commons/core/utils/constants/app_translation_constants.dart
 import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
+import 'package:neom_commons/core/utils/enums/facilitator_type.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_commons/core/utils/enums/verification_level.dart';
@@ -59,7 +60,7 @@ class AppDrawer extends StatelessWidget {
                             drawerRowOption(AppDrawerMenu.inbox, const Icon(FontAwesomeIcons.comments), context),
                           ],
                         ),
-                      drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendar), context),
+                      // drawerRowOption(AppDrawerMenu.calendar, const Icon(FontAwesomeIcons.calendar), context),
                       if(AppFlavour.appInUse != AppInUse.c) //TODO Not implemented on "C" app yet
                         drawerRowOption(AppDrawerMenu.requests, const Icon(Icons.email), context),
                       Column(
@@ -72,7 +73,7 @@ class AppDrawer extends StatelessWidget {
                               children: [
                                 // if(_.user.userRole != UserRole.subscriber && (_.appProfile.type == ProfileType.appArtist || (_.appProfile.type == ProfileType.facilitator && _.appProfile.facilities?.values.first.type == FacilityType.publisher)))
                                 //   drawerRowOption(AppDrawerMenu.nupale, const Icon(FontAwesomeIcons.bookOpenReader), context),
-                                // drawerRowOption(AppDrawerMenu.casete, const Icon(FontAwesomeIcons.bookOpenReader), context),
+                                // drawerRowOption(AppDrawerMenu.casete, const Icon(FontAwesomeIcons.tape), context),
                                 drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
                                 const Divider(),
                                 drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
@@ -290,7 +291,7 @@ class AppDrawer extends StatelessWidget {
             case AppDrawerMenu.inspiration:
               Get.toNamed(AppRouteConstants.blog);
             case AppDrawerMenu.nupale:
-              Get.toNamed(AppRouteConstants.nupaleStats1);
+              Get.toNamed(AppRouteConstants.nupaleHome);
             case AppDrawerMenu.casete:
               Get.toNamed(AppRouteConstants.nupaleStats2);
               // Get.toNamed(AppRouteConstants.caseteStats);

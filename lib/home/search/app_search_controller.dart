@@ -17,7 +17,6 @@ import 'package:neom_commons/core/utils/enums/search_type.dart';
 
 class AppSearchController extends GetxController implements SearchService {
 
-  var logger = AppUtilities.logger;  
   final userController = Get.find<UserController>();
   MateController mateController = Get.put(MateController());
   ScrollController scrollController = ScrollController();
@@ -37,45 +36,58 @@ class AppSearchController extends GetxController implements SearchService {
   SearchType searchType = SearchType.profile;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    logger.i("Search Controller Init");
+    AppUtilities.logger.i("Search Controller Init");
+
     try {
-      searchType = Get.arguments as SearchType;
-      switch(searchType) {
-        case SearchType.profile:
-          await loadProfiles();
-          await loadItems();
-          break;
-        case SearchType.band:
-          break;
-        case SearchType.event:
-          break;
-        case SearchType.any:
-          break;
+      final args = Get.arguments;
+      if(args is List && args.isNotEmpty) {
+
+        final firstArg = args[0];
+        if(firstArg is SearchType) {
+          searchType = firstArg;
+        }
+
+        switch(searchType) {
+          case SearchType.profile:
+            loadProfiles();
+            break;
+          case SearchType.band:
+            break;
+          case SearchType.event:
+            break;
+          case SearchType.any:
+            loadProfiles();
+            loadItems();
+            break;
+        }
+      } else {
+        loadProfiles();
       }
     } catch (e) {
-      logger.e(e.toString());
+      AppUtilities.logger.e(e.toString());
     }
 
   }
 
   @override
-  void onReady() async {
+  void onReady() {
     super.onReady();
     try {
       setSearchParam("");
     } catch (e) {
-      logger.e(e.toString());
+      AppUtilities.logger.e(e.toString());
     }
 
     update([AppPageIdConstants.search]);
   }
 
   @override
-  void setSearchParam(String param) {
+  void setSearchParam(String param, {bool onlyByName = false}) {
     searchParam.value = param;
     filteredProfiles.value = searchParam.isEmpty ? mateController.totalProfiles
+        : onlyByName ? mateController.filterByName(searchParam.value)
         : mateController.filterByNameOrInstrument(searchParam.value);
     // Actualizamos el filtrado de media items:
     filteredMediaItems.value = searchParam.isEmpty
@@ -143,8 +155,8 @@ class AppSearchController extends GetxController implements SearchService {
       sortedProfileLocation.value[distanceBetweenProfiles] = mate;
     });
 
-    logger.i("Filtered Profiles ${filteredProfiles.value.length}");
-    logger.i("Sortered Profiles ${sortedProfileLocation.value.length}");
+    AppUtilities.logger.i("Filtered Profiles ${filteredProfiles.value.length}");
+    AppUtilities.logger.i("Sortered Profiles ${sortedProfileLocation.value.length}");
     update([AppPageIdConstants.search]);
   }
 

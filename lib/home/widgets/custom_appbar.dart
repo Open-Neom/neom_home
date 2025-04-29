@@ -71,7 +71,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             icon: const Icon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: ()=>{
-              Get.toNamed(AppRouteConstants.search, arguments: SearchType.profile)
+              Get.toNamed(AppRouteConstants.search, arguments: SearchType.any)
             }
         ),
         AppFlavour.appInUse == AppInUse.c
