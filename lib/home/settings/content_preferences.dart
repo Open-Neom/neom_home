@@ -7,6 +7,7 @@ import 'package:neom_commons/core/ui/widgets/title_subtitle_row.dart';
 import 'package:neom_commons/core/utils/app_color.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
+import 'package:neom_commons/core/utils/constants/app_locale_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
@@ -35,7 +36,7 @@ class ContentPreferencePage extends StatelessWidget {
             HeaderWidget(AppTranslationConstants.language.tr, secondHeader: true),
             TitleSubtitleRow(
                 AppTranslationConstants.preferredLanguage.tr,
-                subtitle: AppTranslationConstants.languageFromLocale(Get.locale!).tr,
+                subtitle: AppLocaleConstants.languageFromLocale(Get.locale!).tr,
                 onPressed: () => Alert(
                   context: context,
                   style: AlertStyle(
@@ -44,7 +45,7 @@ class ContentPreferencePage extends StatelessWidget {
                   ),
                   title: AppTranslationConstants.chooseYourLanguage.tr,
                   content: Obx(()=> DropdownButton<String>(
-                        items: AppTranslationConstants.supportedLanguages.map<DropdownMenuItem<String>>((String language) {
+                        items: AppLocaleConstants.supportedLanguages.map<DropdownMenuItem<String>>((String language) {
                           return DropdownMenuItem<String>(
                               value: language,
                               child: Text(language.tr)

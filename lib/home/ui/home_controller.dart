@@ -60,7 +60,7 @@ class HomeController extends GetxController implements HomeService {
         }
       }
 
-      if(!currentIndex.value.isEqual(toIndex) || currentIndex == 0) {
+      if(!currentIndex.value.isEqual(toIndex) || currentIndex.value == 0) {
         selectPageView(toIndex);
       }
 
@@ -265,7 +265,7 @@ class HomeController extends GetxController implements HomeService {
   }
 
   Future<void> setInitialTimeline() async {
-    if(timelineController.initialized && currentIndex == 0 && !startingHome) {
+    if(timelineController.initialized && currentIndex.value == 0 && !startingHome) {
       if(timelineController.timelineScrollController.hasClients) {
         await timelineController.timelineScrollController.animateTo(
             0.0, curve: Curves.easeOut,

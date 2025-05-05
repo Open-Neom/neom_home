@@ -1,4 +1,4 @@
-library neom_home;
+library;
 
 export 'home/home_routes.dart';
 

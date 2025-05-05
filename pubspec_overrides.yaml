@@ -1,29 +1,18 @@
 dependency_overrides:
   neom_commons:
     path: ../neom_commons
-  neom_commerce:
-    path: ../neom_commerce
   neom_events:
     path: ../neom_events
-#  neom_itemlists:
-#    path: ../neom_itemlists
-  neom_audio_player:
-    path: ../neom_audio_player
-#  neom_posts:
-#    path: ../neom_posts
+  neom_itemlists:
+    path: ../neom_itemlists
   neom_profile:
     path: ../neom_profile
   neom_timeline:
     path: ../neom_timeline
-  neom_generator:
-    path: ../neom_generator
-#  neom_generator:
-#    path: ../neom_generator
-  #  neom_inbox:
-  #    path: ../neom_inbox
-  #  neom_booking:
-  #    path: ../neom_booking
-  #  neom_jobs:
-  #    path: ../neom_jobs
-#  uuid: 4.4.0
-#  rxdart: 0.28.0
+  neom_audio_player:
+    path: ../neom_audio_player
+
+  neom_booking:
+    path: ../neom_booking
+  neom_jobs:
+    path: ../neom_jobs

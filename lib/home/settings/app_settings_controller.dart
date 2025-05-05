@@ -8,6 +8,7 @@ import 'package:neom_commons/core/data/implementations/app_hive_controller.dart'
 import 'package:neom_commons/core/data/implementations/geolocator_controller.dart';
 import 'package:neom_commons/core/data/implementations/user_controller.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
+import 'package:neom_commons/core/utils/constants/app_locale_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
@@ -43,7 +44,7 @@ class AppSettingsController extends GetxController {
     super.onInit();
     logger.d("Settings Controller Init");
     await userController.getProfiles();
-    newLanguage = AppTranslationConstants.languageFromLocale(Get.locale!);
+    newLanguage = AppLocaleConstants.languageFromLocale(Get.locale!);
     isLoading = false;
     locationPermission = await Geolocator.checkPermission();
   }

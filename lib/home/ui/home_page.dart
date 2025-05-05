@@ -34,7 +34,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppFlavour.appInUse == AppInUse.g ? AppColor.getMain() : AppColor.main50,
         appBar: PreferredSize(
     preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
-    child: Obx(()=> _.currentIndex != 0 ||  _.timelineController.showAppBar.value
+    child: Obx(()=> _.currentIndex.value != 0 ||  _.timelineController.showAppBar.value
             ? CustomAppBar(
             title: AppConstants.appTitle,
             profileImg: _.userController.profile.photoUrl.isNotEmpty

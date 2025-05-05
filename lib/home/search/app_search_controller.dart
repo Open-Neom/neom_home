@@ -113,9 +113,9 @@ class AppSearchController extends GetxController implements SearchService {
   }
 
   @override
-  Future<void> loadProfiles() async {
+  Future<void> loadProfiles({bool includeSelf = false}) async {
     try {
-      await mateController.loadProfiles();
+      await mateController.loadProfiles(includeSelf: includeSelf);
       filteredProfiles.value.addAll(mateController.followingProfiles);
       filteredProfiles.value.addAll(mateController.followerProfiles);
       filteredProfiles.value.addAll(mateController.mates);

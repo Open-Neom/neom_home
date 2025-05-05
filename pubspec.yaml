@@ -18,42 +18,27 @@ dependencies:
   neom_events:
     git:
       url: git@github.com:Cyberneom/neom_events.git
-  neom_inbox:
-    git:
-      url: git@github.com:Cyberneom/neom_inbox.git
   neom_itemlists:
     git:
       url: git@github.com:Cyberneom/neom_itemlists.git
-  neom_posts:
-    git:
-      url: git@github.com:Cyberneom/neom_posts.git
   neom_profile:
     git:
       url: git@github.com:Cyberneom/neom_profile.git
   neom_timeline:
     git:
       url: git@github.com:Cyberneom/neom_timeline.git
-  neom_booking:
-    git:
-      url: git@github.com:emmanuel-montoya/neom_booking.git
-  neom_commerce:
-    git:
-      url: git@github.com:emmanuel-montoya/neom_commerce.git
   neom_audio_player:
     git:
       url: https://github.com/Cyberneom/neom_audio_player.git
+
+  neom_booking:
+    git:
+      url: git@github.com:emmanuel-montoya/neom_booking.git
   neom_jobs:
     git:
       url: https://github.com/emmanuel-montoya/neom_jobs.git
-  neom_generator:
-    git:
-      url: https://github.com/Cyberneom/neom_generator.git
-
-#  package_info_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
-
-flutter:
+  flutter_lints: ^5.0.0
