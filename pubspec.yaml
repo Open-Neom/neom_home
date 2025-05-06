@@ -27,10 +27,9 @@ dependencies:
 #  neom_timeline:
 #    git:
 #      url: git@github.com:Cyberneom/neom_timeline.git
-#  neom_audio_player:
-#    git:
-#      url: https://github.com/Cyberneom/neom_audio_player.git
-#
+  neom_audio_player:
+    git:
+      url: https://github.com/Cyberneom/neom_audio_player.git
   neom_booking:
     git:
       url: git@github.com:emmanuel-montoya/neom_booking.git
