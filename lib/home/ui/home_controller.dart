@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:neom_audio_player/utils/neom_audio_utilities.dart';
 import 'package:neom_commons/core/data/implementations/app_hive_controller.dart';
 import 'package:neom_commons/neom_commons.dart';
+import 'package:neom_notifications/notifications/data/implementations/push_notification_service.dart';
 import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
 import '../utils/constants/home_constants.dart';
 
