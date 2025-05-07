@@ -14,7 +14,9 @@ import 'package:neom_commons/core/utils/constants/app_translation_constants.dart
 import 'package:neom_commons/core/utils/core_utilities.dart';
 import 'package:neom_commons/core/utils/enums/app_drawer_menu.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
+import 'package:neom_commons/core/utils/enums/facilitator_type.dart';
 import 'package:neom_commons/core/utils/enums/profile_type.dart';
+import 'package:neom_commons/core/utils/enums/subscription_level.dart';
 import 'package:neom_commons/core/utils/enums/user_role.dart';
 import 'package:neom_commons/core/utils/enums/verification_level.dart';
 
@@ -70,8 +72,8 @@ class AppDrawer extends StatelessWidget {
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
                               children: [
-                                // if(_.user.userRole != UserRole.subscriber && (_.appProfile.type == ProfileType.appArtist || (_.appProfile.type == ProfileType.facilitator && _.appProfile.facilities?.values.first.type == FacilityType.publisher)))
-                                //   drawerRowOption(AppDrawerMenu.nupale, const Icon(FontAwesomeIcons.bookOpenReader), context),
+                                if(_.user.userRole != UserRole.subscriber && (_.appProfile.type == ProfileType.appArtist || (_.appProfile.type == ProfileType.facilitator && _.appProfile.facilities?.values.first.type == FacilityType.publisher)))
+                                  drawerRowOption(AppDrawerMenu.nupale, const Icon(FontAwesomeIcons.bookOpenReader), context),
                                 // drawerRowOption(AppDrawerMenu.casete, const Icon(FontAwesomeIcons.tape), context),
                                 drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
                                 const Divider(),
@@ -85,7 +87,7 @@ class AppDrawer extends StatelessWidget {
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                         ],
                       ),
-                      if(AppFlavour.appInUse != AppInUse.c) Column(
+                      if(AppFlavour.appInUse != AppInUse.c && _.userController.subscriptionLevel.value > SubscriptionLevel.basic.value) Column(
                         children: [
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
                           const Divider(),
@@ -155,8 +157,8 @@ class AppDrawer extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        _.appProfile.name.length > AppConstants.maxArtistNameLength
-                            ? "${_.appProfile.name.substring(0,AppConstants.maxArtistNameLength).capitalizeFirst}..." : _.appProfile.name.capitalizeFirst,
+                        _.appProfile.name.length > AppConstants.maxDrawerNameLength
+                            ? "${_.appProfile.name.substring(0,AppConstants.maxDrawerNameLength).capitalizeFirst}..." : _.appProfile.name.capitalizeFirst,
                         style: AppTheme.primaryTitleText,
                         overflow: TextOverflow.fade,
                       ),
@@ -188,10 +190,10 @@ class AppDrawer extends StatelessWidget {
           context: context));
       widgets.add(AppTheme.widthSpace5);
       widgets.add(AppFlavour.getVerificationIcon(_.appProfile.verificationLevel));
-    } else if(_.userController.userSubscription?.subscriptionId.isEmpty ?? true) {
+    } else if(_.user.subscriptionId.isEmpty) {
       if(_.appProfile.type == ProfileType.general) {
         widgets.add(TextButton(
-          onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
+          onPressed: () => _.subscriptionController?.getSubscriptionAlert(context, AppRouteConstants.home),
           style: TextButton.styleFrom(
             padding: EdgeInsets.zero, // Remove padding here
             textStyle: const TextStyle(decoration: TextDecoration.underline), // Keep your underline style
@@ -206,14 +208,19 @@ class AppDrawer extends StatelessWidget {
         widgets.add(AppTheme.widthSpace5);
         widgets.add(const Icon(Icons.verified_outlined, color: Colors.white70));
         widgets.add(TextButton(
-            onPressed: () => _.subscriptionController.getSubscriptionAlert(context, AppRouteConstants.home),
+            onPressed: () => _.subscriptionController?.getSubscriptionAlert(context, AppRouteConstants.home),
             child: Text(AppTranslationConstants.verifyProfile.tr,
               style: const TextStyle(decoration: TextDecoration.underline),
             )
         ));
       }
     } else {
-      widgets.add(Text(AppTranslationConstants.activeSubscription.tr,));
+      if(_.user.subscriptionId == SubscriptionLevel.basic.name) {
+        widgets.add(Text(AppTranslationConstants.enjoyTheApp.tr,));
+      } else {
+        widgets.add(Text(AppTranslationConstants.activeSubscription.tr,));
+      }
+
     }
 
 

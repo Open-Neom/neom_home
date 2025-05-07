@@ -74,10 +74,15 @@ class AppSettingsController extends GetxController {
     }
 
     try {
-      isAvailable ? AppHiveController().updateLocale(appLocale)
-          : Get.snackbar(AppTranslationConstants.underConstruction.tr,
-          AppTranslationConstants.underConstructionMsg.tr,
-          snackPosition: SnackPosition.bottom);
+      if(isAvailable) {
+        AppHiveController().setLocale(appLocale);
+        AppHiveController().updateLocale(appLocale);        
+      } else {
+        Get.snackbar(AppTranslationConstants.underConstruction.tr,
+            AppTranslationConstants.underConstructionMsg.tr,
+            snackPosition: SnackPosition.bottom);
+      }
+      
     } catch (e) {
       logger.e(e.toString());
     }
