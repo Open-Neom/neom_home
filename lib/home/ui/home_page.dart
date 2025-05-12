@@ -28,19 +28,18 @@ class HomePage extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
       init: HomeController(),
-      builder: (_) =>
-    // Obx(()=>
-    Scaffold(
+      builder: (_) => Scaffold(
         backgroundColor: AppFlavour.appInUse == AppInUse.g ? AppColor.getMain() : AppColor.main50,
         appBar: PreferredSize(
-    preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
-    child: Obx(()=> _.currentIndex.value != 0 ||  _.timelineController.showAppBar.value
-            ? CustomAppBar(
-            title: AppConstants.appTitle,
-            profileImg: _.userController.profile.photoUrl.isNotEmpty
-                ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
-            profileId: _.userController.profile.id
-        ) : const SizedBox.shrink(),),),
+          preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
+          child: Obx(()=> _.currentIndex.value != 0 ||  _.timelineController.showAppBar.value
+              ? CustomAppBar(
+              title: AppConstants.appTitle,
+              profileImg: _.userController.profile.photoUrl.isNotEmpty
+                  ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
+              profileId: _.userController.profile.id
+          ) : const SizedBox.shrink(),),
+        ),
         drawer: const AppDrawer(),
         body: Obx(()=>  _.isLoading.value ? Container(
             decoration: AppTheme.appBoxDecoration,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/core/app_flavour.dart';
 import 'package:neom_commons/core/domain/model/app_media_item.dart';
+import 'package:neom_commons/core/domain/model/app_profile.dart';
 import 'package:neom_commons/core/utils/app_theme.dart';
 import 'package:neom_commons/core/utils/app_utilities.dart';
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
@@ -12,8 +13,8 @@ import 'package:neom_itemlists/itemlists/ui/widgets/app_item_widgets.dart';
 
 import '../app_search_controller.dart';
 
-List<Widget> buildMateTiles(AppSearchController controller, BuildContext context) {
-  return controller.sortedProfileLocation.value.values.map((mate) {
+List<Widget> buildMateTiles(List<AppProfile> mates, BuildContext context) {
+  return mates.map((mate) {
     // Puedes reutilizar la lógica de buildMateSearchList para crear cada ListTile
     return mate.name.isNotEmpty && mate.isActive
         ? GestureDetector(

@@ -183,8 +183,6 @@ class HomeController extends GetxController implements HomeService {
       AppUtilities.logger.e(e.toString());
     }
 
-
-    // update([AppPageIdConstants.home]);
   }
 
   @override
