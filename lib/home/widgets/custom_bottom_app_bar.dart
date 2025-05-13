@@ -83,6 +83,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
     CustomBottomAppBarItem? item,
     int index = 0,
     ValueChanged<int>? onPressed,
+    int currentIndex = 0,
   }) {
     Color color = homeController.currentIndex.value == index ? widget.selectedColor : widget.color;
     return Expanded(

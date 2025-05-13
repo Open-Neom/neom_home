@@ -72,22 +72,22 @@ class AppDrawer extends StatelessWidget {
                           if(AppFlavour.appInUse == AppInUse.e)
                             Column(
                               children: [
-                                if(_.user.userRole != UserRole.subscriber && (_.appProfile.type == ProfileType.appArtist || (_.appProfile.type == ProfileType.facilitator && _.appProfile.facilities?.values.first.type == FacilityType.publisher)))
+                                if(_.userController.subscriptionLevel.value >= SubscriptionLevel.creator.value || _.user.userRole.value > UserRole.subscriber.value)
                                   drawerRowOption(AppDrawerMenu.nupale, const Icon(FontAwesomeIcons.bookOpenReader), context),
+                                //TODO Working on it with similar views as NUPALE but analysing caseteSessions
                                 // drawerRowOption(AppDrawerMenu.casete, const Icon(FontAwesomeIcons.tape), context),
                                 drawerRowOption(AppDrawerMenu.directory, const Icon(FontAwesomeIcons.building), context),
                                 const Divider(),
                                 drawerRowOption(AppDrawerMenu.appItemQuotation, const Icon(Icons.attach_money), context),
                                 drawerRowOption(AppDrawerMenu.services, const Icon(Icons.room_service), context),
-                                ///DEPRECATED
                                 const Divider(),
                               ],
                             )
-                          ///NOT READY FOR THIS FUNCITONALITY OF CROWDFUNDING
+                          ///NOT READY FOR THIS FUNCITONALITY OF CROWDFUNDING - AppInUse.e Usage
                           // _menuListRowButton(AppConstants.crowdfunding, const Icon(FontAwesomeIcons.gifts), true, context),
                         ],
                       ),
-                      if(AppFlavour.appInUse != AppInUse.c && _.userController.subscriptionLevel.value > SubscriptionLevel.basic.value) Column(
+                      if(AppFlavour.appInUse != AppInUse.c && (_.userController.subscriptionLevel.value >= SubscriptionLevel.creator.value || _.user.userRole.value > UserRole.subscriber.value)) Column(
                         children: [
                           drawerRowOption(AppDrawerMenu.wallet, const Icon(FontAwesomeIcons.coins), context),
                           const Divider(),
