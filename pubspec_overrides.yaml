@@ -11,11 +11,5 @@ dependency_overrides:
     path: ../neom_jobs
   neom_notifications:
     path: ../neom_notifications
-#  neom_itemlists:
-#    path: ../neom_itemlists
-#  neom_profile:
-#    path: ../neom_profile
-#  neom_timeline:
-#    path: ../neom_timeline
-
-#
+  neom_search:
+    path: ../neom_search

@@ -140,7 +140,7 @@ class AppDrawer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(28),
                 image: DecorationImage(
                   image: CachedNetworkImageProvider(_.appProfile.photoUrl.isNotEmpty
-                      ? _.appProfile.photoUrl : AppFlavour.getNoImageUrl()),
+                      ? _.appProfile.photoUrl : AppFlavour.getAppLogoUrl()),
                   fit: BoxFit.cover,
                   ),
                 ),
@@ -156,9 +156,8 @@ class AppDrawer extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        _.appProfile.name.length > AppConstants.maxDrawerNameLength
-                            ? "${_.appProfile.name.substring(0,AppConstants.maxDrawerNameLength).capitalizeFirst}..." : _.appProfile.name.capitalizeFirst,
+                      Text(CoreUtilities.capitalizeFirstLetter(_.appProfile.name.length > AppConstants.maxDrawerNameLength
+                          ? "${_.appProfile.name.substring(0,AppConstants.maxDrawerNameLength)}..." : _.appProfile.name,),
                         style: AppTheme.primaryTitleText,
                         overflow: TextOverflow.fade,
                       ),

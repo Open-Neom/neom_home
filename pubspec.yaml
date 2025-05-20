@@ -39,6 +39,9 @@ dependencies:
   neom_notifications:
     git:
       url: git@github.com:Cyberneom/neom_notifications.git
+  neom_search:
+    git:
+      url: git@github.com:Cyberneom/neom_search.git
 
 dev_dependencies:
   flutter_test:
