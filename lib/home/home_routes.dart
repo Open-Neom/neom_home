@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 
 import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
-import 'search/app_search_page.dart';
 import 'settings/about_page.dart';
 import 'settings/account_settings_page.dart';
 import 'settings/blocked_profiles_page.dart';
@@ -22,10 +21,6 @@ class HomeRoutes {
       name: AppRouteConstants.refresh,
       page: () => const HomePage(),
       transition: Transition.zoom,
-    ),
-    GetPage(
-      name: AppRouteConstants.search,
-      page: () => const AppSearchPage(),
     ),
     GetPage(
       name: AppRouteConstants.settingsPrivacy,
