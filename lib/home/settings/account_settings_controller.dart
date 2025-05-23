@@ -19,8 +19,8 @@ import 'package:rflutter_alert/rflutter_alert.dart';
 
 class AccountSettingsController extends GetxController {
 
-  final userController = Get.find<UserController>();
-  late SubscriptionController subscriptionController;
+  UserController userController = Get.find<UserController>();
+  SubscriptionController subscriptionController = Get.put(SubscriptionController());
   AppUser user = AppUser();
 
   bool isLoading = true;
@@ -33,19 +33,20 @@ class AccountSettingsController extends GetxController {
     super.onInit();
     AppUtilities.logger.d("AccountSettings Controller Init for userId ${userController.user.id}");
     user = userController.user;
-
-    subscriptionController = Get.put(SubscriptionController());
-
     controllerPhone.text = user.phoneNumber;
-    isLoading = false;
   }
 
   @override
+  void onReady() {
+    super.onReady();
+    AppUtilities.logger.d("AccountSettings Controller Ready");
+    isLoading = false;
+  }
+
   void getSubscriptionAlert(BuildContext context) {
     subscriptionController.getSubscriptionAlert(context, AppRouteConstants.accountSettings);
   }
 
-  @override
   Future<void> updatePhone(BuildContext context) async {
     String validateMsg = "";
     String phoneNumberText = controllerPhone.text;
@@ -77,7 +78,6 @@ class AccountSettingsController extends GetxController {
     update([AppPageIdConstants.accountSettings]);
   }
 
-  @override
   Future<bool?> getUpdatePhoneAlert(BuildContext context) {
     AppUtilities.logger.d("getUpdatePhoneAlert");
     return Alert(

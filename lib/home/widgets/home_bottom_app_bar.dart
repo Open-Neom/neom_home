@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:neom_commons/core/app_flavour.dart';
-import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 
+import '../domain/models/home_bottom_bar_item.dart';
 import '../ui/home_controller.dart';
-import 'custom_bottom_bar_item.dart';
 
-class CustomBottomAppBar extends StatefulWidget {
+class HomeBottomAppBar extends StatefulWidget {
 
-  final List<CustomBottomAppBarItem> items;
+  final List<HomeBottomAppBarItem> items;
   final String centerItemText;
   final double height;
   final double iconSize;
@@ -19,7 +17,7 @@ class CustomBottomAppBar extends StatefulWidget {
   final NotchedShape notchedShape;
   final ValueChanged<int> onTabSelected;
 
-  CustomBottomAppBar({super.key,
+  HomeBottomAppBar({super.key,
     required this.items,
     this.centerItemText = "",
     this.height = 60,
@@ -35,27 +33,17 @@ class CustomBottomAppBar extends StatefulWidget {
   }
 
   @override
-  State<StatefulWidget> createState() => CustomBottomAppBarState();
+  State<StatefulWidget> createState() => HomeBottomAppBarState();
 }
 
-class CustomBottomAppBarState extends State<CustomBottomAppBar> {
+class HomeBottomAppBarState extends State<HomeBottomAppBar> {
 
   final HomeController homeController = Get.find<HomeController>();
 
   void updateIndex(int index) {
     widget.onTabSelected(index);
     setState(() {
-      switch(AppFlavour.appInUse) {
-        case AppInUse.c:
-          if(index < 3) homeController.currentIndex.value = index;
-          break;
-        case AppInUse.e:
-          if(index < 2) homeController.currentIndex.value = index;
-          break;
-        case AppInUse.g:
-          if(index < 3) homeController.currentIndex.value = index;
-          break;
-      }
+      if(index < 3) homeController.currentIndex.value = index;
     });
   }
 
@@ -80,7 +68,7 @@ class CustomBottomAppBarState extends State<CustomBottomAppBar> {
   }
 
   Widget _buildTabItem({
-    CustomBottomAppBarItem? item,
+    HomeBottomAppBarItem? item,
     int index = 0,
     ValueChanged<int>? onPressed,
     int currentIndex = 0,

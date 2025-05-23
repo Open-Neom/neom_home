@@ -21,13 +21,13 @@ import 'package:neom_commons/core/utils/enums/search_type.dart';
 
 import '../ui/home_controller.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   final String title;
   final String profileImg;
   final String profileId;
 
-  const CustomAppBar({
+  const HomeAppBar({
     required this.title,
     required this.profileImg,
     required this.profileId,
@@ -71,7 +71,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             icon: const Icon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: ()=>{
-              Get.toNamed(AppRouteConstants.search, arguments: SearchType.any)
+              Get.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
             }
         ),
         AppFlavour.appInUse == AppInUse.c

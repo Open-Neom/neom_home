@@ -12,11 +12,11 @@ import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
 import 'package:neom_commons/core/utils/enums/app_in_use.dart';
 
+import '../domain/models/home_bottom_bar_item.dart';
 import '../drawer/app_drawer.dart';
 import '../utils/constants/home_constants.dart';
-import '../widgets/custom_appbar.dart';
-import '../widgets/custom_bottom_app_bar.dart';
-import '../widgets/custom_bottom_bar_item.dart';
+import '../widgets/home_appbar.dart';
+import '../widgets/home_bottom_app_bar.dart';
 import 'home_controller.dart';
 
 class HomePage extends StatelessWidget {
@@ -33,7 +33,7 @@ class HomePage extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
           child: Obx(()=> _.currentIndex.value != 0 ||  _.timelineController.showAppBar.value
-              ? CustomAppBar(
+              ? HomeAppBar(
               title: AppConstants.appTitle,
               profileImg: _.userController.profile.photoUrl.isNotEmpty
                   ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
@@ -58,17 +58,17 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),),
-        bottomNavigationBar: CustomBottomAppBar(
+        bottomNavigationBar: HomeBottomAppBar(
           backgroundColor: AppColor.bottomNavigationBar,
           color: Colors.white54,
           selectedColor: Colors.white.withOpacity(0.9),
           notchedShape: const CircularNotchedRectangle(),
           onTabSelected:(int index) => _.selectPageView(index, context: context),
           items: [
-            CustomBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
-            CustomBottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: AppFlavour.getSecondTabTitle().tr,),
-            CustomBottomAppBarItem(iconData: AppFlavour.getThirdTabIcon(), text: AppFlavour.getThirdTabTitle().tr),
-            CustomBottomAppBarItem(iconData: AppFlavour.getForthTabIcon(), text: AppFlavour.getFortTabTitle().tr,)
+            HomeBottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
+            HomeBottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: AppFlavour.getSecondTabTitle().tr,),
+            HomeBottomAppBarItem(iconData: AppFlavour.getThirdTabIcon(), text: AppFlavour.getThirdTabTitle().tr),
+            HomeBottomAppBarItem(iconData: AppFlavour.getForthTabIcon(), text: AppFlavour.getFortTabTitle().tr,)
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
