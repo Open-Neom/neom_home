@@ -61,6 +61,7 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
             item: widget.items[index],
             index: index,
             onPressed: updateIndex,
+            currentIndex: homeController.currentIndex.value,
           );
         }),
       ),
@@ -73,7 +74,7 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
     ValueChanged<int>? onPressed,
     int currentIndex = 0,
   }) {
-    Color color = homeController.currentIndex.value == index ? widget.selectedColor : widget.color;
+    Color color = currentIndex == index ? widget.selectedColor : widget.color;
     return Expanded(
       child: GestureDetector(
         onTap: () => onPressed!(index),

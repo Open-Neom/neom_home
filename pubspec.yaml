@@ -14,10 +14,10 @@ dependencies:
 
   neom_commons:
     git:
-      url: https://github.com/Cyberneom/neom_commons.git
+      url: git@github.com:Cyberneom/neom_commons.git
   neom_events:
     git:
-      url: https://github.com/Cyberneom/neom_events.git
+      url: git@github.com:Cyberneom/neom_events.git
   neom_audio_player:
     git:
       url: https://github.com/Cyberneom/neom_audio_player.git
@@ -29,7 +29,7 @@ dependencies:
       url: git@github.com:emmanuel-montoya/neom_jobs.git
   neom_notifications:
     git:
-      url: https://github.com/Cyberneom/neom_notifications.git
+      url: git@github.com:Cyberneom/neom_notifications.git
   neom_search:
     git:
       url: https://github.com/Cyberneom/neom_search.git
