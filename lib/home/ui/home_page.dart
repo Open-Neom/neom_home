@@ -36,7 +36,7 @@ class HomePage extends StatelessWidget {
               ? HomeAppBar(
               title: AppConstants.appTitle,
               profileImg: _.userController.profile.photoUrl.isNotEmpty
-                  ? _.userController.profile.photoUrl : AppFlavour.getNoImageUrl(),
+                  ? _.userController.profile.photoUrl : AppFlavour.getAppLogoUrl(),
               profileId: _.userController.profile.id
           ) : const SizedBox.shrink(),),
         ),

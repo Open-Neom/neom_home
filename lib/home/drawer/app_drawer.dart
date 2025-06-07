@@ -49,7 +49,7 @@ class AppDrawer extends StatelessWidget {
                             drawerRowOption(AppDrawerMenu.inspiration, const Icon(FontAwesomeIcons.filePen), context),
                           ],
                         ),
-                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.appArtist)
+                      if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.appArtist && _.user.userRole != UserRole.subscriber)
                         drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
                       if(AppFlavour.appInUse == AppInUse.c && _.userController.user.userRole != UserRole.subscriber)
                         Column(
