@@ -51,7 +51,7 @@ class AppDrawer extends StatelessWidget {
                         ),
                       if(AppFlavour.appInUse == AppInUse.g && _.appProfile.type == ProfileType.appArtist && _.user.userRole != UserRole.subscriber)
                         drawerRowOption(AppDrawerMenu.bands, const Icon(Icons.people), context),
-                      if(AppFlavour.appInUse == AppInUse.c && _.userController.user.userRole != UserRole.subscriber)
+                      if(AppFlavour.appInUse == AppInUse.c)
                         Column(
                           children: [
                             drawerRowOption(AppDrawerMenu.frequencies, Icon(AppFlavour.getInstrumentIcon()), context),
@@ -308,7 +308,7 @@ class AppDrawer extends StatelessWidget {
           child: icon
       ),
       title: customText(
-        selectedMenu.name.tr,
+        selectedMenu.name.tr.capitalize,
         textAlign: TextAlign.start,
         style: TextStyle(
           fontSize: 20,

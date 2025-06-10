@@ -43,8 +43,8 @@ class SettingsPrivacyPage extends StatelessWidget {
             TitleSubtitleRow(AppTranslationConstants.contentPreferences.tr, navigateTo: AppRouteConstants.contentPreferences),
             HeaderWidget(AppTranslationConstants.general.tr.capitalize, secondHeader: true,),
             TitleSubtitleRow(AppTranslationConstants.aboutApp.tr, navigateTo: AppRouteConstants.about),
-            if(AppFlavour.appInUse == AppInUse.c) TitleSubtitleRow(AppTranslationConstants.likeMyWork.tr, subtitle: AppTranslationConstants.buyCoffee.tr,
-              onPressed: () => launchUrl(Uri.parse(AppFlavour.getBuyMeACoffeeURL(),),)),
+            // if(AppFlavour.appInUse == AppInUse.c) TitleSubtitleRow(AppTranslationConstants.likeMyWork.tr, subtitle: AppTranslationConstants.buyCoffee.tr,
+            //   onPressed: () => launchUrl(Uri.parse(AppFlavour.getBuyMeACoffeeURL(),),)),
             TitleSubtitleRow(AppTranslationConstants.contactUs.tr, subtitle: AppTranslationConstants.contactUsSub.tr,
                 onPressed: () {
                 showModalBottomSheet(
