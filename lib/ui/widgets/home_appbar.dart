@@ -3,32 +3,30 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:neom_commons/auth/ui/login/login_controller.dart';
-import 'package:neom_commons/core/app_flavour.dart';
-import 'package:neom_commons/core/data/firestore/activity_feed_firestore.dart';
-import 'package:neom_commons/core/domain/model/activity_feed.dart';
-import 'package:neom_commons/core/utils/app_color.dart';
-import 'package:neom_commons/core/utils/app_theme.dart';
-import 'package:neom_commons/core/utils/app_utilities.dart';
-import 'package:neom_commons/core/utils/constants/app_assets.dart';
-import 'package:neom_commons/core/utils/constants/app_constants.dart';
-import 'package:neom_commons/core/utils/constants/app_route_constants.dart';
-import 'package:neom_commons/core/utils/constants/app_translation_constants.dart';
-import 'package:neom_commons/core/utils/constants/message_translation_constants.dart';
-import 'package:neom_commons/core/utils/core_utilities.dart';
-import 'package:neom_commons/core/utils/enums/app_in_use.dart';
-import 'package:neom_commons/core/utils/enums/search_type.dart';
+import 'package:neom_commons/ui/theme/app_color.dart';
+import 'package:neom_commons/ui/theme/app_theme.dart';
+import 'package:neom_commons/utils/app_alerts.dart';
+import 'package:neom_commons/utils/constants/app_assets.dart';
+import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
+import 'package:neom_commons/utils/enums/dot_menu_choices.dart';
+import 'package:neom_commons/utils/share_utilities.dart';
+import 'package:neom_core/app_config.dart';
+import 'package:neom_core/app_properties.dart';
+import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
+import 'package:neom_core/domain/model/activity_feed.dart';
+import 'package:neom_core/domain/use_cases/login_service.dart';
+import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_core/utils/enums/app_in_use.dart';
+import 'package:neom_core/utils/enums/search_type.dart';
 
-import '../ui/home_controller.dart';
+import '../home_controller.dart';
 
 class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
-  final String title;
   final String profileImg;
   final String profileId;
 
   const HomeAppBar({
-    required this.title,
     required this.profileImg,
     required this.profileId,
     super.key
@@ -48,7 +46,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: CircleAvatar(
           maxRadius: 60,
           backgroundImage: CachedNetworkImageProvider(profileImg.isNotEmpty
-              ? profileImg : AppFlavour.getNoImageUrl())
+              ? profileImg : AppProperties.getNoImageUrl())
         ),
         onPressed: ()=> Scaffold.of(context).openDrawer(),
       ),
@@ -59,8 +57,8 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
           fit: BoxFit.fitHeight,
         ),
         onTap: () {
-          AppUtilities.showAlert(context, message: "${AppTranslationConstants.version.tr} "
-              "${AppFlavour.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
+          AppAlerts.showAlert(context, message: "${AppTranslationConstants.version.tr} "
+              "${AppConfig.instance.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
         }
       ),
       actionsIconTheme: const IconThemeData(size: 20),
@@ -74,13 +72,17 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               Get.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
             }
         ),
-        AppFlavour.appInUse == AppInUse.c
+        AppConfig.instance.appInUse == AppInUse.c
         ? IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(Icons.add_box_outlined, size: 25,),
             color: Colors.white70,
-            onPressed: ()=> {
-              Get.find<HomeController>().modalBottomSheetMenu(context)
+            onPressed: () {
+              if(!Get.isRegistered<HomeController>()) {
+                AppConfig.logger.d("HomeController not registered, registering now");
+                Get.put(HomeController());
+              }
+              Get.find<HomeController>().modalBottomSheetMenu(context);
             })
             : IconButton(
           padding: EdgeInsets.zero,
@@ -90,14 +92,14 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
         Padding(
           padding: const EdgeInsets.only(right: 10),
-          child: PopupMenuButton<String>(
+          child: PopupMenuButton<DotMenuChoices>(
             color: AppColor.getMain(),
             onSelected: choiceAction,
             itemBuilder: (BuildContext context) {
-              return AppConstants.choices.map((String choice){
-                return PopupMenuItem<String>(
+              return DotMenuChoices.values.map((DotMenuChoices choice){
+                return PopupMenuItem<DotMenuChoices>(
                   value: choice,
-                  child: Text(choice.tr.capitalizeFirst),
+                  child: Text(choice.name.tr.capitalizeFirst),
                 );
               }).toList();
             },
@@ -110,16 +112,16 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  void choiceAction(String choice) async {
+  void choiceAction(DotMenuChoices choice) async {
     switch(choice) {
-      case AppConstants.settings:
+      case DotMenuChoices.settings:
         Get.toNamed(AppRouteConstants.settingsPrivacy);
         break;
-      case AppConstants.logout:
-        Get.find<LoginController>().signOut();
+      case DotMenuChoices.logout:
+        Get.find<LoginService>().signOut();
         break;
-      case MessageTranslationConstants.toShareApp:
-        await CoreUtilities().shareApp();
+      case DotMenuChoices.shareApp:
+        await ShareUtilities.shareApp();
         break;
     }
   }

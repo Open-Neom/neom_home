@@ -1,37 +1,49 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:neom_audio_player/utils/neom_audio_utilities.dart';
-import 'package:neom_commons/core/data/implementations/app_hive_controller.dart';
-import 'package:neom_commons/neom_commons.dart';
-import 'package:neom_notifications/notifications/data/implementations/push_notification_service.dart';
-import 'package:neom_timeline/timeline/ui/timeline_controller.dart';
-import '../utils/constants/home_constants.dart';
+import 'package:neom_commons/ui/theme/app_color.dart';
+import 'package:neom_commons/ui/theme/app_theme.dart';
+import 'package:neom_commons/utils/app_utilities.dart';
+import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
+import 'package:neom_core/app_config.dart';
+import 'package:neom_core/data/firestore/profile_firestore.dart';
+import 'package:neom_core/data/implementations/app_initialization_controller.dart';
+import 'package:neom_core/data/implementations/user_controller.dart';
+import 'package:neom_core/domain/model/event.dart';
+import 'package:neom_core/domain/use_cases/home_service.dart';
+import 'package:neom_core/domain/use_cases/login_service.dart';
+import 'package:neom_core/domain/use_cases/timeline_service.dart';
+import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_core/utils/constants/core_constants.dart';
+import 'package:neom_core/utils/enums/app_in_use.dart';
+import 'package:neom_core/utils/enums/auth_status.dart';
+
+import '../utilities/constants/home_constants.dart';
+import '../utilities/constants/home_translation_constants.dart';
 
 class HomeController extends GetxController implements HomeService {
 
 
-  final loginController = Get.find<LoginController>();
+  final loginController = Get.find<LoginService>();
   final userController = Get.find<UserController>();
-  final timelineController = Get.put(TimelineController());
+  final timelineServiceImpl = Get.find<TimelineService>();
 
   bool startingHome = true;
   bool hasItems = false;
 
   RxBool isLoading = true.obs;
-  RxBool mediaPlayerEnabled = true.obs;
+  final RxBool _mediaPlayerEnabled = true.obs;
   Event event = Event();
 
   final PageController pageController = PageController();
-  // final ScrollController scrollController = ScrollController();
 
-  RxInt currentIndex = 0.obs;
+  final RxInt _currentIndex = 0.obs;
   String toRoute = "";
-  RxBool timelineReady = false.obs;
+  final RxBool _timelineReady = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    AppUtilities.logger.t("Home Controller Init");
+    AppConfig.logger.t("Home Controller Init");
 
     try {
 
@@ -44,8 +56,8 @@ class HomeController extends GetxController implements HomeService {
 
       pageController.addListener(() {
         int newIndex = pageController.page!.toInt();
-        if (currentIndex.value != newIndex) {
-          currentIndex.value = newIndex;
+        if (_currentIndex.value != newIndex) {
+          _currentIndex.value = newIndex;
         }
       });
 
@@ -61,58 +73,49 @@ class HomeController extends GetxController implements HomeService {
         }
       }
 
-      if(!currentIndex.value.isEqual(toIndex) || currentIndex.value == 0) {
+      if(!_currentIndex.value.isEqual(toIndex) || _currentIndex.value == 0) {
         selectPageView(toIndex);
       }
 
       hasItems = (userController.profile.favoriteItems?.length ?? 0) > 1;
     } catch (e) {
-      AppUtilities.logger.e(e.toString());
+      AppConfig.logger.e(e.toString());
     }
-
   }
 
   @override
   void onReady() {
     super.onReady();
-    AppUtilities.logger.t("Home Controller Ready");
-
-    loginController.authStatus.value = AuthStatus.loggedIn;
-    loginController.setIsLoading(false);
-    isLoading.value = false;
-    // update([AppPageIdConstants.home]);
+    AppConfig.logger.t("Home Controller Ready");
 
     try {
-      ///DEPRECAGTED
-      // AppInfo appInfo = await AppInfoFirestore().retrieve();
-      // mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
-      // if(startingHome) _loadUserProfileFeatures();
+      loginController.setAuthStatus(AuthStatus.loggedIn);
+      loginController.setIsLoading(false);
+      isLoading.value = false;
+
+      startingHome = false;
+
+      if(event.id.isNotEmpty) {
+        AppConfig.logger.i("Coming from payment event processed successfully Event: ${event.id}");
+        AppUtilities.showSnackBar(
+          title: CommonTranslationConstants.paymentProcessed.tr,
+          message: CommonTranslationConstants.paymentProcessedMsg.tr,
+        );
+
+        //TODO
+        // await timelineController.gotoEventDetails(event);
+      }
+
+      if(toRoute.isNotEmpty) {
+        Get.toNamed(toRoute);
+      }
+
+      // WidgetsBinding.instance.addPostFrameCallback((_) async {
+      //   Future.delayed(const Duration(milliseconds: 1), () => NeomAudioUtilities.getAudioHandler());
+      // });
     } catch(e) {
-      AppUtilities.logger.e(e.toString());
+      AppConfig.logger.e(e.toString());
     }
-
-    startingHome = false;
-
-    if(event.id.isNotEmpty) {
-      AppUtilities.logger.i("Coming from payment event processed successfully Event: ${event.id}");
-      AppUtilities.showSnackBar(
-        title: AppTranslationConstants.paymentProcessed.tr,
-        message: AppTranslationConstants.paymentProcessedMsg.tr,
-      );
-
-      //TODO
-      // await timelineController.gotoEventDetails(event);
-    }
-
-    if(toRoute.isNotEmpty) {
-      Get.toNamed(toRoute);
-    }
-
-    // update([AppPageIdConstants.home]);
-
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Future.delayed(const Duration(milliseconds: 1), () => NeomAudioUtilities.getAudioHandler());
-    });
   }
 
   Future<void> _loadUserProfileFeatures() async {
@@ -124,44 +127,44 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
-    AppUtilities.logger.d("Changing page view to index: $index");
+    AppConfig.logger.d("Changing page view to index: $index");
 
     try {
       switch(index) {
-        case HomeConstants.firstTabIndex:
-          timelineController.scrollOffset = 0;
+        case CoreConstants.firstHomeTabIndex:
+          timelineServiceImpl.setScrollOffset(0);
           await setInitialTimeline();
           break;
-        case HomeConstants.secondTabIndex:
+        case CoreConstants.secondHomeTabIndex:
           break;
-        case HomeConstants.thirdTabIndex:
+        case CoreConstants.thirdHomeTabIndex:
           break;
-        case HomeConstants.forthTabIndex:
+        case CoreConstants.forthHomeTabIndex:
           break;
       }
 
       if(pageController.hasClients) {
         switch(index) {
-          case HomeConstants.firstTabIndex:
+          case CoreConstants.firstHomeTabIndex:
             // pageController.jumpToPage(index);
             pageController.animateToPage(
               index,
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOutBack,
             );
-            currentIndex.value = index;
+            _currentIndex.value = index;
             break;
-          case HomeConstants.secondTabIndex:
+          case CoreConstants.secondHomeTabIndex:
             // pageController.jumpToPage(index);
             pageController.animateToPage(
               index,
               duration: const Duration(milliseconds: 200),
               curve: Curves.easeInOut,
             );
-            currentIndex.value = index;
+            _currentIndex.value = index;
             break;
-          case HomeConstants.thirdTabIndex:
-            if(AppFlavour.appInUse == AppInUse.e) {
+          case CoreConstants.thirdHomeTabIndex:
+            if(AppConfig.instance.appInUse == AppInUse.e) {
               Get.toNamed(AppRouteConstants.libraryHome);
             } else {
               pageController.jumpToPage(index);
@@ -170,17 +173,17 @@ class HomeController extends GetxController implements HomeService {
                 duration: const Duration(milliseconds: 200),
                 curve: Curves.easeIn,
               );
-              currentIndex.value = index;
+              _currentIndex.value = index;
             }
             break;
-          case HomeConstants.forthTabIndex:
+          case CoreConstants.forthHomeTabIndex:
             Get.toNamed(AppRouteConstants.audioPlayerHome);
             break;
         }
       }
 
     } catch (e) {
-      AppUtilities.logger.e(e.toString());
+      AppConfig.logger.e(e.toString());
     }
 
   }
@@ -223,17 +226,17 @@ class HomeController extends GetxController implements HomeService {
                         onTap: () {
                           Navigator.pop(ctx);
                           switch (HomeConstants.bottomMenuItems[index].title) {
-                            case AppTranslationConstants.createPost:
+                            case CommonTranslationConstants.createPost:
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                               break;
-                            case AppTranslationConstants.organizeEvent:
-                              if(AppFlavour.appInUse == AppInUse.c) {
+                            case HomeTranslationConstants.organizeEvent:
+                              if(AppConfig.instance.appInUse == AppInUse.c) {
                                 Get.toNamed(AppRouteConstants.createNeomEventType);
                               } else {
                                 Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                               }
                               break;
-                            case AppTranslationConstants.shareComment:
+                            case HomeTranslationConstants.shareComment:
                               Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                               break;
                           }
@@ -264,47 +267,51 @@ class HomeController extends GetxController implements HomeService {
   }
 
   Future<void> setInitialTimeline() async {
-    if(timelineController.initialized && currentIndex.value == 0 && !startingHome) {
-      if(timelineController.timelineScrollController.hasClients) {
-        await timelineController.timelineScrollController.animateTo(
+    if(_currentIndex.value == 0 && !startingHome) {
+      if(timelineServiceImpl.getScrollController().hasClients) {
+        await timelineServiceImpl.getScrollController().animateTo(
             0.0, curve: Curves.easeOut,
             duration: const Duration(milliseconds: 1000));
       }
-      await timelineController.getTimeline();
+      await timelineServiceImpl.getTimeline();
     }
-  }
-
-  void timelineIsReady({bool isReady = true}) async {
-
-    AppInfo appInfo = await AppInfoFirestore().retrieve();
-    mediaPlayerEnabled.value = appInfo.mediaPlayerEnabled;
-    if(startingHome) _loadUserProfileFeatures();
-
-    timelineReady.value = isReady;
-
-    userController.getUserSubscription();
-    Future.microtask(() => UserFirestore().updateLastTimeOn(userController.user.id));
-    Future.microtask(() => AppHiveController().fetchCachedData());
-    Future.microtask(() => AppHiveController().fetchSettingsData());
-
-    if(userController.user.fcmToken.isEmpty
-        || userController.user.fcmToken != userController.fcmToken) {
-      Future.microtask(() => UserFirestore().updateFcmToken(userController.user.id, userController.fcmToken));
-    }
-    // Inicialización de las notificaciones
-    Future.microtask(() => verifyLocation());
-    Future.microtask(() => PushNotificationService.init());
-    Future.microtask(() => AppHiveController().setFirstTime(false));
   }
 
   @override
-  Future<void> verifyLocation() async {
-    AppUtilities.logger.t("Verifying location");
-    try {
-      userController.profile.position = await GeoLocatorController().updateLocation(userController.profile.id, userController.profile.position);
-    } catch (e) {
-      AppUtilities.logger.e(e.toString());
+  void timelineIsReady({bool isReady = true}) async {
+
+    _mediaPlayerEnabled.value = AppConfig.instance.appInfo.mediaPlayerEnabled;
+    if(startingHome) _loadUserProfileFeatures();
+
+    _timelineReady.value = isReady;
+
+    AppInitializationController.runPostLoginTasks();
+    AppInitializationController.initAudioHandler();
+  }
+
+  @override
+  int get currentIndex => _currentIndex.value;
+
+  @override
+  bool get timelineReady => _timelineReady.value;
+
+  @override
+  bool get mediaPlayerEnabled => _mediaPlayerEnabled.value;
+
+  @override
+  set currentIndex(int index) {
+    if(_currentIndex.value != index) {
+      _currentIndex.value = index;
+      AppConfig.logger.d("Current Index set to: $index");
     }
+  }
+
+  @override
+  double getTimelineScrollOffset() {
+    if(timelineServiceImpl.getScrollController().hasClients) {
+      return timelineServiceImpl.getScrollController().offset;
+    }
+    return 0.0;
   }
 
 }

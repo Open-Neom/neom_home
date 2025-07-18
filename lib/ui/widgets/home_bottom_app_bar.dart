@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../domain/models/home_bottom_bar_item.dart';
-import '../ui/home_controller.dart';
+import '../../domain/models/bottom_bar_item.dart';
+import '../home_controller.dart';
 
 class HomeBottomAppBar extends StatefulWidget {
 
-  final List<HomeBottomAppBarItem> items;
+  final List<BottomAppBarItem> items;
   final String centerItemText;
   final double height;
   final double iconSize;
@@ -43,7 +43,7 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
   void updateIndex(int index) {
     widget.onTabSelected(index);
     setState(() {
-      if(index < 3) homeController.currentIndex.value = index;
+      if(index < 3) homeController.currentIndex = index;
     });
   }
 
@@ -61,7 +61,7 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
             item: widget.items[index],
             index: index,
             onPressed: updateIndex,
-            currentIndex: homeController.currentIndex.value,
+            currentIndex: homeController.currentIndex,
           );
         }),
       ),
@@ -69,7 +69,7 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
   }
 
   Widget _buildTabItem({
-    HomeBottomAppBarItem? item,
+    BottomAppBarItem? item,
     int index = 0,
     ValueChanged<int>? onPressed,
     int currentIndex = 0,
