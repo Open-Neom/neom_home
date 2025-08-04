@@ -37,24 +37,24 @@ class HomePage extends StatelessWidget {
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
       init: HomeController(),
-      builder: (_) => Scaffold(
+      builder: (homeController) => Scaffold(
         backgroundColor: AppConfig.instance.appInUse == AppInUse.g ? AppColor.getMain() : AppColor.main50,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
-          child: (_.userServiceImpl == null) ? HomeAppBarLite() : (_.currentIndex != 0 || (_.timelineServiceImpl?.showAppBar ?? false))
+          child: (homeController.userServiceImpl == null) ? HomeAppBarLite() : (homeController.currentIndex != 0 || (homeController.timelineServiceImpl?.showAppBar ?? false))
               ? HomeAppBar(
-              profileImg: (_.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
-                  ? _.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
-              profileId: _.userServiceImpl?.profile.id ?? ''
+              profileImg: (homeController.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
+                  ? homeController.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
+              profileId: homeController.userServiceImpl?.profile.id ?? ''
           ) : const SizedBox.shrink()
         ),
         drawer: const AppDrawer(),
-        body: Obx(()=>  _.isLoading.value ? Container(
+        body: Obx(()=>  homeController.isLoading.value ? Container(
             decoration: AppTheme.appBoxDecoration,
             child: const AppCircularProgressIndicator(showLogo: false,)
         ) : PageView(
             physics: const NeverScrollableScrollPhysics(),
-            controller: _.pageController,
+            controller: homeController.pageController,
             children: [
               firstPage,
               if(secondPage != null) secondPage!,
@@ -67,7 +67,7 @@ class HomePage extends StatelessWidget {
           color: Colors.white54,
           selectedColor: Colors.white.withOpacity(0.9),
           notchedShape: const CircularNotchedRectangle(),
-          onTabSelected:(int index) => _.selectPageView(index, context: context),
+          onTabSelected:(int index) => homeController.selectPageView(index, context: context),
           items: [
             BottomAppBarItem(iconData: FontAwesomeIcons.house, text: firstTabName.tr),
             if(secondPage != null) BottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: secondTabName.tr,),
@@ -76,13 +76,13 @@ class HomePage extends StatelessWidget {
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: _.timelineServiceImpl != null ? SizedBox(
+        floatingActionButton: homeController.timelineServiceImpl != null ? SizedBox(
           width: 43, height: 43,
           child: FloatingActionButton(
             tooltip: AppFlavour.getHomeActionBtnTooltip(),
             splashColor: AppColor.white,
             onPressed: () => AppConfig.instance.appInUse != AppInUse.c
-              ? _.modalBottomSheetMenu(context)
+              ? homeController.modalBottomSheetMenu(context)
               : Get.toNamed(AppRouteConstants.generator),
             elevation: 10,
             backgroundColor: Colors.white.withOpacity(0.9),
