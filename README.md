@@ -51,14 +51,14 @@ For developers looking to understand advanced Flutter patterns, `neom_home` offe
 
 ## How it Supports the Open Neom Initiative
 
-As the primary user interface, neom_home is pivotal to Open Neom's vision and the Tecnozenismo philosophy:
+As the primary user interface, neom_home is pivotal to Open Neom's vision and the Tecnozenism philosophy:
 
 •	Unified User Experience: It provides the overarching framework that unifies all modular functionalities,
     delivering a cohesive and intuitive experience for users engaging with conscious well-being practices and neuroscientific tools.
 •	Embodiment of Modularity: By integrating content from various feature modules, it visually represents the "Plug-and-Play"
     nature of Open Neom's architecture, demonstrating the power of a decoupled system.
 •	Facilitating Conscious Engagement: The thoughtful design of the home screen, navigation, and quick actions aims to create
-    a mindful digital environment, aligning directly with the Tecnozenismo principle of balanced interaction with technology.
+    a mindful digital environment, aligning directly with the Tecnozenism principle of balanced interaction with technology.
 •	Foundation for Expansion: Its flexible structure allows for easy addition of new feature modules and adaptation to different app flavors,
     ensuring Open Neom's scalability and future growth towards decentralization and open research.
 
@@ -76,7 +76,7 @@ and on neom_commons for reusable UI components, themes, and utility functions.
 We encourage contributions to the neom_home module! As the main application interface, improvements here directly enhance the user's primary experience.
 Whether you're interested in UI/UX refinements, navigation logic, or integrating new global actions, your contribution can have a significant impact.
 
-To understand the broader architectural context of Open Neom and how neom_home fits into the overall vision of Tecnozenismo,
+To understand the broader architectural context of Open Neom and how neom_home fits into the overall vision of Tecnozenism,
 please refer to the main project's [MANIFEST.md](https://github.com/Open-Neom/neom_app_lite/blob/main/MANIFEST.md).
 
 For guidance on how to contribute to Open Neom and to understand the various levels of learning and engagement possible within the project,

@@ -1,23 +1,24 @@
 name: neom_home
 description: Home for Open Neom.
-version: 1.4.0
+version: 1.4.0-dev
 homepage: https://github.com/Open-Neom/neom_home
-publish_to: 'none'
 
 environment:
-  sdk: ">=3.4.0 <4.0.0"
+  sdk: ">=3.8.0 <4.0.0"
   flutter: ">=3.19.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  neom_core:
-    git:
-      url: git@github.com:Open-Neom/neom_core.git
-  neom_commons:
-    git:
-      url: git@github.com:Open-Neom/neom_commons.git
+  neom_core: ^1.4.1-dev
+  neom_commons: ^1.4.1-dev
+
+  # TRANSITIVE DEPENDENCIES FOR PUB.DEV PUBLISHING
+  get: ^5.0.0-release-candidate-9.3.2
+  cached_network_image: ^3.4.1
+  font_awesome_flutter: ^10.9.0
+
 
 dev_dependencies:
   flutter_test:
