@@ -46,7 +46,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
         icon: CircleAvatar(
           maxRadius: 60,
           backgroundImage: CachedNetworkImageProvider(profileImg.isNotEmpty
-              ? profileImg : AppProperties.getNoImageUrl())
+              ? profileImg : AppProperties.getAppLogoUrl())
         ),
         onPressed: ()=> Scaffold.of(context).openDrawer(),
       ),

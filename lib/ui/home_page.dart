@@ -7,7 +7,6 @@ import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
-import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
@@ -16,16 +15,22 @@ import 'package:neom_core/utils/enums/app_in_use.dart';
 import '../domain/models/bottom_bar_item.dart';
 import 'home_controller.dart';
 import 'widgets/home_appbar.dart';
+import 'widgets/home_appbar_lite.dart';
 import 'widgets/home_bottom_app_bar.dart';
 
 class HomePage extends StatelessWidget {
 
   final Widget firstPage;
+  final String firstTabName;
   final Widget? secondPage;
+  final String secondTabName;
   final Widget? thirdPage;
+  final String thirdTabName;
   final Widget? forthPage;
+  final String forthTabName;
 
-  const HomePage({super.key, required this.firstPage, this.secondPage, this.thirdPage, this.forthPage});
+  const HomePage({super.key, required this.firstPage, required this.firstTabName, this.secondPage, this.secondTabName = '',
+    this.thirdPage, this.thirdTabName = '', this.forthPage, this.forthTabName = ''});
 
   @override
   Widget build(BuildContext context){
@@ -36,35 +41,26 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppConfig.instance.appInUse == AppInUse.g ? AppColor.getMain() : AppColor.main50,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(56.0), // Altura del AppBar
-          child: Obx(()=> _.currentIndex != 0 ||  _.timelineServiceImpl.showAppBar
+          child: (_.userServiceImpl == null) ? HomeAppBarLite() : (_.currentIndex != 0 || (_.timelineServiceImpl?.showAppBar ?? false))
               ? HomeAppBar(
-              profileImg: _.userController.profile.photoUrl.isNotEmpty
-                  ? _.userController.profile.photoUrl : AppProperties.getAppLogoUrl(),
-              profileId: _.userController.profile.id
-          ) : const SizedBox.shrink(),),
+              profileImg: (_.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
+                  ? _.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
+              profileId: _.userServiceImpl?.profile.id ?? ''
+          ) : const SizedBox.shrink()
         ),
         drawer: const AppDrawer(),
         body: Obx(()=>  _.isLoading.value ? Container(
             decoration: AppTheme.appBoxDecoration,
             child: const AppCircularProgressIndicator(showLogo: false,)
-        ) : Stack(
-          children: [
-            PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: _.pageController,
-              children: [
-                firstPage,
-                if(secondPage != null) secondPage!,
-                if(thirdPage != null) thirdPage!,
-                if(forthPage != null) forthPage!
-              ]
-            ),
-            // if(_.mediaPlayerEnabled && _.timelineReady) const Positioned(
-            //   left: 0, right: 0,
-            //   bottom: 0,
-            //   child: MiniPlayer(),
-            // ),
-          ],
+        ) : PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: _.pageController,
+            children: [
+              firstPage,
+              if(secondPage != null) secondPage!,
+              if(thirdPage != null) thirdPage!,
+              if(forthPage != null) forthPage!
+            ]
         ),),
         bottomNavigationBar: HomeBottomAppBar(
           backgroundColor: AppColor.bottomNavigationBar,
@@ -73,14 +69,14 @@ class HomePage extends StatelessWidget {
           notchedShape: const CircularNotchedRectangle(),
           onTabSelected:(int index) => _.selectPageView(index, context: context),
           items: [
-            BottomAppBarItem(iconData: FontAwesomeIcons.house, text: AppTranslationConstants.home.tr),
-            if(secondPage != null) BottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: AppFlavour.getSecondTabTitle().tr,),
-            if(thirdPage != null) BottomAppBarItem(iconData: AppFlavour.getThirdTabIcon(), text: AppFlavour.getThirdTabTitle().tr),
-            if(forthPage != null) BottomAppBarItem(iconData: AppFlavour.getForthTabIcon(), text: AppFlavour.getFortTabTitle().tr,)
+            BottomAppBarItem(iconData: FontAwesomeIcons.house, text: firstTabName.tr),
+            if(secondPage != null) BottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: secondTabName.tr,),
+            if(thirdPage != null) BottomAppBarItem(iconData: AppFlavour.getThirdTabIcon(), text: thirdTabName.tr),
+            if(forthPage != null) BottomAppBarItem(iconData: AppFlavour.getForthTabIcon(), text: forthTabName.tr,)
           ],
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: SizedBox(
+        floatingActionButton: _.timelineServiceImpl != null ? SizedBox(
           width: 43, height: 43,
           child: FloatingActionButton(
             tooltip: AppFlavour.getHomeActionBtnTooltip(),
@@ -93,7 +89,7 @@ class HomePage extends StatelessWidget {
             foregroundColor: Colors.black87,
             child: Icon(AppFlavour.getHomeActionBtnIcon()),
           ),
-        ),
+        ) : null,
       ),
       // ),
     );

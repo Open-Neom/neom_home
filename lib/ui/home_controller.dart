@@ -3,15 +3,19 @@ import 'package:get/get.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/app_utilities.dart';
+import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
+import 'package:neom_commons/utils/constants/translations/message_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/data/implementations/app_initialization_controller.dart';
-import 'package:neom_core/data/implementations/user_controller.dart';
 import 'package:neom_core/domain/model/event.dart';
+import 'package:neom_core/domain/use_cases/audio_handler_service.dart';
+import 'package:neom_core/domain/use_cases/audio_player_invoker_service.dart';
 import 'package:neom_core/domain/use_cases/home_service.dart';
 import 'package:neom_core/domain/use_cases/login_service.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
+import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/constants/core_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
@@ -23,9 +27,9 @@ import '../utilities/constants/home_translation_constants.dart';
 class HomeController extends GetxController implements HomeService {
 
 
-  final loginController = Get.find<LoginService>();
-  final userController = Get.find<UserController>();
-  final timelineServiceImpl = Get.find<TimelineService>();
+  final loginServiceImpl = Get.isRegistered<LoginService>() ? Get.find<LoginService>() : null;
+  final userServiceImpl = Get.isRegistered<UserService>() ? Get.find<UserService>() : null;
+  final timelineServiceImpl = Get.isRegistered<TimelineService>() ? Get.find<TimelineService>() : null;
 
   bool startingHome = true;
   bool hasItems = false;
@@ -46,13 +50,6 @@ class HomeController extends GetxController implements HomeService {
     AppConfig.logger.t("Home Controller Init");
 
     try {
-
-      if(userController.user.id.isEmpty) {
-        Get.toNamed(AppRouteConstants.logout,
-            arguments: [AppRouteConstants.logout]
-        );
-        return;
-      }
 
       pageController.addListener(() {
         int newIndex = pageController.page!.toInt();
@@ -77,7 +74,14 @@ class HomeController extends GetxController implements HomeService {
         selectPageView(toIndex);
       }
 
-      hasItems = (userController.profile.favoriteItems?.length ?? 0) > 1;
+      hasItems = (userServiceImpl?.profile.favoriteItems?.length ?? 0) > 1;
+
+      // if(userServiceImpl?.user.id.isEmpty ?? true) {
+      //   Get.toNamed(AppRouteConstants.logout,
+      //       arguments: [AppRouteConstants.logout]
+      //   );
+      //   return;
+      // }
     } catch (e) {
       AppConfig.logger.e(e.toString());
     }
@@ -89,8 +93,8 @@ class HomeController extends GetxController implements HomeService {
     AppConfig.logger.t("Home Controller Ready");
 
     try {
-      loginController.setAuthStatus(AuthStatus.loggedIn);
-      loginController.setIsLoading(false);
+      loginServiceImpl?.setAuthStatus(AuthStatus.loggedIn);
+      loginServiceImpl?.setIsLoading(false);
       isLoading.value = false;
 
       startingHome = false;
@@ -99,41 +103,39 @@ class HomeController extends GetxController implements HomeService {
         AppConfig.logger.i("Coming from payment event processed successfully Event: ${event.id}");
         AppUtilities.showSnackBar(
           title: CommonTranslationConstants.paymentProcessed.tr,
-          message: CommonTranslationConstants.paymentProcessedMsg.tr,
+          message: MessageTranslationConstants.paymentProcessedMsg.tr,
         );
 
         //TODO
         // await timelineController.gotoEventDetails(event);
       }
 
-      if(toRoute.isNotEmpty) {
-        Get.toNamed(toRoute);
-      }
-
-      // WidgetsBinding.instance.addPostFrameCallback((_) async {
-      //   Future.delayed(const Duration(milliseconds: 1), () => NeomAudioUtilities.getAudioHandler());
-      // });
+      if(toRoute.isNotEmpty) Get.toNamed(toRoute);
     } catch(e) {
       AppConfig.logger.e(e.toString());
     }
   }
 
   Future<void> _loadUserProfileFeatures() async {
-    if(userController.user.profiles.isNotEmpty && userController.user.profiles.first.id.isNotEmpty) {
-      userController.user.profiles.first = await ProfileFirestore().getProfileFeatures(userController.user.profiles.first);
-      userController.profile = userController.user.profiles.first;
+    if(userServiceImpl == null) return;
+    if(userServiceImpl!.user.profiles.isNotEmpty && userServiceImpl!.user.profiles.first.id.isNotEmpty) {
+      userServiceImpl!.user.profiles.first = await ProfileFirestore().getProfileFeatures(userServiceImpl!.user.profiles.first);
+      userServiceImpl!.profile = userServiceImpl!.user.profiles.first;
     }
   }
 
   @override
   void selectPageView(int index, {BuildContext? context}) async {
     AppConfig.logger.d("Changing page view to index: $index");
+    isLoading.value = true;
 
     try {
       switch(index) {
         case CoreConstants.firstHomeTabIndex:
-          timelineServiceImpl.setScrollOffset(0);
-          await setInitialTimeline();
+          if(timelineServiceImpl != null) {
+            timelineServiceImpl!.setScrollOffset(0);
+            await setInitialTimeline();
+          }
           break;
         case CoreConstants.secondHomeTabIndex:
           break;
@@ -144,23 +146,14 @@ class HomeController extends GetxController implements HomeService {
       }
 
       if(pageController.hasClients) {
+        AppConfig.logger.d("Jumping to index: $index");
         switch(index) {
           case CoreConstants.firstHomeTabIndex:
-            // pageController.jumpToPage(index);
-            pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOutBack,
-            );
+            pageController.jumpToPage(index);
             _currentIndex.value = index;
             break;
           case CoreConstants.secondHomeTabIndex:
-            // pageController.jumpToPage(index);
-            pageController.animateToPage(
-              index,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-            );
+            pageController.jumpToPage(index);
             _currentIndex.value = index;
             break;
           case CoreConstants.thirdHomeTabIndex:
@@ -168,16 +161,17 @@ class HomeController extends GetxController implements HomeService {
               Get.toNamed(AppRouteConstants.libraryHome);
             } else {
               pageController.jumpToPage(index);
-              pageController.animateToPage(
-                index,
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeIn,
-              );
               _currentIndex.value = index;
             }
             break;
           case CoreConstants.forthHomeTabIndex:
-            Get.toNamed(AppRouteConstants.audioPlayerHome);
+            if(Get.isRegistered<AudioPlayerInvokerService>()
+                && Get.isRegistered<AudioHandlerService>()) {
+              Get.toNamed(AppRouteConstants.audioPlayerHome);
+            } else {
+              pageController.jumpToPage(index);
+              _currentIndex.value = index;
+            }
             break;
         }
       }
@@ -186,6 +180,8 @@ class HomeController extends GetxController implements HomeService {
       AppConfig.logger.e(e.toString());
     }
 
+    isLoading.value = false;
+    update([AppPageIdConstants.home]);
   }
 
   @override
@@ -268,12 +264,12 @@ class HomeController extends GetxController implements HomeService {
 
   Future<void> setInitialTimeline() async {
     if(_currentIndex.value == 0 && !startingHome) {
-      if(timelineServiceImpl.getScrollController().hasClients) {
-        await timelineServiceImpl.getScrollController().animateTo(
+      if(timelineServiceImpl?.getScrollController().hasClients ?? false) {
+        await timelineServiceImpl?.getScrollController().animateTo(
             0.0, curve: Curves.easeOut,
             duration: const Duration(milliseconds: 1000));
       }
-      await timelineServiceImpl.getTimeline();
+      await timelineServiceImpl?.getTimeline();
     }
   }
 
@@ -308,8 +304,8 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   double getTimelineScrollOffset() {
-    if(timelineServiceImpl.getScrollController().hasClients) {
-      return timelineServiceImpl.getScrollController().offset;
+    if(timelineServiceImpl?.getScrollController().hasClients ?? false) {
+      return timelineServiceImpl!.getScrollController().offset;
     }
     return 0.0;
   }
