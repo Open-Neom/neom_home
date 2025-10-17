@@ -1,6 +1,6 @@
 name: neom_home
 description: Home for Open Neom.
-version: 1.4.0-dev
+version: 1.4.1-dev
 homepage: https://github.com/Open-Neom/neom_home
 
 environment:
@@ -17,7 +17,7 @@ dependencies:
   # TRANSITIVE DEPENDENCIES FOR PUB.DEV PUBLISHING
   get: ^5.0.0-release-candidate-9.3.2
   cached_network_image: ^3.4.1
-  font_awesome_flutter: ^10.9.0
+  font_awesome_flutter: ^10.10.0
 
 dev_dependencies:
   flutter_test:

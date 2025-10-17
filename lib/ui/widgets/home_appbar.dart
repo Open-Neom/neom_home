@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/app_alerts.dart';
@@ -16,7 +17,6 @@ import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_core/domain/model/activity_feed.dart';
 import 'package:neom_core/domain/use_cases/login_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
-import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 
 import '../home_controller.dart';
@@ -61,19 +61,9 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
               "${AppConfig.instance.appVersion}${kDebugMode ? " - Dev Mode" : ""}");
         }
       ),
-      actionsIconTheme: const IconThemeData(size: 20),
+      actionsIconTheme: const IconThemeData(size: 18),
       actions: <Widget>[
-        buildNotificationFeed(),
-        IconButton(
-            padding: EdgeInsets.zero,
-            icon: const Icon(FontAwesomeIcons.magnifyingGlass),
-            color: Colors.white70,
-            onPressed: ()=>{
-              Get.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
-            }
-        ),
-        AppConfig.instance.appInUse == AppInUse.c
-        ? IconButton(
+        if(AppFlavour.showAppBarAddButton()) IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(Icons.add_box_outlined, size: 25,),
             color: Colors.white70,
@@ -83,12 +73,30 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                 Get.put(HomeController());
               }
               Get.find<HomeController>().modalBottomSheetMenu(context);
-            })
-            : IconButton(
+            }
+        ),
+        if(AppFlavour.showAppBarAddButton() || true) IconButton(
+            padding: EdgeInsets.zero,
+            icon: const Icon(FontAwesomeIcons.building),
+            color: Colors.white70,
+            onPressed: () {
+              Get.toNamed(AppRouteConstants.directory);
+            }
+        ),
+        buildNotificationFeed(),
+        IconButton(
           padding: EdgeInsets.zero,
-          icon: const Icon(FontAwesomeIcons.comments),
+          icon: const Icon(FontAwesomeIcons.magnifyingGlass),
           color: Colors.white70,
-          onPressed: () => Get.toNamed(AppRouteConstants.inbox)
+          onPressed: () => {
+            Get.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
+          }
+        ),
+        IconButton(
+            padding: EdgeInsets.zero,
+            icon: const Icon(FontAwesomeIcons.comments),
+            color: Colors.white70,
+            onPressed: () => Get.toNamed(AppRouteConstants.inbox)
         ),
         Padding(
           padding: const EdgeInsets.only(right: 10),

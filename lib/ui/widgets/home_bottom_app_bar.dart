@@ -16,20 +16,23 @@ class HomeBottomAppBar extends StatefulWidget {
   final Color selectedColor;
   final NotchedShape notchedShape;
   final ValueChanged<int> onTabSelected;
+  final bool showText;
 
-  HomeBottomAppBar({super.key,
+  HomeBottomAppBar({
+    super.key,
     required this.items,
-    this.centerItemText = "",
-    this.height = 60,
-    this.iconSize = 18,
-    this.fontSize = 12,
-    this.backgroundColor,
     required this.color,
     required this.selectedColor,
     required this.notchedShape,
     required this.onTabSelected,
+    this.centerItemText = "",
+    this.height = 60,
+    this.iconSize = 20,
+    this.fontSize = 10,
+    this.backgroundColor,
+    this.showText = true,
   }) {
-    assert(items.length == 2 || items.length == 3 || items.length == 4);
+    assert(items.length > 1 && items.length <= 5);
   }
 
   @override
@@ -83,8 +86,8 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             if(item?.animation != null) item!.animation!,
-            Icon(item!.iconData, color: color, size: widget.iconSize),
-            Text(item.text, style: TextStyle(color: color, fontSize: widget.fontSize),),
+            Icon(item!.iconData, color: color, size: widget.iconSize + (widget.showText ? 0 : 5)),
+            if(widget.showText) Text(item.text, style: TextStyle(color: color, fontSize: widget.fontSize),),
           ],
         ),
       ),

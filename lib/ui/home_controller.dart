@@ -38,9 +38,10 @@ class HomeController extends GetxController implements HomeService {
   final RxBool _mediaPlayerEnabled = true.obs;
   Event event = Event();
 
-  final PageController pageController = PageController();
+  late PageController pageController;
 
   final RxInt _currentIndex = 0.obs;
+  int toIndex =  0;
   String toRoute = "";
   final RxBool _timelineReady = false.obs;
 
@@ -50,15 +51,6 @@ class HomeController extends GetxController implements HomeService {
     AppConfig.logger.t("Home Controller Init");
 
     try {
-
-      pageController.addListener(() {
-        int newIndex = pageController.page!.toInt();
-        if (_currentIndex.value != newIndex) {
-          _currentIndex.value = newIndex;
-        }
-      });
-
-      int toIndex =  0;
 
       if(Get.arguments != null) {
         if (Get.arguments[0] is int) {
@@ -70,18 +62,23 @@ class HomeController extends GetxController implements HomeService {
         }
       }
 
-      if(!_currentIndex.value.isEqual(toIndex) || _currentIndex.value == 0) {
-        selectPageView(toIndex);
+      if (AppConfig.instance.appInUse ==  AppInUse.d) {
+        toIndex = 2;
       }
 
-      hasItems = (userServiceImpl?.profile.favoriteItems?.length ?? 0) > 1;
+      if(toIndex > 0) {
+        _currentIndex.value = toIndex;
+      }
 
-      // if(userServiceImpl?.user.id.isEmpty ?? true) {
-      //   Get.toNamed(AppRouteConstants.logout,
-      //       arguments: [AppRouteConstants.logout]
-      //   );
-      //   return;
-      // }
+      pageController = PageController(initialPage: toIndex);
+      pageController.addListener(() {
+        int newIndex = pageController.page!.toInt();
+        if (_currentIndex.value != newIndex) {
+          _currentIndex.value = newIndex;
+        }
+      });
+
+      hasItems = (userServiceImpl?.profile.favoriteItems?.length ?? 0) > 1;
     } catch (e) {
       AppConfig.logger.e(e.toString());
     }
@@ -93,8 +90,11 @@ class HomeController extends GetxController implements HomeService {
     AppConfig.logger.t("Home Controller Ready");
 
     try {
-      loginServiceImpl?.setAuthStatus(AuthStatus.loggedIn);
-      loginServiceImpl?.setIsLoading(false);
+      if(userServiceImpl?.user.id.isNotEmpty ?? false) {
+        loginServiceImpl?.setAuthStatus(AuthStatus.loggedIn);
+        loginServiceImpl?.setIsLoading(false);  
+      }
+      
       isLoading.value = false;
 
       startingHome = false;
@@ -125,11 +125,14 @@ class HomeController extends GetxController implements HomeService {
   }
 
   @override
-  void selectPageView(int index, {BuildContext? context}) async {
+  void selectPageView(int index, {BuildContext? context, int? totalPages,
+    bool hasCentralAsSecond = false, bool hasCentralAsThird = false}) async {
     AppConfig.logger.d("Changing page view to index: $index");
     isLoading.value = true;
 
     try {
+      totalPages ??= index;
+
       switch(index) {
         case CoreConstants.firstHomeTabIndex:
           if(timelineServiceImpl != null) {
@@ -138,10 +141,18 @@ class HomeController extends GetxController implements HomeService {
           }
           break;
         case CoreConstants.secondHomeTabIndex:
+          if(hasCentralAsSecond) {
+          } else {
+          }
           break;
         case CoreConstants.thirdHomeTabIndex:
+          if(hasCentralAsThird) {
+          } else {
+          }
           break;
         case CoreConstants.forthHomeTabIndex:
+          break;
+        case CoreConstants.fifthHomeTabIndex:
           break;
       }
 
@@ -153,25 +164,44 @@ class HomeController extends GetxController implements HomeService {
             _currentIndex.value = index;
             break;
           case CoreConstants.secondHomeTabIndex:
-            pageController.jumpToPage(index);
-            _currentIndex.value = index;
-            break;
-          case CoreConstants.thirdHomeTabIndex:
-            if(AppConfig.instance.appInUse == AppInUse.e) {
-              Get.toNamed(AppRouteConstants.libraryHome);
+            if(hasCentralAsSecond) {
+              if(context != null) modalBottomSheetMenu(context);
             } else {
               pageController.jumpToPage(index);
               _currentIndex.value = index;
             }
             break;
+          case CoreConstants.thirdHomeTabIndex:
+            if(hasCentralAsThird) {
+              if(context != null) modalBottomSheetMenu(context);
+            } else {
+              if(AppConfig.instance.appInUse == AppInUse.e) {
+                Get.toNamed(AppRouteConstants.libraryHome);
+              } else {
+                pageController.jumpToPage(index);
+                _currentIndex.value = index;
+              }
+            }
+            break;
           case CoreConstants.forthHomeTabIndex:
-            if(Get.isRegistered<AudioPlayerInvokerService>()
+            if(hasCentralAsThird && AppConfig.instance.appInUse == AppInUse.e) {
+              Get.toNamed(AppRouteConstants.libraryHome);
+            } else if(!hasCentralAsThird && Get.isRegistered<AudioPlayerInvokerService>()
                 && Get.isRegistered<AudioHandlerService>()) {
               Get.toNamed(AppRouteConstants.audioPlayerHome);
             } else {
               pageController.jumpToPage(index);
               _currentIndex.value = index;
             }
+            break;
+          case CoreConstants.fifthHomeTabIndex:
+            if(Get.isRegistered<AudioPlayerInvokerService>() && Get.isRegistered<AudioHandlerService>()) {
+              Get.toNamed(AppRouteConstants.audioPlayerHome);
+            } else {
+              pageController.jumpToPage(index);
+              _currentIndex.value = index;
+            }
+
             break;
         }
       }
@@ -186,10 +216,9 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   Future<void> modalBottomSheetMenu(BuildContext context) async {
-    // isPressed.value = true;
     await showModalBottomSheet(
         elevation: 0,
-        backgroundColor: AppTheme.canvasColor25(context),
+        backgroundColor: AppTheme.canvasColor50(context),
         context: context,
         builder: (BuildContext ctx) {
           return Column(
@@ -198,7 +227,7 @@ class HomeController extends GetxController implements HomeService {
                 height: 260,
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                    color: AppColor.main95,
+                    color: AppColor.getMain(),
                     borderRadius: const BorderRadius.all(Radius.circular(10.0))
                 ),
                 child: ListView.separated(
@@ -293,6 +322,11 @@ class HomeController extends GetxController implements HomeService {
 
   @override
   bool get mediaPlayerEnabled => _mediaPlayerEnabled.value;
+
+  @override
+  set mediaPlayerEnabled(bool enabled) {
+    _mediaPlayerEnabled.value = enabled;
+  }
 
   @override
   set currentIndex(int index) {
