@@ -26,11 +26,11 @@ class HomePage extends StatelessWidget {
   final String thirdTabName;
   final Widget? forthPage;
   final String forthTabName;
-  Widget? centralPage;
-  String centralTabName;
-  bool addCentralActionButton;
+  final Widget? centralPage;
+  final String centralTabName;
+  final bool addCentralActionButton;
 
-  HomePage({super.key, required this.firstPage, required this.firstTabName, this.secondPage, this.secondTabName = '',
+  const HomePage({super.key, required this.firstPage, required this.firstTabName, this.secondPage, this.secondTabName = '',
     this.thirdPage, this.thirdTabName = '', this.forthPage, this.forthTabName = '',
     this.centralPage, this.centralTabName = '', this.addCentralActionButton = false});
 
@@ -44,7 +44,11 @@ class HomePage extends StatelessWidget {
 
     bool showCentralAsSecond = ((centralPage != null || addCentralActionButton) && secondPage != null && thirdPage == null && forthPage == null);
     bool showCentralAsThird = ((centralPage != null || addCentralActionButton) && secondPage != null && thirdPage != null && forthPage != null);
-    if(centralPage == null && addCentralActionButton) centralPage = SizedBox();
+    Widget centralWidget = SizedBox.shrink();
+    if(centralPage != null && !addCentralActionButton) {
+      centralWidget = centralPage!;
+    }
+
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
       init: HomeController(),
@@ -52,14 +56,14 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppFlavour.getBackgroundColor(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50.0), // Altura del AppBar
-          child: (homeController.userServiceImpl == null) ? HomeAppBarLite()
+          child:Obx(()=>  (homeController.userServiceImpl == null) ? HomeAppBarLite()
               : (homeController.currentIndex != 0 || (homeController.timelineServiceImpl?.showAppBar ?? false))
               ? HomeAppBar(
               profileImg: (homeController.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
                   ? homeController.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
               profileId: homeController.userServiceImpl?.profile.id ?? ''
           ) : const SizedBox.shrink(),
-        ),
+        ),),
         drawer: const AppDrawer(),
         body: Obx(()=>  homeController.isLoading.value ? Container(
             decoration: AppTheme.appBoxDecoration,
@@ -69,9 +73,9 @@ class HomePage extends StatelessWidget {
             controller: homeController.pageController,
             children: [
               firstPage,
-              if(showCentralAsSecond && centralPage != null) centralPage!,
+              if(showCentralAsSecond) centralWidget,
               if(secondPage != null) secondPage!,
-              if(showCentralAsThird && centralPage != null) centralPage!,
+              if(showCentralAsThird) centralWidget,
               if(thirdPage != null) thirdPage!,
               if(forthPage != null) forthPage!
             ]
