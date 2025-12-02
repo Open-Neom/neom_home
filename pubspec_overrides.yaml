@@ -3,3 +3,8 @@ dependency_overrides:
     path: ../neom_core
   neom_commons:
     path: ../neom_commons
+  neom_google_places:
+    path: ../neom_google_places
+  neom_maps_services:
+    path: ../neom_maps_services
+  package_info_plus: 9.0.0

@@ -3,24 +3,24 @@ import 'package:get/get.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/app_utilities.dart';
+import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
+import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/message_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/data/implementations/app_initialization_controller.dart';
 import 'package:neom_core/domain/model/event.dart';
-import 'package:neom_core/domain/use_cases/audio_handler_service.dart';
-import 'package:neom_core/domain/use_cases/audio_player_invoker_service.dart';
 import 'package:neom_core/domain/use_cases/home_service.dart';
 import 'package:neom_core/domain/use_cases/login_service.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
-import 'package:neom_core/utils/constants/core_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/auth_status.dart';
 
+import '../domain/models/home_tab_item.dart';
 import '../utilities/constants/home_constants.dart';
 import '../utilities/constants/home_translation_constants.dart';
 
@@ -30,6 +30,8 @@ class HomeController extends GetxController implements HomeService {
   final loginServiceImpl = Get.isRegistered<LoginService>() ? Get.find<LoginService>() : null;
   final userServiceImpl = Get.isRegistered<UserService>() ? Get.find<UserService>() : null;
   final timelineServiceImpl = Get.isRegistered<TimelineService>() ? Get.find<TimelineService>() : null;
+
+  List<HomeTabItem> _tabs = [];
 
   bool startingHome = true;
   bool hasItems = false;
@@ -70,12 +72,12 @@ class HomeController extends GetxController implements HomeService {
         _currentIndex.value = toIndex;
       }
 
-      pageController = PageController(initialPage: toIndex);
+      pageController = PageController(initialPage: _getPageIndexFromVisualIndex(toIndex));
       pageController.addListener(() {
-        int newIndex = pageController.page!.toInt();
-        if (_currentIndex.value != newIndex) {
-          _currentIndex.value = newIndex;
-        }
+        // int newIndex = pageController.page!.toInt();
+        // if (_currentIndex.value != newIndex) {
+        //   _currentIndex.value = newIndex;
+        // }
       });
 
       hasItems = (userServiceImpl?.profile.favoriteItems?.length ?? 0) > 1;
@@ -116,6 +118,20 @@ class HomeController extends GetxController implements HomeService {
     }
   }
 
+  void initTabs(List<HomeTabItem> tabs) {
+    _tabs = tabs;
+  }
+
+  int _getPageIndexFromVisualIndex(int visualIndex) {
+    int pageIndex = 0;
+    for (int i = 0; i < visualIndex; i++) {
+      if (i < _tabs.length && _tabs[i].page != null) {
+        pageIndex++;
+      }
+    }
+    return pageIndex;
+  }
+
   Future<void> _loadUserProfileFeatures() async {
     if(userServiceImpl == null) return;
     if(userServiceImpl!.user.profiles.isNotEmpty && userServiceImpl!.user.profiles.first.id.isNotEmpty) {
@@ -125,87 +141,41 @@ class HomeController extends GetxController implements HomeService {
   }
 
   @override
-  void selectPageView(int index, {BuildContext? context, int? totalPages,
-    bool hasCentralAsSecond = false, bool hasCentralAsThird = false}) async {
-    AppConfig.logger.d("Changing page view to index: $index");
-    isLoading.value = true;
+  void selectTab(int index, {BuildContext? context}) async {
+    if (index >= _tabs.length) return;
 
-    try {
-      totalPages ??= index;
+    AppConfig.logger.d("Selecting tab index: $index");
+    HomeTabItem selectedTab = _tabs[index];
 
-      switch(index) {
-        case CoreConstants.firstHomeTabIndex:
-          if(timelineServiceImpl != null) {
-            timelineServiceImpl!.setScrollOffset(0);
-            await setInitialTimeline();
-          }
-          break;
-        case CoreConstants.secondHomeTabIndex:
-          if(hasCentralAsSecond) {
-          } else {
-          }
-          break;
-        case CoreConstants.thirdHomeTabIndex:
-          if(hasCentralAsThird) {
-          } else {
-          }
-          break;
-        case CoreConstants.forthHomeTabIndex:
-          break;
-        case CoreConstants.fifthHomeTabIndex:
-          break;
-      }
-
-      if(pageController.hasClients) {
-        AppConfig.logger.d("Jumping to index: $index");
-        switch(index) {
-          case CoreConstants.firstHomeTabIndex:
-            pageController.jumpToPage(index);
-            _currentIndex.value = index;
-            break;
-          case CoreConstants.secondHomeTabIndex:
-            if(hasCentralAsSecond) {
-              if(context != null) modalBottomSheetMenu(context);
-            } else {
-              pageController.jumpToPage(index);
-              _currentIndex.value = index;
-            }
-            break;
-          case CoreConstants.thirdHomeTabIndex:
-            if(hasCentralAsThird) {
-              if(context != null) modalBottomSheetMenu(context);
-            } else {
-              if(AppConfig.instance.appInUse == AppInUse.e) {
-                Get.toNamed(AppRouteConstants.libraryHome);
-              } else {
-                pageController.jumpToPage(index);
-                _currentIndex.value = index;
-              }
-            }
-            break;
-          case CoreConstants.forthHomeTabIndex:
-            if(hasCentralAsThird && AppConfig.instance.appInUse == AppInUse.e) {
-              Get.toNamed(AppRouteConstants.libraryHome);
-            } else if(!hasCentralAsThird && Get.isRegistered<AudioPlayerInvokerService>()
-                && Get.isRegistered<AudioHandlerService>()) {
-              Get.toNamed(AppRouteConstants.audioPlayerHome);
-            } else {
-              pageController.jumpToPage(index);
-              _currentIndex.value = index;
-            }
-            break;
-          case CoreConstants.fifthHomeTabIndex:
-            if(Get.isRegistered<AudioPlayerInvokerService>() && Get.isRegistered<AudioHandlerService>()) {
-              Get.toNamed(AppRouteConstants.audioPlayerHome);
-            } else {
-              pageController.jumpToPage(index);
-              _currentIndex.value = index;
-            }
-
-            break;
+    if (selectedTab.isActionButton) {
+      if(context != null) {
+        if(selectedTab.title == AppTranslationConstants.add) {
+          modalBottomAddMenu(context);
         }
       }
 
+      return;
+    }
+
+    if (selectedTab.route != null) {
+      Get.toNamed(selectedTab.route!);
+      return;
+    }
+
+    isLoading.value = true;
+
+    try {
+      if (index == 0 && timelineServiceImpl != null) {
+        timelineServiceImpl!.setScrollOffset(0);
+        await setInitialTimeline();
+      }
+
+      int targetPageIndex = _getPageIndexFromVisualIndex(index);
+
+      if (pageController.hasClients) {
+        pageController.jumpToPage(targetPageIndex);
+        _currentIndex.value = index;
+      }
     } catch (e) {
       AppConfig.logger.e(e.toString());
     }
@@ -215,7 +185,7 @@ class HomeController extends GetxController implements HomeService {
   }
 
   @override
-  Future<void> modalBottomSheetMenu(BuildContext context) async {
+  Future<void> modalBottomAddMenu(BuildContext context) async {
     await showModalBottomSheet(
         elevation: 0,
         backgroundColor: AppTheme.canvasColor50(context),
@@ -250,21 +220,23 @@ class HomeController extends GetxController implements HomeService {
                           style: const TextStyle(fontSize: 13),),
                         onTap: () {
                           Navigator.pop(ctx);
-                          switch (HomeConstants.bottomMenuItems[index].title) {
-                            case CommonTranslationConstants.createPost:
-                              Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                              break;
-                            case HomeTranslationConstants.organizeEvent:
-                              if(AppConfig.instance.appInUse == AppInUse.c) {
-                                Get.toNamed(AppRouteConstants.createNeomEventType);
-                              } else {
+                          AuthGuard.protect(context, () {
+                            switch (HomeConstants.bottomMenuItems[index].title) {
+                              case CommonTranslationConstants.createPost:
                                 Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                              }
-                              break;
-                            case HomeTranslationConstants.shareComment:
-                              Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                              break;
-                          }
+                                break;
+                              case HomeTranslationConstants.organizeEvent:
+                                if(AppConfig.instance.appInUse == AppInUse.c) {
+                                  Get.toNamed(AppRouteConstants.createNeomEventType);
+                                } else {
+                                  Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                }
+                                break;
+                              case HomeTranslationConstants.shareComment:
+                                Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                break;
+                            }
+                          });
                         },
                       );
                     }

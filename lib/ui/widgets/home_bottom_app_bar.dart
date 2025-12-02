@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:neom_commons/ui/widgets/bottom_bar_item.dart';
 
-import '../../domain/models/bottom_bar_item.dart';
 import '../home_controller.dart';
 
 class HomeBottomAppBar extends StatefulWidget {
 
-  final List<BottomAppBarItem> items;
+  final List<BottomBarItem> items;
   final String centerItemText;
   final double height;
   final double iconSize;
@@ -72,7 +72,7 @@ class HomeBottomAppBarState extends State<HomeBottomAppBar> {
   }
 
   Widget _buildTabItem({
-    BottomAppBarItem? item,
+    BottomBarItem? item,
     int index = 0,
     ValueChanged<int>? onPressed,
     int currentIndex = 0,

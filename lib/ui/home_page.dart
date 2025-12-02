@@ -1,57 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/app_drawer.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
+import 'package:neom_commons/ui/widgets/bottom_bar_item.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 
-import '../domain/models/bottom_bar_item.dart';
+import '../domain/models/home_tab_item.dart';
 import 'home_controller.dart';
-import 'widgets/home_appbar.dart';
+import 'widgets/home_app_bar.dart';
 import 'widgets/home_appbar_lite.dart';
 import 'widgets/home_bottom_app_bar.dart';
 
 class HomePage extends StatelessWidget {
 
-  final Widget firstPage;
-  final String firstTabName;
-  final Widget? secondPage;
-  final String secondTabName;
-  final Widget? thirdPage;
-  final String thirdTabName;
-  final Widget? forthPage;
-  final String forthTabName;
-  final Widget? centralPage;
-  final String centralTabName;
+  final List<HomeTabItem> tabs;
   final bool addCentralActionButton;
 
-  const HomePage({super.key, required this.firstPage, required this.firstTabName, this.secondPage, this.secondTabName = '',
-    this.thirdPage, this.thirdTabName = '', this.forthPage, this.forthTabName = '',
-    this.centralPage, this.centralTabName = '', this.addCentralActionButton = false});
+  const HomePage({super.key, required this.tabs,
+    this.addCentralActionButton = false});
 
   @override
   Widget build(BuildContext context){
-    int totalPages = 1;
-    if(secondPage != null) totalPages++;
-    if(thirdPage != null) totalPages++;
-    if(forthPage != null) totalPages++;
-    if(centralPage != null) totalPages++;
-
-    bool showCentralAsSecond = ((centralPage != null || addCentralActionButton) && secondPage != null && thirdPage == null && forthPage == null);
-    bool showCentralAsThird = ((centralPage != null || addCentralActionButton) && secondPage != null && thirdPage != null && forthPage != null);
-    Widget centralWidget = SizedBox.shrink();
-    if(centralPage != null && !addCentralActionButton) {
-      centralWidget = centralPage!;
-    }
+    final List<Widget> pageWidgets = tabs
+        .where((tab) => tab.page != null)
+        .map((tab) => tab.page!).toList();
 
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
       init: HomeController(),
+      initState: (_) {
+        Get.find<HomeController>().initTabs(tabs);
+      },
       builder: (homeController) => Scaffold(
         backgroundColor: AppFlavour.getBackgroundColor(),
         appBar: PreferredSize(
@@ -65,47 +49,34 @@ class HomePage extends StatelessWidget {
           ) : const SizedBox.shrink(),
         ),),
         drawer: const AppDrawer(),
-        body: Obx(()=>  homeController.isLoading.value ? Container(
-            decoration: AppTheme.appBoxDecoration,
-            child: const AppCircularProgressIndicator(showLogo: false,)
-        ) : PageView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: homeController.pageController,
-            children: [
-              firstPage,
-              if(showCentralAsSecond) centralWidget,
-              if(secondPage != null) secondPage!,
-              if(showCentralAsThird) centralWidget,
-              if(thirdPage != null) thirdPage!,
-              if(forthPage != null) forthPage!
-            ]
-        ),),
+        body: Stack(
+          children: [
+            PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: homeController.pageController,
+              children: pageWidgets,
+            ),
+            Obx(()=> homeController.isLoading.value ? Container(
+              decoration: AppTheme.appBoxDecoration,
+                  child: const AppCircularProgressIndicator(showLogo: false,)
+              ) : SizedBox.shrink()),
+          ],
+        ),
         bottomNavigationBar: HomeBottomAppBar(
           backgroundColor: AppColor.bottomNavigationBar,
           color: Colors.white54,
           selectedColor: Colors.white,
-          height: 56,
+          height: 50,
           notchedShape: const CircularNotchedRectangle(),
-          onTabSelected:(int index) {
-            homeController.selectPageView(index,
-              context: context,
-              totalPages: totalPages,
-              hasCentralAsSecond: showCentralAsSecond,
-              hasCentralAsThird: showCentralAsThird
-            );
-          },
-          items: [
-            BottomAppBarItem(iconData: FontAwesomeIcons.house, text: firstTabName.tr),
-            if(showCentralAsSecond) BottomAppBarItem(iconData: AppFlavour.getCentralTabIcon(), text: centralTabName.tr,),
-            if(secondPage != null) BottomAppBarItem(iconData: AppFlavour.getSecondTabIcon(), text: secondTabName.tr,),
-            if(showCentralAsThird) BottomAppBarItem(iconData: AppFlavour.getCentralTabIcon(), text: centralTabName.tr,),
-            if(thirdPage != null) BottomAppBarItem(iconData: AppFlavour.getThirdTabIcon(), text: thirdTabName.tr),
-            if(forthPage != null) BottomAppBarItem(iconData: AppFlavour.getForthTabIcon(), text: forthTabName.tr,)
-          ],
+          onTabSelected: (int index) => homeController.selectTab(index, context: context),
+          items: tabs.map((tab) => BottomBarItem(
+              iconData: tab.icon,
+              text: tab.title.tr
+          )).toList(),
           showText: false,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: homeController.timelineServiceImpl != null && AppFlavour.activateHomeActionBtn() ? SizedBox(
+        floatingActionButton: homeController.timelineServiceImpl != null && addCentralActionButton ? SizedBox(
           width: 43, height: 43,
           child: FloatingActionButton(
             tooltip: AppFlavour.getHomeActionBtnTooltip(),
