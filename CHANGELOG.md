@@ -1,3 +1,5 @@
+## 1.6.0-dev - Architectural Changes and Major Refactoring:
+- Implementing Guest Mode & improving performance
 ## 1.4.0-dev - Architectural Changes and Major Refactoring:
 
 This release marks a significant architectural overhaul across the Open Neom ecosystem, with `neom_core` playing a central role in defining the new, more robust, and maintainable structure. The primary focus has been on enhancing decoupling, testability, and clarity of responsibilities.
