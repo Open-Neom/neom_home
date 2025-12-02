@@ -1,6 +1,6 @@
 name: neom_home
 description: Home for Open Neom.
-version: 1.5.0-dev
+version: 1.6.0-dev
 homepage: https://github.com/Open-Neom/neom_home
 
 environment:
