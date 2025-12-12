@@ -66,7 +66,7 @@ class HomePage extends StatelessWidget {
           backgroundColor: AppColor.bottomNavigationBar,
           color: Colors.white54,
           selectedColor: Colors.white,
-          height: 50,
+          height: 55,
           notchedShape: const CircularNotchedRectangle(),
           onTabSelected: (int index) => homeController.selectTab(index, context: context),
           items: tabs.map((tab) => BottomBarItem(

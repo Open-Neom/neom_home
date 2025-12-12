@@ -7,7 +7,7 @@ import 'home_translation_constants.dart';
 class HomeConstants {
 
   static final List<BottomMenuItem> bottomMenuItems = [
-    BottomMenuItem(CommonTranslationConstants.createPost, HomeTranslationConstants.createPostMsg, Icons.colorize, AppRouteConstants.mediaUpload),
+    BottomMenuItem(CommonTranslationConstants.createPost, HomeTranslationConstants.createPostMsg, Icons.create, AppRouteConstants.mediaUpload),
     BottomMenuItem(HomeTranslationConstants.organizeEvent, HomeTranslationConstants.organizeEventMsg, Icons.event, AppRouteConstants.createEventType),
     BottomMenuItem(HomeTranslationConstants.shareComment, HomeTranslationConstants.shareCommentMsg, Icons.info, AppRouteConstants.createPostText),
   ];

@@ -194,10 +194,10 @@ class HomeController extends GetxController implements HomeService {
           return Column(
             children: <Widget>[
               Container(
-                height: 260,
+                height: 300,
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                    color: AppColor.getMain(),
+                    color: AppColor.main75,
                     borderRadius: const BorderRadius.all(Radius.circular(10.0))
                 ),
                 child: ListView.separated(
@@ -212,12 +212,12 @@ class HomeController extends GetxController implements HomeService {
                           ),
                           child: Icon(HomeConstants.bottomMenuItems[index].icon, color: Colors.white),
                         ),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 15,),
+                        trailing: const Icon(Icons.arrow_forward_ios, size: 18,),
                         title: Text(HomeConstants.bottomMenuItems[index].title.tr,
-                          style: const TextStyle(color: Colors.white, fontSize: 15),
+                          style: const TextStyle(color: Colors.white, fontSize: 18),
                         ),
                         subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr,
-                          style: const TextStyle(fontSize: 13),),
+                          style: const TextStyle(fontSize: 15),),
                         onTap: () {
                           Navigator.pop(ctx);
                           AuthGuard.protect(context, () {
@@ -278,11 +278,13 @@ class HomeController extends GetxController implements HomeService {
   void timelineIsReady({bool isReady = true}) async {
 
     _mediaPlayerEnabled.value = AppConfig.instance.appInfo.mediaPlayerEnabled;
-    if(startingHome) _loadUserProfileFeatures();
-
     _timelineReady.value = isReady;
 
-    AppInitializationController.runPostLoginTasks();
+    if(!AppConfig.instance.isGuestMode) {
+      if(startingHome) _loadUserProfileFeatures();
+      AppInitializationController.runPostLoginTasks();
+    }
+
     AppInitializationController.initAudioHandler();
   }
 

@@ -43,11 +43,28 @@ class _HomeAppBarState extends State<HomeAppBar> {
   // 2. Variable para controlar la notificación falsa
   bool showFakeNotification = false;
   Timer? _guestTimer;
+  Future<List<ActivityFeed>>? _activityFeedFuture;
 
   @override
   void initState() {
     super.initState();
     _startGuestTimer();
+    if (widget.profileId.isNotEmpty) {
+      _activityFeedFuture = ActivityFeedFirestore().retrieve(widget.profileId);
+    }
+  }
+
+  @override
+  void didUpdateWidget(HomeAppBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // 3. Seguridad: Solo volvemos a llamar a Firebase si el ID del usuario CAMBIÓ
+    if (widget.profileId != oldWidget.profileId) {
+      if (widget.profileId.isNotEmpty) {
+        _activityFeedFuture = ActivityFeedFirestore().retrieve(widget.profileId);
+      } else {
+        _activityFeedFuture = null;
+      }
+    }
   }
 
   void _startGuestTimer() {
@@ -160,7 +177,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             },
           ),
           FutureBuilder<List<ActivityFeed>>(
-            future: (widget.profileId.isEmpty) ? null : ActivityFeedFirestore().retrieve(widget.profileId),
+            future: _activityFeedFuture,
             builder: (context, snapshot) {
 
               int unreadCount = 0;
