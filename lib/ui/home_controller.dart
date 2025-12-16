@@ -118,6 +118,12 @@ class HomeController extends GetxController implements HomeService {
     }
   }
 
+  @override
+  void onClose() {
+    pageController.dispose();
+    super.onClose();
+  }
+
   void initTabs(List<HomeTabItem> tabs) {
     _tabs = tabs;
   }
@@ -173,7 +179,11 @@ class HomeController extends GetxController implements HomeService {
       int targetPageIndex = _getPageIndexFromVisualIndex(index);
 
       if (pageController.hasClients) {
-        pageController.jumpToPage(targetPageIndex);
+        if (pageController.positions.length > 1) {
+          AppConfig.logger.w("PageController attached to multiple views. Skipping jump.");
+        } else {
+          pageController.jumpToPage(targetPageIndex);
+        }
         _currentIndex.value = index;
       }
     } catch (e) {
@@ -226,11 +236,7 @@ class HomeController extends GetxController implements HomeService {
                                 Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                                 break;
                               case HomeTranslationConstants.organizeEvent:
-                                if(AppConfig.instance.appInUse == AppInUse.c) {
-                                  Get.toNamed(AppRouteConstants.createNeomEventType);
-                                } else {
-                                  Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                                }
+                                Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                                 break;
                               case HomeTranslationConstants.shareComment:
                                 Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);

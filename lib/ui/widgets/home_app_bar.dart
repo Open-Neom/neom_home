@@ -110,7 +110,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           child: Image.asset(
             AppAssets.logoCompanyWhite,
             height: 25,
-            fit: BoxFit.fitHeight,
+            fit: BoxFit.contain,
           ),
           onTap: () {
             AppAlerts.showAlert(context, message: "${AppTranslationConstants.version.tr} "
