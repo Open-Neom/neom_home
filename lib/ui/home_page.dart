@@ -5,7 +5,8 @@ import 'package:neom_commons/ui/app_drawer.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
-import 'package:neom_commons/ui/widgets/bottom_bar_item.dart';
+import 'package:neom_commons/ui/widgets/neom_bottom_app_bar.dart';
+import 'package:neom_commons/ui/widgets/neom_bottom_app_bar_item.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
@@ -14,7 +15,6 @@ import '../domain/models/home_tab_item.dart';
 import 'home_controller.dart';
 import 'widgets/home_app_bar.dart';
 import 'widgets/home_appbar_lite.dart';
-import 'widgets/home_bottom_app_bar.dart';
 
 class HomePage extends StatelessWidget {
 
@@ -62,18 +62,19 @@ class HomePage extends StatelessWidget {
               ) : SizedBox.shrink()),
           ],
         ),
-        bottomNavigationBar: HomeBottomAppBar(
+        bottomNavigationBar: NeomBottomAppBar(
           backgroundColor: AppColor.bottomNavigationBar,
           color: Colors.white54,
           selectedColor: Colors.white,
           height: 55,
           notchedShape: const CircularNotchedRectangle(),
           onTabSelected: (int index) => homeController.selectTab(index, context: context),
-          items: tabs.map((tab) => BottomBarItem(
+          items: tabs.map((tab) => NeomBottomAppBarItem(
               iconData: tab.icon,
               text: tab.title.tr
           )).toList(),
           showText: false,
+          currentIndex: homeController.currentIndex,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: homeController.timelineServiceImpl != null && addCentralActionButton ? SizedBox(
