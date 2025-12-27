@@ -9,6 +9,7 @@ import 'package:neom_commons/ui/widgets/neom_bottom_app_bar.dart';
 import 'package:neom_commons/ui/widgets/neom_bottom_app_bar_item.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_core/app_properties.dart';
+import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 
 import '../domain/models/home_tab_item.dart';
@@ -20,9 +21,11 @@ class HomePage extends StatelessWidget {
 
   final List<HomeTabItem> tabs;
   final bool addCentralActionButton;
+  final Widget? miniPlayer;
 
   const HomePage({super.key, required this.tabs,
-    this.addCentralActionButton = false});
+    this.addCentralActionButton = false,
+    this.miniPlayer,});
 
   @override
   Widget build(BuildContext context){
@@ -32,20 +35,20 @@ class HomePage extends StatelessWidget {
 
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
-      init: HomeController(),
+      ///DEPRECATED init: HomeController(),
       initState: (_) {
         Get.find<HomeController>().initTabs(tabs);
       },
-      builder: (homeController) => Scaffold(
+      builder: (controller) => Scaffold(
         backgroundColor: AppFlavour.getBackgroundColor(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50.0), // Altura del AppBar
-          child:Obx(()=>  (homeController.userServiceImpl == null) ? HomeAppBarLite()
-              : (homeController.currentIndex != 0 || (homeController.timelineServiceImpl?.showAppBar ?? false))
+          child: Obx(()=>  (controller.userServiceImpl == null) ? HomeAppBarLite()
+              : (controller.currentIndex != 0 || (controller.timelineServiceImpl?.showAppBar ?? false))
               ? HomeAppBar(
-              profileImg: (homeController.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
-                  ? homeController.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
-              profileId: homeController.userServiceImpl?.profile.id ?? ''
+              profileImg: (controller.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
+                  ? controller.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
+              profileId: controller.userServiceImpl?.profile.id ?? ''
           ) : const SizedBox.shrink(),
         ),),
         drawer: const AppDrawer(),
@@ -53,10 +56,15 @@ class HomePage extends StatelessWidget {
           children: [
             PageView(
               physics: const NeverScrollableScrollPhysics(),
-              controller: homeController.pageController,
+              controller: controller.pageController,
               children: pageWidgets,
             ),
-            Obx(()=> homeController.isLoading.value ? Container(
+            Obx(()=> (Get.isRegistered<UserService>() && Get.find<UserService>().user.id.isNotEmpty && miniPlayer != null
+                && (controller.timelineReady) && (controller.mediaPlayerEnabled)) ?
+              Positioned(left: 0, right: 0, bottom: 0, child: miniPlayer!,)
+                : SizedBox.shrink()
+            ),
+            Obx(()=> controller.isLoading.value ? Container(
               decoration: AppTheme.appBoxDecoration,
                   child: const AppCircularProgressIndicator(showLogo: false,)
               ) : SizedBox.shrink()),
@@ -68,16 +76,16 @@ class HomePage extends StatelessWidget {
           selectedColor: Colors.white,
           height: 55,
           notchedShape: const CircularNotchedRectangle(),
-          onTabSelected: (int index) => homeController.selectTab(index, context: context),
+          onTabSelected: (int index) => controller.selectTab(index, context: context),
           items: tabs.map((tab) => NeomBottomAppBarItem(
               iconData: tab.icon,
               text: tab.title.tr
           )).toList(),
           showText: false,
-          currentIndex: homeController.currentIndex,
+          currentIndex: controller.currentIndex,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        floatingActionButton: homeController.timelineServiceImpl != null && addCentralActionButton ? SizedBox(
+        floatingActionButton: controller.timelineServiceImpl != null && addCentralActionButton ? SizedBox(
           width: 43, height: 43,
           child: FloatingActionButton(
             tooltip: AppFlavour.getHomeActionBtnTooltip(),
