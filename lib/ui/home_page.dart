@@ -9,7 +9,6 @@ import 'package:neom_commons/ui/widgets/neom_bottom_app_bar.dart';
 import 'package:neom_commons/ui/widgets/neom_bottom_app_bar_item.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_core/app_properties.dart';
-import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 
 import '../domain/models/home_tab_item.dart';
@@ -59,8 +58,9 @@ class HomePage extends StatelessWidget {
               controller: controller.pageController,
               children: pageWidgets,
             ),
-            Obx(()=> (Get.isRegistered<UserService>() && Get.find<UserService>().user.id.isNotEmpty && miniPlayer != null
-                && (controller.timelineReady) && (controller.mediaPlayerEnabled)) ?
+            Obx(()=> (miniPlayer != null
+                && (controller.timelineReady)
+                && (controller.mediaPlayerEnabled)) ?
               Positioned(left: 0, right: 0, bottom: 0, child: miniPlayer!,)
                 : SizedBox.shrink()
             ),
