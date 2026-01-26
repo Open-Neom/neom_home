@@ -34,7 +34,6 @@ class HomePage extends StatelessWidget {
 
     return GetBuilder<HomeController>(
       id: AppPageIdConstants.home,
-      ///DEPRECATED init: HomeController(),
       initState: (_) {
         Get.find<HomeController>().initTabs(tabs);
       },
@@ -58,9 +57,8 @@ class HomePage extends StatelessWidget {
               controller: controller.pageController,
               children: pageWidgets,
             ),
-            Obx(()=> (miniPlayer != null
-                && (controller.timelineReady)
-                && (controller.mediaPlayerEnabled)) ?
+            if(miniPlayer != null) Obx(()=> (controller.timelineReady
+                && controller.mediaPlayerEnabled) ?
               Positioned(left: 0, right: 0, bottom: 0, child: miniPlayer!,)
                 : SizedBox.shrink()
             ),
