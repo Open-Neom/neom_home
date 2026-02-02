@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:sint/sint.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/app_utilities.dart';
@@ -24,12 +24,12 @@ import '../domain/models/home_tab_item.dart';
 import '../utilities/constants/home_constants.dart';
 import '../utilities/constants/home_translation_constants.dart';
 
-class HomeController extends GetxController implements HomeService {
+class HomeController extends SintController implements HomeService {
 
 
-  final loginServiceImpl = Get.isRegistered<LoginService>() ? Get.find<LoginService>() : null;
-  final userServiceImpl = Get.isRegistered<UserService>() ? Get.find<UserService>() : null;
-  final timelineServiceImpl = Get.isRegistered<TimelineService>() ? Get.find<TimelineService>() : null;
+  final loginServiceImpl = Sint.isRegistered<LoginService>() ? Sint.find<LoginService>() : null;
+  final userServiceImpl = Sint.isRegistered<UserService>() ? Sint.find<UserService>() : null;
+  final timelineServiceImpl = Sint.isRegistered<TimelineService>() ? Sint.find<TimelineService>() : null;
 
   List<HomeTabItem> _tabs = [];
 
@@ -54,13 +54,13 @@ class HomeController extends GetxController implements HomeService {
 
     try {
 
-      if(Get.arguments != null) {
-        if (Get.arguments[0] is int) {
-          toIndex = Get.arguments[0] as int;
-        } else if (Get.arguments[0] is Event) {
-          event = Get.arguments[0] as  Event;
-        } else if (Get.arguments[0] is String) {
-          toRoute = Get.arguments[0] as String;
+      if(Sint.arguments != null) {
+        if (Sint.arguments[0] is int) {
+          toIndex = Sint.arguments[0] as int;
+        } else if (Sint.arguments[0] is Event) {
+          event = Sint.arguments[0] as  Event;
+        } else if (Sint.arguments[0] is String) {
+          toRoute = Sint.arguments[0] as String;
         }
       }
 
@@ -112,7 +112,7 @@ class HomeController extends GetxController implements HomeService {
         // await timelineController.gotoEventDetails(event);
       }
 
-      if(toRoute.isNotEmpty) Get.toNamed(toRoute);
+      if(toRoute.isNotEmpty) Sint.toNamed(toRoute);
     } catch(e) {
       AppConfig.logger.e(e.toString());
     }
@@ -164,7 +164,7 @@ class HomeController extends GetxController implements HomeService {
     }
 
     if (selectedTab.route != null) {
-      Get.toNamed(selectedTab.route!);
+      Sint.toNamed(selectedTab.route!);
       return;
     }
 
@@ -233,13 +233,13 @@ class HomeController extends GetxController implements HomeService {
                           AuthGuard.protect(context, () {
                             switch (HomeConstants.bottomMenuItems[index].title) {
                               case CommonTranslationConstants.createPost:
-                                Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                                 break;
                               case HomeTranslationConstants.organizeEvent:
-                                Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                                 break;
                               case HomeTranslationConstants.shareComment:
-                                Get.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                                 break;
                             }
                           });
@@ -266,7 +266,7 @@ class HomeController extends GetxController implements HomeService {
   }
 
   void gotoEvent(Event event) {
-    Get.toNamed(AppRouteConstants.eventDetails, arguments: [event]);
+    Sint.toNamed(AppRouteConstants.eventDetails, arguments: [event]);
   }
 
   Future<void> setInitialTimeline() async {

@@ -2,7 +2,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
+import 'package:sint/sint.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/app_alerts.dart';
@@ -74,14 +74,14 @@ class HomeAppBarLite extends StatelessWidget implements PreferredSizeWidget {
   void choiceAction(DotMenuChoices choice) async {
     switch(choice) {
       case DotMenuChoices.settings:
-        if(Get.isRegistered<SettingsService>()) {
-          Get.toNamed(AppRouteConstants.settingsPrivacy);
+        if(Sint.isRegistered<SettingsService>()) {
+          Sint.toNamed(AppRouteConstants.settingsPrivacy);
         }
 
         break;
       case DotMenuChoices.logout:
-        if(Get.isRegistered<LoginService>()) {
-          Get.find<LoginService>().signOut();
+        if(Sint.isRegistered<LoginService>()) {
+          Sint.find<LoginService>().signOut();
         }
         break;
       case DotMenuChoices.shareApp:

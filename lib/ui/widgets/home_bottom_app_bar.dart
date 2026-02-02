@@ -1,5 +1,5 @@
 // import 'package:flutter/material.dart';
-// import 'package:get/get.dart';
+// import 'package:sint/sint.dart';
 // import 'package:neom_commons/ui/widgets/bottom_bar_item.dart';
 //
 // import '../home_controller.dart';
@@ -41,7 +41,7 @@
 //
 // class HomeBottomAppBarState extends State<HomeBottomAppBar> {
 //
-//   final HomeController homeController = Get.find<HomeController>();
+//   final HomeController homeController = Sint.find<HomeController>();
 //
 //   void updateIndex(int index) {
 //     widget.onTabSelected(index);

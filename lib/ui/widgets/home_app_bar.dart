@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get/get.dart';
+import 'package:sint/sint.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
@@ -124,11 +124,11 @@ class _HomeAppBarState extends State<HomeAppBar> {
             icon: const Icon(Icons.add_box_outlined, size: 25,),
             color: Colors.white70,
             onPressed: () {
-              if(!Get.isRegistered<HomeController>()) {
+              if(!Sint.isRegistered<HomeController>()) {
                 AppConfig.logger.d("HomeController not registered, registering now");
-                Get.put(HomeController());
+                Sint.put(HomeController());
               }
-              Get.find<HomeController>().modalBottomAddMenu(context);
+              Sint.find<HomeController>().modalBottomAddMenu(context);
             }
         ),
         if(AppFlavour.showAppBarDirectoryBtn()) IconButton(
@@ -136,7 +136,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             icon: const Icon(FontAwesomeIcons.building),
             color: Colors.white70,
             onPressed: () {
-              Get.toNamed(AppRouteConstants.directory);
+              Sint.toNamed(AppRouteConstants.directory);
             }
         ),
         buildNotificationFeed(context),
@@ -145,7 +145,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             icon: const Icon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: () => {
-              Get.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
+              Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
             }
         ),
         IconButton(
@@ -154,7 +154,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
           color: Colors.white70,
           onPressed: () {
             AuthGuard.protect(context, () {
-              Get.toNamed(AppRouteConstants.inbox);
+              Sint.toNamed(AppRouteConstants.inbox);
             });
           } ,
         ),
@@ -172,7 +172,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             onPressed: () {
               // El AuthGuard interceptará esto y pedirá registro
               AuthGuard.protect(context, () {
-                Get.toNamed(AppRouteConstants.feedActivity);
+                Sint.toNamed(AppRouteConstants.feedActivity);
               });
             },
           ),

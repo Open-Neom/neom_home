@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:sint/sint.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/app_drawer.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
@@ -32,10 +32,10 @@ class HomePage extends StatelessWidget {
         .where((tab) => tab.page != null)
         .map((tab) => tab.page!).toList();
 
-    return GetBuilder<HomeController>(
+    return SintBuilder<HomeController>(
       id: AppPageIdConstants.home,
       initState: (_) {
-        Get.find<HomeController>().initTabs(tabs);
+        Sint.find<HomeController>().initTabs(tabs);
       },
       builder: (controller) => Scaffold(
         backgroundColor: AppFlavour.getBackgroundColor(),
@@ -88,7 +88,7 @@ class HomePage extends StatelessWidget {
           child: FloatingActionButton(
             tooltip: AppFlavour.getHomeActionBtnTooltip(),
             splashColor: AppColor.white,
-            onPressed: () => Get.toNamed(AppRouteConstants.generator),
+            onPressed: () => Sint.toNamed(AppRouteConstants.generator),
             elevation: 10,
             backgroundColor: Colors.white.withAlpha(230),
             foregroundColor: Colors.black87,

@@ -1,10 +1,10 @@
-import 'package:get/get.dart';
+import 'package:sint/sint.dart';
 
 class HomeRoutes {
 
-  static final List<GetPage<dynamic>> routes = [
+  static final List<SintPage<dynamic>> routes = [
     ///UNCOMMENT THIS IN ORDER TO ENABLE AUDIO PLAYER HOME PAGE
-    // GetPage(
+    // SintPage(
     //     name: AppRouteConstants.home,
     //     page: () => const HomePage(),
     //     transition: Transition.zoom
