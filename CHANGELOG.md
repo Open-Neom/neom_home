@@ -1,3 +1,14 @@
+## 1.6.1-dev - Real-time Badge Notifications
+
+### New Features
+- **AppBarIconBadge widget** - Reusable badge component for AppBar icons
+- **Real-time notification badges** - Both notifications (🔔) and inbox (💬) badges now update in real-time using StreamBuilder
+- **Inbox unread count** - Shows number of conversations with unread messages
+
+### Technical Changes
+- Replaced FutureBuilder with StreamBuilder for live updates
+- Integrated with `getUnreadNotificationsCountStream` and `getUnreadInboxCountStream` from neom_core
+
 ## 1.6.0-dev - Architectural Changes and Major Refactoring:
 - Implementing Guest Mode & improving performance
 ## 1.4.0-dev - Architectural Changes and Major Refactoring:
