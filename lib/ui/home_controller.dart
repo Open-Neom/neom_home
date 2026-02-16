@@ -9,6 +9,7 @@ import 'package:neom_commons/utils/constants/translations/app_translation_consta
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/message_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/data/firestore/app_release_item_firestore.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/data/implementations/app_initialization_controller.dart';
 import 'package:neom_core/domain/model/event.dart';
@@ -19,6 +20,7 @@ import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/auth_status.dart';
+import 'package:neom_core/utils/enums/user_role.dart';
 
 import '../domain/models/home_tab_item.dart';
 import '../utilities/constants/home_constants.dart';
@@ -46,6 +48,10 @@ class HomeController extends SintController implements HomeService {
   int toIndex =  0;
   String toRoute = "";
   final RxBool _timelineReady = false.obs;
+
+  // OPTIMIZATION: Track last timeline load to prevent excessive reloads
+  DateTime? _lastTimelineLoad;
+  static const _timelineRefreshThreshold = Duration(minutes: 5);
 
   @override
   void onInit() {
@@ -271,12 +277,27 @@ class HomeController extends SintController implements HomeService {
 
   Future<void> setInitialTimeline() async {
     if(_currentIndex.value == 0 && !startingHome) {
+      // OPTIMIZATION: Only reload if data is stale (older than 5 minutes)
+      final now = DateTime.now();
+      if (_lastTimelineLoad != null &&
+          now.difference(_lastTimelineLoad!) < _timelineRefreshThreshold) {
+        AppConfig.logger.d("Timeline data still fresh, skipping reload");
+        // Just scroll to top without reloading
+        if(timelineServiceImpl?.getScrollController().hasClients ?? false) {
+          await timelineServiceImpl?.getScrollController().animateTo(
+              0.0, curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 500));
+        }
+        return;
+      }
+
       if(timelineServiceImpl?.getScrollController().hasClients ?? false) {
         await timelineServiceImpl?.getScrollController().animateTo(
             0.0, curve: Curves.easeOut,
             duration: const Duration(milliseconds: 1000));
       }
       await timelineServiceImpl?.getTimeline();
+      _lastTimelineLoad = now;
     }
   }
 
@@ -285,13 +306,135 @@ class HomeController extends SintController implements HomeService {
 
     _mediaPlayerEnabled.value = AppConfig.instance.appInfo.mediaPlayerEnabled;
     _timelineReady.value = isReady;
+    _lastTimelineLoad = DateTime.now(); // OPTIMIZATION: Track initial load time
 
     if(!AppConfig.instance.isGuestMode) {
-      if(startingHome) _loadUserProfileFeatures();
-      AppInitializationController.runPostLoginTasks();
+      // OPTIMIZATION: Defer profile features loading to not block UI
+      if(startingHome) {
+        Future.delayed(const Duration(milliseconds: 500), () {
+          _loadUserProfileFeatures();
+        });
+      }
+      // OPTIMIZATION: Defer post-login tasks
+      Future.microtask(() => AppInitializationController.runPostLoginTasks());
+
+      // Check for pending releases if user has support role or higher
+      Future.delayed(const Duration(seconds: 2), () {
+        _checkPendingReleasesForSupportUsers();
+      });
     }
 
-    AppInitializationController.initAudioHandler();
+    // OPTIMIZATION: Defer audio handler initialization
+    Future.delayed(const Duration(seconds: 1), () {
+      AppInitializationController.initAudioHandler();
+    });
+  }
+
+  /// Checks if there are pending releases and shows modal for support+ users
+  Future<void> _checkPendingReleasesForSupportUsers() async {
+    if (userServiceImpl == null) return;
+
+    try {
+      // Only check for support role or higher
+      if (userServiceImpl!.user.userRole.value >= UserRole.support.value) {
+        final pendingReleases = await AppReleaseItemFirestore().retrievePendingReleases();
+
+        if (pendingReleases.isNotEmpty) {
+          AppConfig.logger.i("Found ${pendingReleases.length} pending releases for review");
+          _showPendingReleasesModal(pendingReleases.length);
+        }
+      }
+    } catch (e) {
+      AppConfig.logger.e("Error checking pending releases: $e");
+    }
+  }
+
+  /// Shows a modal alerting the user about pending releases
+  void _showPendingReleasesModal(int count) {
+    final context = Sint.context;
+    if (context == null) return;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColor.main75,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: Colors.orange.withValues(alpha: 0.2),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.assignment_outlined,
+                color: Colors.orange,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                HomeTranslationConstants.pendingReleasesModalTitle.tr,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '$count ${HomeTranslationConstants.pendingReleasesModalMessage.tr}',
+              style: const TextStyle(
+                color: Colors.white70,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              HomeTranslationConstants.pendingReleasesModalHint.tr,
+              style: TextStyle(
+                color: Colors.grey[500],
+                fontSize: 12,
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              HomeTranslationConstants.reviewLater.tr,
+              style: TextStyle(color: Colors.grey[400]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              // Navigate to Requests page with pending releases tab (index 3)
+              Sint.toNamed(AppRouteConstants.request, arguments: [3]);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.orange,
+            ),
+            child: Text(
+              HomeTranslationConstants.reviewNow.tr,
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

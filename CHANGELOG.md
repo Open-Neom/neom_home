@@ -1,4 +1,4 @@
-## 1.6.1-dev - Real-time Badge Notifications
+## 2.0.0 - Real-time Badge Notifications
 
 ### New Features
 - **AppBarIconBadge widget** - Reusable badge component for AppBar icons

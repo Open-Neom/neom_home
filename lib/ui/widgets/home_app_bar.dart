@@ -44,18 +44,24 @@ class _HomeAppBarState extends State<HomeAppBar> {
   // Variable para controlar la notificación falsa (modo guest)
   bool showFakeNotification = false;
   Timer? _guestTimer;
+  Timer? _pollingTimer;
 
-  // Streams para conteo en tiempo real
-  Stream<int>? _unreadNotificationsStream;
-  Stream<int>? _unreadInboxStream;
+  // OPTIMIZED: Use cached counts instead of real-time streams to reduce Firestore reads
+  int _unreadNotificationsCount = 0;
+  int _unreadInboxCount = 0;
+  bool _isLoadingCounts = false;
+
+  // Cache duration - fetch every 2 minutes instead of real-time
+  static const _pollInterval = Duration(minutes: 2);
 
   @override
   void initState() {
     super.initState();
     _startGuestTimer();
     if (widget.profileId.isNotEmpty) {
-      _unreadNotificationsStream = ActivityFeedFirestore().getUnreadNotificationsCountStream(widget.profileId);
-      _unreadInboxStream = InboxFirestore().getUnreadInboxCountStream(widget.profileId);
+      // OPTIMIZED: Load counts once on init, then poll periodically
+      _loadUnreadCounts();
+      _startPollingTimer();
     }
   }
 
@@ -64,14 +70,55 @@ class _HomeAppBarState extends State<HomeAppBar> {
     super.didUpdateWidget(oldWidget);
     // Solo volvemos a llamar a Firebase si el ID del usuario CAMBIÓ
     if (widget.profileId != oldWidget.profileId) {
+      _pollingTimer?.cancel();
       if (widget.profileId.isNotEmpty) {
-        _unreadNotificationsStream = ActivityFeedFirestore().getUnreadNotificationsCountStream(widget.profileId);
-        _unreadInboxStream = InboxFirestore().getUnreadInboxCountStream(widget.profileId);
+        _loadUnreadCounts();
+        _startPollingTimer();
       } else {
-        _unreadNotificationsStream = null;
-        _unreadInboxStream = null;
+        _unreadNotificationsCount = 0;
+        _unreadInboxCount = 0;
       }
     }
+  }
+
+  /// OPTIMIZED: Start periodic polling instead of real-time streams
+  void _startPollingTimer() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(_pollInterval, (_) {
+      if (mounted && widget.profileId.isNotEmpty) {
+        _loadUnreadCounts();
+      }
+    });
+  }
+
+  /// OPTIMIZED: Load counts with a single Future call instead of continuous streams
+  Future<void> _loadUnreadCounts() async {
+    if (_isLoadingCounts || widget.profileId.isEmpty) return;
+    _isLoadingCounts = true;
+
+    try {
+      // Fetch both counts in parallel
+      final results = await Future.wait([
+        ActivityFeedFirestore().getUnreadNotificationsCount(widget.profileId),
+        InboxFirestore().getUnreadInboxCount(widget.profileId),
+      ]);
+
+      if (mounted) {
+        setState(() {
+          _unreadNotificationsCount = results[0];
+          _unreadInboxCount = results[1];
+        });
+      }
+    } catch (e) {
+      AppConfig.logger.e("Error loading unread counts: $e");
+    } finally {
+      _isLoadingCounts = false;
+    }
+  }
+
+  /// Public method to refresh counts (can be called after viewing notifications/inbox)
+  void refreshUnreadCounts() {
+    _loadUnreadCounts();
   }
 
   void _startGuestTimer() {
@@ -90,7 +137,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   @override
   void dispose() {
-    _guestTimer?.cancel(); // Limpiamos el timer para evitar fugas de memoria
+    _guestTimer?.cancel();
+    _pollingTimer?.cancel(); // OPTIMIZED: Cancel polling timer
     super.dispose();
   }
 
@@ -160,81 +208,40 @@ class _HomeAppBarState extends State<HomeAppBar> {
     );
   }
 
-  /// Construye el ícono de notificaciones con badge de conteo en tiempo real.
+  /// OPTIMIZED: Construye el ícono de notificaciones con badge usando polling en lugar de streams.
   Widget buildNotificationFeed(BuildContext context) {
-    // Si no hay stream (usuario no logueado), mostrar sin badge o con fake
-    if (_unreadNotificationsStream == null) {
-      return AppBarIconBadge(
-        icon: FontAwesomeIcons.bell,
-        count: showFakeNotification ? 1 : 0,
-        onPressed: () {
-          AuthGuard.protect(context, () {
-            Sint.toNamed(AppRouteConstants.feedActivity);
-          });
-        },
-      );
-    }
+    int displayCount = widget.profileId.isEmpty && showFakeNotification
+        ? 1
+        : _unreadNotificationsCount;
 
-    return StreamBuilder<int>(
-      stream: _unreadNotificationsStream,
-      builder: (context, snapshot) {
-        int unreadCount = 0;
-
-        if (snapshot.hasData) {
-          unreadCount = snapshot.data!;
-        } else if (showFakeNotification) {
-          unreadCount = 1;
-        }
-
-        return AppBarIconBadge(
-          icon: FontAwesomeIcons.bell,
-          count: unreadCount,
-          onPressed: () {
-            AuthGuard.protect(context, () {
-              Sint.toNamed(AppRouteConstants.feedActivity);
-            });
-          },
-        );
+    return AppBarIconBadge(
+      icon: FontAwesomeIcons.bell,
+      count: displayCount,
+      onPressed: () {
+        AuthGuard.protect(context, () {
+          Sint.toNamed(AppRouteConstants.feedActivity);
+          // Refresh counts after viewing notifications
+          Future.delayed(const Duration(seconds: 1), () => refreshUnreadCounts());
+        });
       },
     );
   }
 
-  /// Construye el ícono de inbox/mensajes con badge de conteo en tiempo real.
+  /// OPTIMIZED: Construye el ícono de inbox/mensajes con badge usando polling en lugar de streams.
   Widget buildInboxIcon(BuildContext context) {
-    // Si no hay stream (usuario no logueado), mostrar sin badge o con fake
-    if (_unreadInboxStream == null) {
-      return AppBarIconBadge(
-        icon: FontAwesomeIcons.comments,
-        count: showFakeNotification ? 1 : 0,
-        onPressed: () {
-          AuthGuard.protect(context, () {
-            Sint.toNamed(AppRouteConstants.inbox);
-          });
-        },
-      );
-    }
+    int displayCount = widget.profileId.isEmpty && showFakeNotification
+        ? 1
+        : _unreadInboxCount;
 
-    return StreamBuilder<int>(
-      stream: _unreadInboxStream,
-      builder: (context, snapshot) {
-        int unreadCount = 0;
-
-        if (snapshot.hasData) {
-          unreadCount = snapshot.data!;
-        } else if (showFakeNotification) {
-          // Para usuarios guest, mostrar 1 mensaje falso
-          unreadCount = 1;
-        }
-
-        return AppBarIconBadge(
-          icon: FontAwesomeIcons.comments,
-          count: unreadCount,
-          onPressed: () {
-            AuthGuard.protect(context, () {
-              Sint.toNamed(AppRouteConstants.inbox);
-            });
-          },
-        );
+    return AppBarIconBadge(
+      icon: FontAwesomeIcons.comments,
+      count: displayCount,
+      onPressed: () {
+        AuthGuard.protect(context, () {
+          Sint.toNamed(AppRouteConstants.inbox);
+          // Refresh counts after viewing inbox
+          Future.delayed(const Duration(seconds: 1), () => refreshUnreadCounts());
+        });
       },
     );
   }

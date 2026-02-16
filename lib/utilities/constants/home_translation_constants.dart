@@ -8,4 +8,11 @@ class HomeTranslationConstants {
   static const String shareWritingMsg = 'shareWritingMsg';
   static const String startPoll = 'startPoll';
   static const String startPollMsg = 'startPollMsg';
+
+  // Pending releases modal
+  static const String pendingReleasesModalTitle = 'pendingReleasesModalTitle';
+  static const String pendingReleasesModalMessage = 'pendingReleasesModalMessage';
+  static const String pendingReleasesModalHint = 'pendingReleasesModalHint';
+  static const String reviewNow = 'reviewNow';
+  static const String reviewLater = 'reviewLater';
 }
