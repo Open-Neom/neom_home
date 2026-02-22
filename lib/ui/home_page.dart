@@ -1,5 +1,5 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
-import 'package:sint/sint.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/app_drawer.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
@@ -10,9 +10,11 @@ import 'package:neom_commons/ui/widgets/neom_bottom_app_bar_item.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:sint/sint.dart';
 
 import '../domain/models/home_tab_item.dart';
 import 'home_controller.dart';
+import 'web/home_web_page.dart';
 import 'widgets/home_app_bar.dart';
 import 'widgets/home_appbar_lite.dart';
 
@@ -28,6 +30,14 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    // Use web layout on wide screens
+    if (kIsWeb && MediaQuery.of(context).size.width > 900) {
+      return HomeWebPage(tabs: tabs, miniPlayer: miniPlayer);
+    }
+    return _buildMobileHome(context);
+  }
+
+  Widget _buildMobileHome(BuildContext context){
     final List<Widget> pageWidgets = tabs
         .where((tab) => tab.page != null)
         .map((tab) => tab.page!).toList();

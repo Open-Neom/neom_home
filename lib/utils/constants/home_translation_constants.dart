@@ -1,4 +1,5 @@
 class HomeTranslationConstants {
+
   static const String createPostMsg = 'createPostMsg';
   static const String organizeEvent = 'organizeEvent';
   static const String organizeEventMsg = 'organizeEventMsg';

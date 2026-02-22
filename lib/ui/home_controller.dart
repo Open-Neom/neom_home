@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:sint/sint.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/app_utilities.dart';
@@ -21,10 +20,11 @@ import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/auth_status.dart';
 import 'package:neom_core/utils/enums/user_role.dart';
+import 'package:sint/sint.dart';
 
 import '../domain/models/home_tab_item.dart';
-import '../utilities/constants/home_constants.dart';
-import '../utilities/constants/home_translation_constants.dart';
+import '../utils/constants/home_constants.dart';
+import '../utils/constants/home_translation_constants.dart';
 
 class HomeController extends SintController implements HomeService {
 
