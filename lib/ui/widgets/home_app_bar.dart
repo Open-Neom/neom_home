@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/utils/app_alerts.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
@@ -15,6 +15,7 @@ import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_core/data/firestore/inbox_firestore.dart';
+import 'package:neom_core/domain/use_cases/shop_cart_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 import 'package:sint/sint.dart';
@@ -51,6 +52,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   int _unreadNotificationsCount = 0;
   int _unreadInboxCount = 0;
   bool _isLoadingCounts = false;
+  bool _unreadLoaded = false;
 
   // Cache duration - fetch every 2 minutes instead of real-time
   static const _pollInterval = Duration(minutes: 2);
@@ -94,7 +96,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   /// OPTIMIZED: Load counts with a single Future call instead of continuous streams
   Future<void> _loadUnreadCounts() async {
-    if (_isLoadingCounts || widget.profileId.isEmpty) return;
+    if (_unreadLoaded ||_isLoadingCounts || widget.profileId.isEmpty) return;
     _isLoadingCounts = true;
 
     try {
@@ -115,6 +117,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
     } finally {
       _isLoadingCounts = false;
     }
+
+    _unreadLoaded = true;
   }
 
   /// Public method to refresh counts (can be called after viewing notifications/inbox)
@@ -147,13 +151,13 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       titleSpacing: 0,
-      backgroundColor: AppColor.appBar,
+      backgroundColor: AppColor.surfaceElevated,
       elevation: 0.0,
       automaticallyImplyLeading: false,
       leading: IconButton(
         icon: CircleAvatar(
             maxRadius: 60,
-            backgroundImage: CachedNetworkImageProvider(widget.profileImg.isNotEmpty
+            backgroundImage: platformImageProvider(widget.profileImg.isNotEmpty
                 ? widget.profileImg : AppProperties.getAppLogoUrl())
         ),
         onPressed: () {
@@ -195,14 +199,17 @@ class _HomeAppBarState extends State<HomeAppBar> {
               Sint.toNamed(AppRouteConstants.directory);
             }
         ),
+        _buildCartBadge(),
         buildNotificationFeed(context),
         IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
-            onPressed: () => {
-              Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any])
-            }
+            onPressed: () {
+              AuthGuard.protect(context, () {
+                Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
+              });
+            },
         ),
         buildInboxIcon(context),
       ],
@@ -245,5 +252,49 @@ class _HomeAppBarState extends State<HomeAppBar> {
         });
       },
     );
+  }
+
+  /// Cart badge icon — only visible when ShopCartService is registered (e.g. EMXI).
+  Widget _buildCartBadge() {
+    try {
+      final cartService = Sint.find<ShopCartService>();
+      return Obx(() {
+        final count = cartService.itemCount;
+        return IconButton(
+          padding: EdgeInsets.zero,
+          icon: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              const Icon(Icons.shopping_cart_outlined, size: 22),
+              if (count > 0)
+                Positioned(
+                  right: -6,
+                  top: -4,
+                  child: Container(
+                    padding: const EdgeInsets.all(3),
+                    decoration: BoxDecoration(
+                      color: AppColor.bondiBlue,
+                      shape: BoxShape.circle,
+                    ),
+                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                    child: Text(
+                      count > 9 ? '9+' : '$count',
+                      style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          color: Colors.white70,
+          onPressed: () {
+            Sint.toNamed(AppRouteConstants.shopCart);
+          },
+        );
+      });
+    } catch (_) {
+      // ShopCartService not registered — hide the cart icon
+      return const SizedBox.shrink();
+    }
   }
 }

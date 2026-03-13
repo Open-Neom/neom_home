@@ -26,7 +26,7 @@ class HomeAppBarLite extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       titleSpacing: 0,
-      backgroundColor: AppColor.appBar,
+      backgroundColor: AppColor.surfaceElevated,
       elevation: 0.0,
       automaticallyImplyLeading: false,
       leading: IconButton(

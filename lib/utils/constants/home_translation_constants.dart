@@ -16,4 +16,12 @@ class HomeTranslationConstants {
   static const String pendingReleasesModalHint = 'pendingReleasesModalHint';
   static const String reviewNow = 'reviewNow';
   static const String reviewLater = 'reviewLater';
+
+  // Web sidebar & sections
+  static const String suggestionsForYou = 'suggestionsForYou';
+  static const String seeAll = 'seeAll';
+  static const String follow = 'follow';
+  static const String newReleases = 'newReleases';
+  static const String featuredBooks = 'featuredBooks';
+  static const String yourStory = 'yourStory';
 }

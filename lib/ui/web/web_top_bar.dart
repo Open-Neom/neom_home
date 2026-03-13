@@ -92,7 +92,7 @@ class _WebTopBarState extends State<WebTopBar> {
     return Container(
       height: 56,
       decoration: BoxDecoration(
-        color: AppColor.appBar,
+        color: AppColor.surfaceElevated,
         boxShadow: [
           BoxShadow(color: Colors.black.withAlpha(40), blurRadius: 4, offset: const Offset(0, 2)),
         ],

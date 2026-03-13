@@ -24,15 +24,35 @@ class HomePage extends StatelessWidget {
   final bool addCentralActionButton;
   final Widget? miniPlayer;
 
+  /// Optional Spotify-like web player builders (forwarded to HomeWebPage).
+  final WebBottomPlayerBuilder? webBottomPlayerBuilder;
+  final WebNowPlayingBuilder? webNowPlayingFullBuilder;
+  final WebQueuePanelBuilder? webQueuePanelBuilder;
+
+  /// Optional chat bubble widget (e.g. ItzliChatBubble) for web bottom-right.
+  final Widget? chatBubble;
+
   const HomePage({super.key, required this.tabs,
     this.addCentralActionButton = false,
-    this.miniPlayer,});
+    this.miniPlayer,
+    this.webBottomPlayerBuilder,
+    this.webNowPlayingFullBuilder,
+    this.webQueuePanelBuilder,
+    this.chatBubble,
+  });
 
   @override
   Widget build(BuildContext context){
     // Use web layout on wide screens
     if (kIsWeb && MediaQuery.of(context).size.width > 900) {
-      return HomeWebPage(tabs: tabs, miniPlayer: miniPlayer);
+      return HomeWebPage(
+        tabs: tabs,
+        miniPlayer: miniPlayer,
+        webBottomPlayerBuilder: webBottomPlayerBuilder,
+        webNowPlayingFullBuilder: webNowPlayingFullBuilder,
+        webQueuePanelBuilder: webQueuePanelBuilder,
+        chatBubble: chatBubble,
+      );
     }
     return _buildMobileHome(context);
   }
@@ -79,7 +99,7 @@ class HomePage extends StatelessWidget {
           ],
         ),
         bottomNavigationBar: NeomBottomAppBar(
-          backgroundColor: AppColor.bottomNavigationBar,
+          backgroundColor: AppColor.surfaceElevated,
           color: Colors.white54,
           selectedColor: Colors.white,
           height: 55,
@@ -100,7 +120,7 @@ class HomePage extends StatelessWidget {
             splashColor: AppColor.white,
             onPressed: () => Sint.toNamed(AppRouteConstants.generator),
             elevation: 10,
-            backgroundColor: Colors.white.withAlpha(230),
+            backgroundColor: AppColor.white80,
             foregroundColor: Colors.black87,
             child: Icon(AppFlavour.getHomeActionBtnIcon()),
           ),

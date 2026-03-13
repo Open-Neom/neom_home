@@ -49,6 +49,23 @@ class HomeController extends SintController implements HomeService {
   String toRoute = "";
   final RxBool _timelineReady = false.obs;
 
+  // Web: Instagram-style overlay panels (mutual exclusion)
+  final RxBool showNotificationPanel = false.obs;
+  final RxBool showSearchPanel = false.obs;
+
+  /// Whether any overlay panel is open (collapses sidebar).
+  bool get hasOverlayPanel => showNotificationPanel.value || showSearchPanel.value;
+
+  void toggleNotificationPanel() {
+    if (showSearchPanel.value) showSearchPanel.value = false;
+    showNotificationPanel.toggle();
+  }
+
+  void toggleSearchPanel() {
+    if (showNotificationPanel.value) showNotificationPanel.value = false;
+    showSearchPanel.toggle();
+  }
+
   // OPTIMIZATION: Track last timeline load to prevent excessive reloads
   DateTime? _lastTimelineLoad;
   static const _timelineRefreshThreshold = Duration(minutes: 5);
@@ -213,7 +230,7 @@ class HomeController extends SintController implements HomeService {
                 height: 300,
                 margin: const EdgeInsets.symmetric(horizontal: 15),
                 decoration: BoxDecoration(
-                    color: AppColor.main75,
+                    color: AppColor.surfaceElevated,
                     borderRadius: const BorderRadius.all(Radius.circular(10.0))
                 ),
                 child: ListView.separated(
@@ -272,7 +289,7 @@ class HomeController extends SintController implements HomeService {
   }
 
   void gotoEvent(Event event) {
-    Sint.toNamed(AppRouteConstants.eventDetails, arguments: [event]);
+    Sint.toNamed(AppRouteConstants.eventPath(event.id, slug: event.slug), arguments: [event]);
   }
 
   Future<void> setInitialTimeline() async {
@@ -357,7 +374,7 @@ class HomeController extends SintController implements HomeService {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: AppColor.main75,
+        backgroundColor: AppColor.surfaceElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),

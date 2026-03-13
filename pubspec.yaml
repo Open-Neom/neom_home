@@ -16,6 +16,7 @@ dependencies:
 
   # TRANSITIVE DEPENDENCIES FOR PUB.DEV PUBLISHING
   cached_network_image: ^3.4.1
+  cloud_firestore: ^6.1.2
   font_awesome_flutter: ^10.10.0
 
 dev_dependencies:
