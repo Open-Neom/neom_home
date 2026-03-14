@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_core/app_config.dart';
@@ -132,11 +133,9 @@ class _MiniProfileCard extends StatelessWidget {
       onTap: onTap,
       child: Row(
         children: [
-          CircleAvatar(
+          platformCircleAvatar(
+            imageUrl: photoUrl.isNotEmpty ? photoUrl : AppProperties.getAppLogoUrl(),
             radius: 22,
-            backgroundImage: NetworkImage(
-              photoUrl.isNotEmpty ? photoUrl : AppProperties.getAppLogoUrl(),
-            ),
           ),
           const SizedBox(width: 12),
           Expanded(

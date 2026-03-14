@@ -135,7 +135,7 @@ class HomeController extends SintController implements HomeService {
         // await timelineController.gotoEventDetails(event);
       }
 
-      if(toRoute.isNotEmpty) Sint.toNamed(toRoute);
+      if(toRoute.isNotEmpty) Sint.offNamed(toRoute);
     } catch(e) {
       AppConfig.logger.e(e.toString());
     }
@@ -187,7 +187,7 @@ class HomeController extends SintController implements HomeService {
     }
 
     if (selectedTab.route != null) {
-      Sint.toNamed(selectedTab.route!);
+      Sint.offNamed(selectedTab.route!);
       return;
     }
 

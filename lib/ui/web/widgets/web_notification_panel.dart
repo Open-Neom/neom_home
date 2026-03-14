@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
@@ -162,13 +163,11 @@ class _WebNotificationPanelState extends State<WebNotificationPanel> {
                 widget.onClose();
                 Sint.toNamed(AppRouteConstants.matePath(activityFeed.profileId), arguments: [activityFeed.profileId]);
               },
-              child: CircleAvatar(
-                radius: 24,
-                backgroundImage: platformImageProvider(
-                  activityFeed.profileImgUrl.isNotEmpty
+              child: platformCircleAvatar(
+                imageUrl: activityFeed.profileImgUrl.isNotEmpty
                       ? activityFeed.profileImgUrl
                       : AppProperties.getAppLogoUrl(),
-                ),
+                radius: 24,
               ),
             ),
             const SizedBox(width: 14),
@@ -214,14 +213,16 @@ class _WebNotificationPanelState extends State<WebNotificationPanel> {
                 child: SizedBox(
                   width: 46,
                   height: 46,
-                  child: Image(
-                    image: platformImageProvider(activityFeed.mediaUrl),
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(
-                      color: Colors.grey.shade800,
-                      child: const Icon(Icons.image, size: 18, color: Colors.white38),
-                    ),
-                  ),
+                  child: kIsWeb
+                    ? platformNetworkImage(imageUrl: activityFeed.mediaUrl, fit: BoxFit.cover)
+                    : Image(
+                        image: platformImageProvider(activityFeed.mediaUrl),
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) => Container(
+                          color: Colors.grey.shade800,
+                          child: const Icon(Icons.image, size: 18, color: Colors.white38),
+                        ),
+                      ),
                 ),
               ),
             ],

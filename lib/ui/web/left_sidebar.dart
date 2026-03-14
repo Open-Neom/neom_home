@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
@@ -398,11 +399,9 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     },
                   ),
                 _NavItem(
-                  leading: CircleAvatar(
+                  leading: platformCircleAvatar(
+                    imageUrl: AppProperties.getAppLogoUrl(),
                     radius: 14,
-                    backgroundImage: AppProperties.getAppLogoUrl().isNotEmpty
-                        ? NetworkImage(AppProperties.getAppLogoUrl())
-                        : null,
                   ),
                   label: _profileName.isNotEmpty ? _profileName : 'Perfil',
                   expanded: widget.expanded,

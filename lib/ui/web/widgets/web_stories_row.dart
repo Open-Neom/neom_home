@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/data/firestore/constants/app_firestore_collection_constants.dart';
@@ -152,12 +153,10 @@ class _WebStoriesRowState extends State<WebStoriesRow> {
           children: [
             Stack(
               children: [
-                CircleAvatar(
+                platformCircleAvatar(
+                  imageUrl: _profileAvatarUrl,
                   radius: 26,
                   backgroundColor: Colors.grey.shade800,
-                  backgroundImage: _profileAvatarUrl.isNotEmpty
-                      ? NetworkImage(_profileAvatarUrl)
-                      : null,
                   child: _profileAvatarUrl.isEmpty
                       ? const Icon(Icons.person, size: 26, color: Colors.white54)
                       : null,
@@ -252,12 +251,10 @@ class _WebStoryCircleState extends State<_WebStoryCircle> {
                         ? null
                         : Border.all(color: Colors.grey.shade700, width: 2),
                   ),
-                  child: CircleAvatar(
+                  child: platformCircleAvatar(
+                    imageUrl: widget.avatarUrl,
                     radius: 23,
                     backgroundColor: Colors.grey.shade900,
-                    backgroundImage: widget.avatarUrl.isNotEmpty
-                        ? NetworkImage(widget.avatarUrl)
-                        : null,
                     child: widget.avatarUrl.isEmpty
                         ? const Icon(Icons.person, size: 22, color: Colors.white38)
                         : null,

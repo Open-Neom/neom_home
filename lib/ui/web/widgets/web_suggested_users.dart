@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
@@ -168,11 +169,9 @@ class _SuggestionRowState extends State<_SuggestionRow> {
         children: [
           GestureDetector(
             onTap: () => Sint.toNamed(AppRouteConstants.matePath(widget.profile.id), arguments: widget.profile.id),
-            child: CircleAvatar(
+            child: platformCircleAvatar(
+              imageUrl: widget.profile.photoUrl.isNotEmpty ? widget.profile.photoUrl : AppProperties.getAppLogoUrl(),
               radius: 16,
-              backgroundImage: NetworkImage(
-                widget.profile.photoUrl.isNotEmpty ? widget.profile.photoUrl : AppProperties.getAppLogoUrl(),
-              ),
             ),
           ),
           const SizedBox(width: 10),

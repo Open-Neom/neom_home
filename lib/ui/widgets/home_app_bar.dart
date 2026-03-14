@@ -155,10 +155,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
       elevation: 0.0,
       automaticallyImplyLeading: false,
       leading: IconButton(
-        icon: CircleAvatar(
-            maxRadius: 60,
-            backgroundImage: platformImageProvider(widget.profileImg.isNotEmpty
-                ? widget.profileImg : AppProperties.getAppLogoUrl())
+        icon: platformCircleAvatar(
+            imageUrl: widget.profileImg.isNotEmpty
+                ? widget.profileImg : AppProperties.getAppLogoUrl(),
+            radius: 60,
         ),
         onPressed: () {
           AuthGuard.protect(context, () {

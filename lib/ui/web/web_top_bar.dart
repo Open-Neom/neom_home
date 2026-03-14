@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
 import 'package:neom_core/app_config.dart';
@@ -153,11 +154,9 @@ class _WebTopBarState extends State<WebTopBar> {
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: GestureDetector(
                   onTap: () => Sint.toNamed(AppRouteConstants.profile),
-                  child: CircleAvatar(
+                  child: platformCircleAvatar(
+                    imageUrl: _profileImg.isNotEmpty ? _profileImg : AppProperties.getAppLogoUrl(),
                     radius: 16,
-                    backgroundImage: NetworkImage(
-                      _profileImg.isNotEmpty ? _profileImg : AppProperties.getAppLogoUrl(),
-                    ),
                   ),
                 ),
               ),

@@ -339,13 +339,11 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 22,
-              backgroundImage: platformImageProvider(
-                profile.photoUrl.isNotEmpty
+            platformCircleAvatar(
+              imageUrl: profile.photoUrl.isNotEmpty
                     ? profile.photoUrl
                     : AppProperties.getAppLogoUrl(),
-              ),
+              radius: 22,
             ),
             const SizedBox(width: 14),
             Expanded(
