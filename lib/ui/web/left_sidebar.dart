@@ -10,6 +10,7 @@ import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
@@ -193,18 +194,20 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   isActive: widget.currentTabIndex == 1,
                   onTap: () => widget.onTabSelected(1),
                 ),
-                _NavItem(
-                  icon: Icons.menu_book_outlined,
-                  label: 'Libros',
-                  expanded: widget.expanded,
-                  onTap: () => Sint.toNamed(AppRouteConstants.libraryHome),
-                ),
-                _NavItem(
-                  icon: Icons.palette,
-                  label: 'Galería',
-                  expanded: widget.expanded,
-                  onTap: () => Sint.toNamed(AppRouteConstants.museumHome),
-                ),
+                if (AppConfig.instance.appInUse == AppInUse.e)
+                  _NavItem(
+                    icon: Icons.menu_book_outlined,
+                    label: 'Libros',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.libraryHome),
+                  ),
+                if (AppConfig.instance.appInUse == AppInUse.e)
+                  _NavItem(
+                    icon: Icons.palette,
+                    label: 'Galería',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.museumHome),
+                  ),
                 if (!kReleaseMode || _isSupportOrAbove)
                   _NavItem(
                     icon: Icons.headphones_outlined,
@@ -226,14 +229,14 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
-                if (AppFlavour.showVst())
+                if (AppFlavour.showVst() && _isSupportOrAbove)
                   _NavItem(
                     icon: FontAwesomeIcons.guitar,
                     label: 'VST',
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.vstHome),
                   ),
-                if (AppFlavour.showDaw())
+                if (AppFlavour.showDaw() && _isSupportOrAbove)
                   _NavItem(
                     icon: FontAwesomeIcons.sliders,
                     label: 'DAW',
@@ -356,12 +359,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       vertical: 8,
                     ),
                     child: const Divider(color: Colors.white12, height: 1),
-                  ),
-                  _NavItem(
-                    icon: Icons.analytics,
-                    label: 'ERP',
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.erpDashboard),
                   ),
                   _NavItem(
                     icon: Icons.hub,

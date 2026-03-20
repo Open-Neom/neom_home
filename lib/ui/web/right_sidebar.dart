@@ -61,8 +61,9 @@ class RightSidebar extends StatelessWidget {
           // D. Featured books (conditional)
           _FeaturedBooksSection(),
 
-          // E. Quick actions (solo Emxi)
-          if (AppConfig.instance.appInUse == AppInUse.e) ...[
+          // E. Quick actions (EMXI y Gigmeout)
+          if (AppConfig.instance.appInUse == AppInUse.e
+              || AppConfig.instance.appInUse == AppInUse.g) ...[
             const SizedBox(height: 24),
             const _QuickActionsSection(),
           ],
@@ -145,18 +146,22 @@ class _QuickActionsSection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 10),
-        _QuickActionTile(
-          icon: Icons.calculate_outlined,
-          label: 'Cotizador editorial',
-          subtitle: 'Calcula el costo de tu libro',
-          color: const Color(0xFF4FC3F7),
-          onTap: () => Sint.toNamed(AppRouteConstants.quotation),
-        ),
-        const SizedBox(height: 6),
+        if (AppConfig.instance.appInUse == AppInUse.e) ...[
+          _QuickActionTile(
+            icon: Icons.calculate_outlined,
+            label: 'Cotizador editorial',
+            subtitle: 'Calcula el costo de tu libro',
+            color: const Color(0xFF4FC3F7),
+            onTap: () => Sint.toNamed(AppRouteConstants.quotation),
+          ),
+          const SizedBox(height: 6),
+        ],
         _QuickActionTile(
           icon: Icons.school_outlined,
           label: 'Learning',
-          subtitle: 'Mejora tu escritura',
+          subtitle: AppConfig.instance.appInUse == AppInUse.e
+              ? 'Mejora tu escritura'
+              : 'Mejora tus habilidades',
           color: const Color(0xFFAED581),
           onTap: () => Sint.toNamed(AppRouteConstants.learning),
         ),
