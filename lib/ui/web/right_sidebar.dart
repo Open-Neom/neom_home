@@ -6,9 +6,11 @@ import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/domain/model/literature_books.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
+import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
+import 'package:neom_core/utils/enums/subscription_status.dart';
 import 'package:sint/sint.dart';
 
 import 'widgets/web_mini_releases.dart';
@@ -59,7 +61,13 @@ class RightSidebar extends StatelessWidget {
           // D. Featured books (conditional)
           _FeaturedBooksSection(),
 
-          // E. Literary games (solo Emxi)
+          // E. Quick actions (solo Emxi)
+          if (AppConfig.instance.appInUse == AppInUse.e) ...[
+            const SizedBox(height: 24),
+            const _QuickActionsSection(),
+          ],
+
+          // F. Literary games (solo Emxi)
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
             const SizedBox(height: 24),
             const WebSidebarGames(),
@@ -67,7 +75,7 @@ class RightSidebar extends StatelessWidget {
 
           const SizedBox(height: 32),
 
-          // F. Footer
+          // G. Footer
           _buildFooter(),
         ],
       ),
@@ -109,6 +117,151 @@ class RightSidebar extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: Text('\u00b7', style: TextStyle(color: Colors.grey[600], fontSize: 11)),
+    );
+  }
+}
+
+/// Quick action buttons for EMXI sidebar — editorial tools.
+class _QuickActionsSection extends StatelessWidget {
+  const _QuickActionsSection();
+
+  static bool _hasActiveSubscription() {
+    if (!Sint.isRegistered<UserService>()) return false;
+    final sub = Sint.find<UserService>().userSubscription;
+    return sub != null && sub.status == SubscriptionStatus.active;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Herramientas',
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 10),
+        _QuickActionTile(
+          icon: Icons.calculate_outlined,
+          label: 'Cotizador editorial',
+          subtitle: 'Calcula el costo de tu libro',
+          color: const Color(0xFF4FC3F7),
+          onTap: () => Sint.toNamed(AppRouteConstants.quotation),
+        ),
+        const SizedBox(height: 6),
+        _QuickActionTile(
+          icon: Icons.school_outlined,
+          label: 'Learning',
+          subtitle: 'Mejora tu escritura',
+          color: const Color(0xFFAED581),
+          onTap: () => Sint.toNamed(AppRouteConstants.learning),
+        ),
+        if (!_hasActiveSubscription()) ...[
+          const SizedBox(height: 6),
+          Builder(builder: (context) {
+            return _QuickActionTile(
+              icon: Icons.workspace_premium_outlined,
+              label: 'Adquirir suscripción',
+              subtitle: 'Desbloquea todas las herramientas',
+              color: const Color(0xFFFFB74D),
+              onTap: () => AuthGuard.protect(
+                context,
+                () => Sint.toNamed(AppRouteConstants.subscriptionPlans),
+                redirectRoute: AppRouteConstants.subscriptionPlans,
+              ),
+            );
+          }),
+        ],
+      ],
+    );
+  }
+}
+
+class _QuickActionTile extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _QuickActionTile({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  State<_QuickActionTile> createState() => _QuickActionTileState();
+}
+
+class _QuickActionTileState extends State<_QuickActionTile> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: _hovered ? widget.color.withValues(alpha: 0.1) : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: _hovered ? widget.color.withValues(alpha: 0.3) : Colors.grey.withValues(alpha: 0.15),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [widget.color.withValues(alpha: 0.2), widget.color.withValues(alpha: 0.05)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(widget.icon, color: widget.color, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.label,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      widget.subtitle,
+                      style: TextStyle(color: Colors.grey[500], fontSize: 11),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(Icons.chevron_right, color: Colors.grey[600], size: 18),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -238,16 +391,16 @@ class _TopBookTile extends StatelessWidget {
                 ),
               ),
             ),
-            // Cover
+            // Cover — uses platformNetworkImage to bypass CanvasKit CORS
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: book.coverUrl.isNotEmpty
-                  ? Image.network(
-                      book.coverUrl,
+                  ? platformNetworkImage(
+                      imageUrl: book.coverUrl,
                       width: 36,
                       height: 50,
                       fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => _placeholder(),
+                      errorWidget: _placeholder(),
                     )
                   : _placeholder(),
             ),

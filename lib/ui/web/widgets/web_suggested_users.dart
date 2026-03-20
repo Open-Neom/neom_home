@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/domain/model/app_profile.dart';
@@ -65,8 +66,8 @@ class _WebSuggestedUsersState extends State<WebSuggestedUsers> {
           _loaded = true;
         });
       }
-    } catch (e) {
-      AppConfig.logger.e("WebSuggestedUsers: Error loading suggestions: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadSuggestions');
       if (mounted) setState(() => _loaded = true);
     }
   }
@@ -155,8 +156,8 @@ class _SuggestionRowState extends State<_SuggestionRow> {
       } else {
         if (mounted) setState(() => _isLoading = false);
       }
-    } catch (e) {
-      AppConfig.logger.e("Error following profile: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_handleFollow');
       if (mounted) setState(() => _isLoading = false);
     }
   }

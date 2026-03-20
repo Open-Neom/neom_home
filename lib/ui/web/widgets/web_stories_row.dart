@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/data/firestore/constants/app_firestore_collection_constants.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
@@ -54,8 +55,8 @@ class _WebStoriesRowState extends State<WebStoriesRow> {
           _loaded = true;
         });
       }
-    } catch (e) {
-      AppConfig.logger.e("WebStoriesRow: Error loading stories: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadStories');
       if (mounted) setState(() => _loaded = true);
     }
   }

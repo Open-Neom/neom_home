@@ -8,6 +8,8 @@ import 'package:neom_commons/utils/constants/translations/app_translation_consta
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/message_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
+import 'package:neom_core/utils/neom_flow_tracker.dart';
 import 'package:neom_core/data/firestore/app_release_item_firestore.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/data/implementations/app_initialization_controller.dart';
@@ -104,8 +106,8 @@ class HomeController extends SintController implements HomeService {
       });
 
       hasItems = (userServiceImpl?.profile.favoriteItems?.length ?? 0) > 1;
-    } catch (e) {
-      AppConfig.logger.e(e.toString());
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: 'onInit');
     }
   }
 
@@ -113,11 +115,12 @@ class HomeController extends SintController implements HomeService {
   void onReady() {
     super.onReady();
     AppConfig.logger.t("Home Controller Ready");
+    NeomFlowTracker.trackScreen('home');
 
     try {
       if(userServiceImpl?.user.id.isNotEmpty ?? false) {
         loginServiceImpl?.setAuthStatus(AuthStatus.loggedIn);
-        loginServiceImpl?.setIsLoading(false);  
+        loginServiceImpl?.setIsLoading(false);
       }
       
       isLoading.value = false;
@@ -136,13 +139,14 @@ class HomeController extends SintController implements HomeService {
       }
 
       if(toRoute.isNotEmpty) Sint.offNamed(toRoute);
-    } catch(e) {
-      AppConfig.logger.e(e.toString());
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: 'onReady');
     }
   }
 
   @override
   void onClose() {
+    NeomFlowTracker.flushAll();
     pageController.dispose();
     super.onClose();
   }
@@ -175,6 +179,7 @@ class HomeController extends SintController implements HomeService {
 
     AppConfig.logger.d("Selecting tab index: $index");
     HomeTabItem selectedTab = _tabs[index];
+    NeomFlowTracker.trackScreen('home_tab_${selectedTab.title}');
 
     if (selectedTab.isActionButton) {
       if(context != null) {
@@ -209,8 +214,8 @@ class HomeController extends SintController implements HomeService {
         }
         _currentIndex.value = index;
       }
-    } catch (e) {
-      AppConfig.logger.e(e.toString());
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: 'selectTab');
     }
 
     isLoading.value = false;
@@ -361,8 +366,8 @@ class HomeController extends SintController implements HomeService {
           _showPendingReleasesModal(pendingReleases.length);
         }
       }
-    } catch (e) {
-      AppConfig.logger.e("Error checking pending releases: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_checkPendingReleasesForSupportUsers');
     }
   }
 

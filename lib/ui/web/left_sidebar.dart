@@ -10,6 +10,7 @@ import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_core/data/firestore/inbox_firestore.dart';
@@ -118,8 +119,8 @@ class _LeftSidebarState extends State<LeftSidebar> {
           _unreadInbox = results[1];
         });
       }
-    } catch (e) {
-      AppConfig.logger.e("LeftSidebar: Error loading counts: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadCounts');
     }
   }
 
@@ -238,13 +239,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     label: 'DAW',
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.dawProjects),
-                  ),
-                if (AppFlavour.showLearning())
-                  _NavItem(
-                    icon: Icons.school,
-                    label: 'Aprender',
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.learning),
                   ),
                 if (AppFlavour.showBands() && _isArtistNonSubscriber)
                   _NavItem(
@@ -371,9 +365,9 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   ),
                   _NavItem(
                     icon: Icons.hub,
-                    label: 'Hub',
+                    label: 'ERP',
                     expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.hubDashboard),
+                    onTap: () => Sint.toNamed(AppRouteConstants.erpDashboard),
                   ),
                 ],
               ],
@@ -508,8 +502,8 @@ class _NavItemState extends State<_NavItem> {
                         color: widget.isActive ? Colors.white : AppColor.lightGrey,
                         size: 24,
                       ),
-                    // Badge
-                    if (widget.badge > 0)
+                    // Badge — only show in expanded mode to avoid overflow
+                    if (widget.badge > 0 && widget.expanded)
                       Positioned(
                         right: -6,
                         top: -6,
@@ -524,6 +518,20 @@ class _NavItemState extends State<_NavItem> {
                             widget.badge > 99 ? '99+' : widget.badge.toString(),
                             style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                             textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                    // Collapsed mode: small dot indicator for badge
+                    if (widget.badge > 0 && !widget.expanded)
+                      Positioned(
+                        right: -2,
+                        top: -2,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
                           ),
                         ),
                       ),

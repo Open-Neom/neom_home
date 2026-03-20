@@ -10,6 +10,7 @@ import 'package:neom_commons/utils/constants/app_assets.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/text_utilities.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/app_media_item_firestore.dart';
 import 'package:neom_core/data/firestore/app_release_item_firestore.dart';
@@ -83,22 +84,22 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
       // Load media items and release items in parallel
       futures.add(AppMediaItemFirestore().fetchAll().then((items) {
         _allMediaItems = items;
-      }).catchError((e) {
-        AppConfig.logger.e("WebSearchPanel media: $e");
+      }).catchError((e, st) {
+        NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.media');
       }));
 
       futures.add(AppReleaseItemFirestore().retrieveAll().then((items) {
         _allReleaseItems = items;
-      }).catchError((e) {
-        AppConfig.logger.e("WebSearchPanel releases: $e");
+      }).catchError((e, st) {
+        NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.releases');
       }));
 
       await Future.wait(futures);
 
       // Show followers/following + recent releases/media when no query
       _applyLocalFilter();
-    } catch (e) {
-      AppConfig.logger.e("WebSearchPanel: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData');
     }
 
     if (mounted) setState(() => _isLoading = false);
@@ -155,8 +156,8 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
       }
 
       _filteredProfiles = merged.take(10).toList();
-    } catch (e) {
-      AppConfig.logger.e("WebSearchPanel search profiles: $e");
+    } catch (e, st) {
+      NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_searchRemote');
       // Fallback: filter from local near profiles
       _filteredProfiles = _nearProfiles.values.where((p) =>
           p.name.isNotEmpty && p.isActive &&
