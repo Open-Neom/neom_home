@@ -484,8 +484,9 @@ class _NavItemState extends State<_NavItem> {
               color: _isHovered ? Colors.white.withAlpha(18) : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
-            clipBehavior: Clip.hardEdge,
+            clipBehavior: widget.expanded ? Clip.hardEdge : Clip.none,
             child: Row(
+              mainAxisSize: widget.expanded ? MainAxisSize.max : MainAxisSize.min,
               mainAxisAlignment: widget.expanded
                   ? MainAxisAlignment.start
                   : MainAxisAlignment.center,
