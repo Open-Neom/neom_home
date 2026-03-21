@@ -6,6 +6,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
+import 'package:neom_commons/ui/widgets/images/web_network_image_stub.dart'
+    if (dart.library.html) 'package:neom_commons/ui/widgets/images/web_network_image_impl.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
@@ -56,9 +58,11 @@ class _LeftSidebarState extends State<LeftSidebar> {
       ? Sint.find<UserService>().profile.id
       : '';
 
-  String get _profileImg => Sint.isRegistered<UserService>()
-      ? Sint.find<UserService>().profile.photoUrl
-      : '';
+  String get _profileImg {
+    if (!Sint.isRegistered<UserService>()) return '';
+    final url = Sint.find<UserService>().profile.photoUrl.trim();
+    return url.startsWith('http') ? url : '';
+  }
 
   String get _profileName => Sint.isRegistered<UserService>()
       ? Sint.find<UserService>().profile.name
@@ -391,10 +395,12 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   ),
                 _NavItem(
                   leading: platformCircleAvatar(
-                    imageUrl: AppProperties.getAppLogoUrl(),
+                    imageUrl: _profileImg.isNotEmpty ? _profileImg : AppProperties.getAppLogoUrl(),
                     radius: 14,
                   ),
-                  label: _profileName.isNotEmpty ? _profileName : 'Perfil',
+                  label: _profileName.isNotEmpty
+                      ? '${_profileName[0].toUpperCase()}${_profileName.substring(1)}'
+                      : AppTranslationConstants.profile.tr,
                   expanded: widget.expanded,
                   onTap: () {
                     AuthGuard.protect(context, () {
@@ -469,21 +475,20 @@ class _NavItemState extends State<_NavItem> {
           onTap: widget.onTap,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
-            margin: EdgeInsets.symmetric(
-              horizontal: widget.expanded ? 8 : 8,
+            margin: const EdgeInsets.symmetric(
+              horizontal: 4,
               vertical: 2,
             ),
-            padding: EdgeInsets.symmetric(
-              horizontal: widget.expanded ? 12 : 8,
+            padding: const EdgeInsets.symmetric(
+              horizontal: 4,
               vertical: 12,
             ),
             decoration: BoxDecoration(
               color: _isHovered ? Colors.white.withAlpha(18) : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
-            clipBehavior: widget.expanded ? Clip.hardEdge : Clip.none,
             child: Row(
-              mainAxisSize: widget.expanded ? MainAxisSize.max : MainAxisSize.min,
+              mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: widget.expanded
                   ? MainAxisAlignment.start
                   : MainAxisAlignment.center,

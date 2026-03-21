@@ -4,6 +4,7 @@ import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/domain/model/app_release_item.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
+import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:sint/sint.dart';
 
 /// Compact release shelf for the right sidebar.
@@ -28,7 +29,7 @@ class WebMiniReleases extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Novedades',
+              HomeTranslationConstants.newReleases.tr,
               style: TextStyle(color: Colors.grey[500], fontSize: 13, fontWeight: FontWeight.w600),
             ),
             GestureDetector(
@@ -36,9 +37,9 @@ class WebMiniReleases extends StatelessWidget {
                 // Navigate to audio or shelf details
                 if (items.isNotEmpty) AppFlavour.navigateToShelfItem(items.first);
               },
-              child: const Text(
-                'Ver todo',
-                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+              child: Text(
+                HomeTranslationConstants.seeAll.tr,
+                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ],

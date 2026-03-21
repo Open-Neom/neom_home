@@ -24,4 +24,6 @@ class HomeTranslationConstants {
   static const String newReleases = 'newReleases';
   static const String featuredBooks = 'featuredBooks';
   static const String yourStory = 'yourStory';
+  static const String followed = 'followed';
+  static const String topTen = 'topTen';
 }

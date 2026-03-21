@@ -9,6 +9,9 @@ import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
+import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
+import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/subscription_status.dart';
 import 'package:sint/sint.dart';
@@ -42,7 +45,9 @@ class RightSidebar extends StatelessWidget {
             _MiniProfileCard(
               name: profile.name,
               photoUrl: profile.photoUrl,
-              bio: profile.aboutMe,
+              subscriptionLabel: hasUser && Sint.find<UserService>().user.subscriptionId.isNotEmpty
+                  ? AppProperties.getGeneralSubscriptionName()
+                  : CommonTranslationConstants.freeAccount.tr,
               onTap: () => Sint.toNamed(AppRouteConstants.profile),
             ),
 
@@ -89,18 +94,18 @@ class RightSidebar extends StatelessWidget {
       children: [
         Wrap(
           children: [
-            _footerLink('Acerca de'),
+            _footerLink(CommonTranslationConstants.aboutApp.tr),
             _footerDot(),
-            _footerLink('Ayuda'),
+            _footerLink(CommonTranslationConstants.help.tr),
             _footerDot(),
-            _footerLink('Privacidad'),
+            _footerLink(CommonTranslationConstants.privacy.tr),
             _footerDot(),
-            _footerLink('Condiciones'),
+            _footerLink(CommonTranslationConstants.conditions.tr),
           ],
         ),
         const SizedBox(height: 12),
         Text(
-          '\u00a9 2026 EMXI',
+          '\u00a9 2026 ${AppProperties.getAppName()}',
           style: TextStyle(color: Colors.grey[600], fontSize: 11),
         ),
       ],
@@ -138,7 +143,7 @@ class _QuickActionsSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Herramientas',
+          CommonTranslationConstants.tools.tr,
           style: TextStyle(
             color: Colors.grey[500],
             fontSize: 13,
@@ -149,8 +154,8 @@ class _QuickActionsSection extends StatelessWidget {
         if (AppConfig.instance.appInUse == AppInUse.e) ...[
           _QuickActionTile(
             icon: Icons.calculate_outlined,
-            label: 'Cotizador editorial',
-            subtitle: 'Calcula el costo de tu libro',
+            label: CommonTranslationConstants.quotationTool.tr,
+            subtitle: CommonTranslationConstants.quotationToolDesc.tr,
             color: const Color(0xFF4FC3F7),
             onTap: () => Sint.toNamed(AppRouteConstants.quotation),
           ),
@@ -160,8 +165,10 @@ class _QuickActionsSection extends StatelessWidget {
           icon: Icons.school_outlined,
           label: 'Learning',
           subtitle: AppConfig.instance.appInUse == AppInUse.e
-              ? 'Mejora tu escritura'
-              : 'Mejora tus habilidades',
+              ? CommonTranslationConstants.improveWriting.tr
+              : AppConfig.instance.appInUse == AppInUse.c
+                  ? CommonTranslationConstants.expandConsciousness.tr
+                  : CommonTranslationConstants.improveSkills.tr,
           color: const Color(0xFFAED581),
           onTap: () => Sint.toNamed(AppRouteConstants.learning),
         ),
@@ -170,8 +177,8 @@ class _QuickActionsSection extends StatelessWidget {
           Builder(builder: (context) {
             return _QuickActionTile(
               icon: Icons.workspace_premium_outlined,
-              label: 'Adquirir suscripción',
-              subtitle: 'Desbloquea todas las herramientas',
+              label: CommonTranslationConstants.acquireSubscription.tr,
+              subtitle: CommonTranslationConstants.unlockAllTools.tr,
               color: const Color(0xFFFFB74D),
               onTap: () => AuthGuard.protect(
                 context,
@@ -275,18 +282,22 @@ class _QuickActionTileState extends State<_QuickActionTile> {
 class _MiniProfileCard extends StatelessWidget {
   final String name;
   final String photoUrl;
-  final String bio;
+  final String subscriptionLabel;
   final VoidCallback onTap;
 
   const _MiniProfileCard({
     required this.name,
     required this.photoUrl,
-    required this.bio,
+    required this.subscriptionLabel,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final displayName = name.isNotEmpty
+        ? '${name[0].toUpperCase()}${name.substring(1)}'
+        : AppTranslationConstants.profile.tr;
+
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -301,17 +312,16 @@ class _MiniProfileCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  name.isNotEmpty ? name : 'Perfil',
+                  displayName,
                   style: const TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w600),
                   overflow: TextOverflow.ellipsis,
                 ),
-                if (bio.isNotEmpty)
-                  Text(
-                    bio,
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+                Text(
+                  subscriptionLabel,
+                  style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),
@@ -339,14 +349,14 @@ class _FeaturedBooksSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Top 10',
+              HomeTranslationConstants.topTen.tr,
               style: TextStyle(color: Colors.grey[500], fontSize: 13, fontWeight: FontWeight.w600),
             ),
             GestureDetector(
               onTap: () => Sint.toNamed(AppRouteConstants.topBooks),
-              child: const Text(
-                'Ver todo',
-                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+              child: Text(
+                HomeTranslationConstants.seeAll.tr,
+                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ],

@@ -14,6 +14,8 @@ class HomeDeTranslations {
     HomeTranslationConstants.newReleases: 'Neue Veröffentlichungen',
     HomeTranslationConstants.featuredBooks: 'Empfohlene Bücher',
     HomeTranslationConstants.yourStory: 'Ihre Geschichte',
+    HomeTranslationConstants.followed: 'Gefolgt',
+    HomeTranslationConstants.topTen: 'Top 10',
   };
 
 }

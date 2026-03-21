@@ -7,6 +7,7 @@ import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/data/firestore/constants/app_firestore_collection_constants.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:sint/sint.dart';
 
 import '../../../domain/models/story_data.dart';
@@ -179,9 +180,9 @@ class _WebStoriesRowState extends State<WebStoriesRow> {
               ],
             ),
             const SizedBox(height: 4),
-            const Text(
-              'Tu historia',
-              style: TextStyle(color: Colors.white70, fontSize: 10),
+            Text(
+              HomeTranslationConstants.yourStory.tr,
+              style: const TextStyle(color: Colors.white70, fontSize: 10),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,

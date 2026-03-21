@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/models/literary_game_info.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:sint/sint.dart';
 
 /// Compact literary games section for the right sidebar (300px).
@@ -45,9 +46,9 @@ class _WebSidebarGamesState extends State<WebSidebarGames> {
             ),
             GestureDetector(
               onTap: () => Sint.toNamed(AppRouteConstants.games),
-              child: const Text(
-                'Ver todo',
-                style: TextStyle(
+              child: Text(
+                HomeTranslationConstants.seeAll.tr,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.w600,

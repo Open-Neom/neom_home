@@ -8,6 +8,7 @@ import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/domain/model/app_profile.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:sint/sint.dart';
 
 /// Instagram-style "Suggestions for you" widget.
@@ -84,14 +85,14 @@ class _WebSuggestedUsersState extends State<WebSuggestedUsers> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Sugerencias para ti',
+              HomeTranslationConstants.suggestionsForYou.tr,
               style: TextStyle(color: AppColor.textMuted, fontSize: 13, fontWeight: FontWeight.w600),
             ),
             GestureDetector(
               onTap: () => Sint.toNamed(AppRouteConstants.search),
-              child: const Text(
-                'Ver todo',
-                style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
+              child: Text(
+                HomeTranslationConstants.seeAll.tr,
+                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600),
               ),
             ),
           ],
@@ -207,7 +208,7 @@ class _SuggestionRowState extends State<_SuggestionRow> {
             : GestureDetector(
                 onTap: _isFollowing ? null : _handleFollow,
                 child: Text(
-                  _isFollowing ? 'Seguido' : 'Seguir',
+                  _isFollowing ? HomeTranslationConstants.followed.tr : HomeTranslationConstants.follow.tr,
                   style: TextStyle(
                     color: _isFollowing ? AppColor.textMuted : Colors.white,
                     fontSize: 12,

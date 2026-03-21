@@ -14,6 +14,8 @@ class HomeFrTranslations {
     HomeTranslationConstants.newReleases: 'Nouveautés',
     HomeTranslationConstants.featuredBooks: 'Livres en vedette',
     HomeTranslationConstants.yourStory: 'Votre histoire',
+    HomeTranslationConstants.followed: 'Suivi',
+    HomeTranslationConstants.topTen: 'Top 10',
   };
 
 }
