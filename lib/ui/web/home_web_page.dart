@@ -42,7 +42,7 @@ class HomeWebPage extends StatefulWidget {
   final WebNowPlayingBuilder? webNowPlayingFullBuilder;
   final WebQueuePanelBuilder? webQueuePanelBuilder;
 
-  /// Optional chat bubble widget (e.g. ItzliChatBubble) for bottom-right corner.
+  /// Optional chat bubble widget (e.g. SaiaChatBubble) for bottom-right corner.
   final Widget? chatBubble;
 
   const HomeWebPage({

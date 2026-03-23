@@ -16,6 +16,33 @@ class HomeEnTranslations {
     HomeTranslationConstants.yourStory: 'Your story',
     HomeTranslationConstants.followed: 'Followed',
     HomeTranslationConstants.topTen: 'Top 10',
+    HomeTranslationConstants.topFive: 'Top 5',
+
+    // Web left sidebar navigation
+    HomeTranslationConstants.navHome: 'Home',
+    HomeTranslationConstants.navSearch: 'Search',
+    HomeTranslationConstants.navEvents: 'Events',
+    HomeTranslationConstants.navChamber: 'Neom Chamber',
+    HomeTranslationConstants.navInter: 'Interface',
+    HomeTranslationConstants.navBooks: 'Books',
+    HomeTranslationConstants.navGallery: 'Gallery',
+    HomeTranslationConstants.navAudio: 'Audio',
+    HomeTranslationConstants.navGames: 'Games',
+    HomeTranslationConstants.navBlog: 'Blog',
+    HomeTranslationConstants.navVst: 'VST',
+    HomeTranslationConstants.navDaw: 'DAW',
+    HomeTranslationConstants.navBands: 'Bands',
+    HomeTranslationConstants.navNotifications: 'Notifications',
+    HomeTranslationConstants.navMessages: 'Messages',
+    HomeTranslationConstants.navCreate: 'Create',
+    HomeTranslationConstants.navNupale: 'NUPALE',
+    HomeTranslationConstants.navCasete: 'CASETE',
+    HomeTranslationConstants.navUpload: 'Upload',
+    HomeTranslationConstants.navWallet: 'Wallet',
+    HomeTranslationConstants.navServices: 'Services',
+    HomeTranslationConstants.navErp: 'ERP',
+    HomeTranslationConstants.navSettings: 'Settings',
+    HomeTranslationConstants.navLearning: 'Learning',
   };
 
 }

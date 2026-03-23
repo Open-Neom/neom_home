@@ -29,6 +29,7 @@ import 'package:neom_core/utils/enums/user_role.dart';
 import 'package:neom_core/utils/enums/verification_level.dart';
 import 'package:sint/sint.dart';
 
+import '../../utils/constants/home_translation_constants.dart';
 import '../home_controller.dart';
 
 /// Instagram-style left sidebar navigation for web.
@@ -171,14 +172,14 @@ class _LeftSidebarState extends State<LeftSidebar> {
               children: [
                 _NavItem(
                   icon: Icons.home_rounded,
-                  label: 'Inicio',
+                  label: HomeTranslationConstants.navHome.tr,
                   expanded: widget.expanded,
                   isActive: widget.currentTabIndex == 0,
                   onTap: () => widget.onTabSelected(0),
                 ),
                 _NavItem(
                   icon: Icons.search,
-                  label: 'Buscar',
+                  label: HomeTranslationConstants.navSearch.tr,
                   expanded: widget.expanded,
                   onTap: () {
                     AuthGuard.protect(context, () {
@@ -193,64 +194,78 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 ),
                 _NavItem(
                   icon: Icons.event_outlined,
-                  label: 'Eventos',
+                  label: HomeTranslationConstants.navEvents.tr,
                   expanded: widget.expanded,
                   isActive: widget.currentTabIndex == 1,
                   onTap: () => widget.onTabSelected(1),
                 ),
+                if (AppConfig.instance.appInUse == AppInUse.c)
+                  _NavItem(
+                    icon: Icons.blur_circular,
+                    label: HomeTranslationConstants.navChamber.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.generator),
+                  ),
+                if (AppConfig.instance.appInUse == AppInUse.c)
+                  _NavItem(
+                    icon: Icons.compare_arrows,
+                    label: HomeTranslationConstants.navInter.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/inter'),
+                  ),
                 if (AppConfig.instance.appInUse == AppInUse.e)
                   _NavItem(
                     icon: Icons.menu_book_outlined,
-                    label: 'Libros',
+                    label: HomeTranslationConstants.navBooks.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.libraryHome),
                   ),
                 if (AppConfig.instance.appInUse == AppInUse.e)
                   _NavItem(
                     icon: Icons.palette,
-                    label: 'Galería',
+                    label: HomeTranslationConstants.navGallery.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.museumHome),
                   ),
                 if (!kReleaseMode || _isSupportOrAbove)
                   _NavItem(
                     icon: Icons.headphones_outlined,
-                    label: 'Audio',
+                    label: HomeTranslationConstants.navAudio.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.audioPlayer),
                   ),
                 if (AppFlavour.showBlog())
                   _NavItem(
                     icon: FontAwesomeIcons.gamepad,
-                    label: 'Juegos',
+                    label: HomeTranslationConstants.navGames.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.games),
                   ),
                 if (AppFlavour.showBlog())
                   _NavItem(
                     icon: FontAwesomeIcons.filePen,
-                    label: 'Blog',
+                    label: HomeTranslationConstants.navBlog.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
                 if (AppFlavour.showVst() && _isSupportOrAbove)
                   _NavItem(
                     icon: FontAwesomeIcons.guitar,
-                    label: 'VST',
+                    label: HomeTranslationConstants.navVst.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.vstHome),
                   ),
                 if (AppFlavour.showDaw() && _isSupportOrAbove)
                   _NavItem(
                     icon: FontAwesomeIcons.sliders,
-                    label: 'DAW',
+                    label: HomeTranslationConstants.navDaw.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.dawProjects),
                   ),
                 if (AppFlavour.showBands() && _isArtistNonSubscriber)
                   _NavItem(
                     icon: Icons.people,
-                    label: 'Bandas',
+                    label: HomeTranslationConstants.navBands.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.bands),
                   ),
@@ -267,7 +282,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 // Notifications
                 _NavItem(
                   icon: FontAwesomeIcons.bell,
-                  label: 'Notificaciones',
+                  label: HomeTranslationConstants.navNotifications.tr,
                   expanded: widget.expanded,
                   badge: _unreadNotifications,
                   onTap: () {
@@ -284,7 +299,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 ),
                 _NavItem(
                   icon: FontAwesomeIcons.comments,
-                  label: 'Mensajes',
+                  label: HomeTranslationConstants.navMessages.tr,
                   expanded: widget.expanded,
                   badge: _unreadInbox,
                   onTap: () {
@@ -297,7 +312,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 if (AppFlavour.showAppBarAddBtn())
                   _NavItem(
                     icon: Icons.add_circle_outline,
-                    label: 'Crear',
+                    label: HomeTranslationConstants.navCreate.tr,
                     expanded: widget.expanded,
                     onTap: () {
                       AuthGuard.protect(context, () {
@@ -322,35 +337,35 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   if (AppFlavour.showNupale())
                     _NavItem(
                       icon: FontAwesomeIcons.bookOpenReader,
-                      label: 'NUPALE',
+                      label: HomeTranslationConstants.navNupale.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.nupaleHome),
                     ),
                   if (AppFlavour.showCasete())
                     _NavItem(
                       icon: FontAwesomeIcons.solidFileAudio,
-                      label: 'CASETE',
+                      label: HomeTranslationConstants.navCasete.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.caseteHome),
                     ),
                   if (AppFlavour.showReleaseUpload() && _isSupportOrAbove)
                     _NavItem(
                       icon: AppFlavour.getAppItemIcon(),
-                      label: 'Subir',
+                      label: HomeTranslationConstants.navUpload.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.releaseUpload),
                     ),
                   if (AppFlavour.showWallet())
                     _NavItem(
                       icon: FontAwesomeIcons.coins,
-                      label: 'Wallet',
+                      label: HomeTranslationConstants.navWallet.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.wallet),
                     ),
                   if (AppFlavour.showServices()) ...[
                     _NavItem(
                       icon: Icons.room_service,
-                      label: 'Servicios',
+                      label: HomeTranslationConstants.navServices.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.services),
                     ),
@@ -366,7 +381,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   ),
                   _NavItem(
                     icon: Icons.hub,
-                    label: 'ERP',
+                    label: HomeTranslationConstants.navErp.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.erpDashboard),
                   ),
@@ -385,7 +400,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 if (Sint.isRegistered<SettingsService>())
                   _NavItem(
                     icon: Icons.settings_outlined,
-                    label: 'Configuracion',
+                    label: HomeTranslationConstants.navSettings.tr,
                     expanded: widget.expanded,
                     onTap: () {
                       AuthGuard.protect(context, () {

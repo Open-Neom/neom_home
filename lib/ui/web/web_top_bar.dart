@@ -17,6 +17,7 @@ import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 import 'package:sint/sint.dart';
 
+import '../../utils/constants/home_translation_constants.dart';
 import '../widgets/app_bar_icon_badge.dart';
 
 class WebTopBar extends StatefulWidget implements PreferredSizeWidget {
@@ -82,11 +83,11 @@ class _WebTopBarState extends State<WebTopBar> {
     }
   }
 
-  static const _tabs = [
-    (icon: Icons.home_rounded, label: 'Inicio'),
-    (icon: Icons.event_rounded, label: 'Eventos'),
-    (icon: Icons.menu_book_rounded, label: 'Libros'),
-    (icon: Icons.headphones_rounded, label: 'Audio'),
+  static List<({IconData icon, String label})> get _tabs => [
+    (icon: Icons.home_rounded, label: HomeTranslationConstants.navHome.tr),
+    (icon: Icons.event_rounded, label: HomeTranslationConstants.navEvents.tr),
+    (icon: Icons.menu_book_rounded, label: HomeTranslationConstants.navBooks.tr),
+    (icon: Icons.headphones_rounded, label: HomeTranslationConstants.navAudio.tr),
   ];
 
   @override
@@ -122,13 +123,13 @@ class _WebTopBarState extends State<WebTopBar> {
               if(AppFlavour.showAppBarAddBtn()) IconButton(
                 icon: const Icon(Icons.add_circle_outline, size: 22),
                 color: Colors.white70,
-                tooltip: 'Crear',
+                tooltip: HomeTranslationConstants.navCreate.tr,
                 onPressed: () => Sint.toNamed(AppRouteConstants.generator),
               ),
               IconButton(
                 icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 18),
                 color: Colors.white70,
-                tooltip: 'Buscar',
+                tooltip: HomeTranslationConstants.navSearch.tr,
                 onPressed: () => Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]),
               ),
               AppBarIconBadge(

@@ -61,11 +61,13 @@ class HomeController extends SintController implements HomeService {
   void toggleNotificationPanel() {
     if (showSearchPanel.value) showSearchPanel.value = false;
     showNotificationPanel.toggle();
+    update([AppPageIdConstants.home]);
   }
 
   void toggleSearchPanel() {
     if (showNotificationPanel.value) showNotificationPanel.value = false;
     showSearchPanel.toggle();
+    update([AppPageIdConstants.home]);
   }
 
   // OPTIMIZATION: Track last timeline load to prevent excessive reloads

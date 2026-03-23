@@ -63,15 +63,15 @@ class RightSidebar extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // D. Featured books (conditional)
-          _FeaturedBooksSection(),
-
-          // E. Quick actions (EMXI y Gigmeout)
+          // D. Quick actions (EMXI y Gigmeout)
           if (AppConfig.instance.appInUse == AppInUse.e
               || AppConfig.instance.appInUse == AppInUse.g) ...[
-            const SizedBox(height: 24),
             const _QuickActionsSection(),
+            const SizedBox(height: 24),
           ],
+
+          // E. Featured books (conditional)
+          _FeaturedBooksSection(),
 
           // F. Literary games (solo Emxi)
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
@@ -163,7 +163,7 @@ class _QuickActionsSection extends StatelessWidget {
         ],
         _QuickActionTile(
           icon: Icons.school_outlined,
-          label: 'Learning',
+          label: HomeTranslationConstants.navLearning.tr,
           subtitle: AppConfig.instance.appInUse == AppInUse.e
               ? CommonTranslationConstants.improveWriting.tr
               : AppConfig.instance.appInUse == AppInUse.c
@@ -338,7 +338,7 @@ class _FeaturedBooksSection extends StatelessWidget {
     if (!Sint.isRegistered<TimelineService>()) return const SizedBox.shrink();
 
     final controller = Sint.find<TimelineService>();
-    final List<LiteraryBook> books = controller.featuredBooks;
+    final List<LiteraryBook> books = controller.featuredBooks.take(5).toList();
 
     if (books.isEmpty) return const SizedBox.shrink();
 
@@ -349,7 +349,7 @@ class _FeaturedBooksSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              HomeTranslationConstants.topTen.tr,
+              HomeTranslationConstants.topFive.tr,
               style: TextStyle(color: Colors.grey[500], fontSize: 13, fontWeight: FontWeight.w600),
             ),
             GestureDetector(

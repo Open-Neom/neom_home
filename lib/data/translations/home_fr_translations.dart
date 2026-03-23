@@ -16,6 +16,33 @@ class HomeFrTranslations {
     HomeTranslationConstants.yourStory: 'Votre histoire',
     HomeTranslationConstants.followed: 'Suivi',
     HomeTranslationConstants.topTen: 'Top 10',
+    HomeTranslationConstants.topFive: 'Top 5',
+
+    // Web left sidebar navigation
+    HomeTranslationConstants.navHome: 'Accueil',
+    HomeTranslationConstants.navSearch: 'Rechercher',
+    HomeTranslationConstants.navEvents: 'Événements',
+    HomeTranslationConstants.navChamber: 'Chambre Neom',
+    HomeTranslationConstants.navInter: 'Interface',
+    HomeTranslationConstants.navBooks: 'Livres',
+    HomeTranslationConstants.navGallery: 'Galerie',
+    HomeTranslationConstants.navAudio: 'Audio',
+    HomeTranslationConstants.navGames: 'Jeux',
+    HomeTranslationConstants.navBlog: 'Blog',
+    HomeTranslationConstants.navVst: 'VST',
+    HomeTranslationConstants.navDaw: 'DAW',
+    HomeTranslationConstants.navBands: 'Groupes',
+    HomeTranslationConstants.navNotifications: 'Notifications',
+    HomeTranslationConstants.navMessages: 'Messages',
+    HomeTranslationConstants.navCreate: 'Créer',
+    HomeTranslationConstants.navNupale: 'NUPALE',
+    HomeTranslationConstants.navCasete: 'CASETE',
+    HomeTranslationConstants.navUpload: 'Téléverser',
+    HomeTranslationConstants.navWallet: 'Portefeuille',
+    HomeTranslationConstants.navServices: 'Services',
+    HomeTranslationConstants.navErp: 'ERP',
+    HomeTranslationConstants.navSettings: 'Paramètres',
+    HomeTranslationConstants.navLearning: 'Apprentissage',
   };
 
 }

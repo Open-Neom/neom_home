@@ -29,7 +29,7 @@ class HomePage extends StatelessWidget {
   final WebNowPlayingBuilder? webNowPlayingFullBuilder;
   final WebQueuePanelBuilder? webQueuePanelBuilder;
 
-  /// Optional chat bubble widget (e.g. ItzliChatBubble) for web bottom-right.
+  /// Optional chat bubble widget (e.g. SaiaChatBubble) for web bottom-right.
   final Widget? chatBubble;
 
   const HomePage({super.key, required this.tabs,
