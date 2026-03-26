@@ -189,7 +189,7 @@ class _HomeWebPageState extends State<HomeWebPage> {
                               child: Center(
                                 child: ConstrainedBox(
                                   key: _feedContentKey,
-                                  constraints: const BoxConstraints(maxWidth: 750),
+                                  constraints: const BoxConstraints(maxWidth: 800),
                                   child: Column(
                                     children: [
                                       // Stories row at the top — disabled temporarily

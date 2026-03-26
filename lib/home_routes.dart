@@ -1,14 +1,16 @@
+import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:sint/sint.dart';
+
+import 'ui/web/fil_guadalajara_page.dart';
 
 class HomeRoutes {
 
   static final List<SintPage<dynamic>> routes = [
-    ///UNCOMMENT THIS IN ORDER TO ENABLE AUDIO PLAYER HOME PAGE
-    // SintPage(
-    //     name: AppRouteConstants.home,
-    //     page: () => const HomePage(),
-    //     transition: Transition.zoom
-    // ),
+    SintPage(
+      name: AppRouteConstants.filGuadalajara,
+      page: () => const FilGuadalajaraPage(),
+      transition: Transition.rightToLeft,
+    ),
   ];
 
 }

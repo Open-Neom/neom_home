@@ -35,6 +35,8 @@ class HomeTranslationConstants {
   static const String navChamber = 'navChamber';
   static const String navInter = 'navInter';
   static const String navBooks = 'navBooks';
+  static const String navDirectory = 'navDirectory';
+  static const String navBooking = 'navBooking';
   static const String navGallery = 'navGallery';
   static const String navAudio = 'navAudio';
   static const String navGames = 'navGames';
@@ -48,6 +50,7 @@ class HomeTranslationConstants {
   static const String navNupale = 'navNupale';
   static const String navCasete = 'navCasete';
   static const String navUpload = 'navUpload';
+  static const String navUploadWork = 'navUploadWork';
   static const String navWallet = 'navWallet';
   static const String navServices = 'navServices';
   static const String navErp = 'navErp';

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
@@ -29,6 +30,13 @@ import '../utils/constants/home_constants.dart';
 import '../utils/constants/home_translation_constants.dart';
 
 class HomeController extends SintController implements HomeService {
+
+  /// Callback for web post creation modal — set by the app shell (root_binding).
+  /// When set, the "Create" button on web opens the modal instead of navigating.
+  static void Function(BuildContext context)? onWebCreatePost;
+
+  /// Callback for web text post modal (share comment).
+  static void Function(BuildContext context)? onWebShareComment;
 
 
   final loginServiceImpl = Sint.isRegistered<LoginService>() ? Sint.find<LoginService>() : null;
@@ -263,13 +271,21 @@ class HomeController extends SintController implements HomeService {
                           AuthGuard.protect(context, () {
                             switch (HomeConstants.bottomMenuItems[index].title) {
                               case CommonTranslationConstants.createPost:
-                                Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                if (kIsWeb && onWebCreatePost != null) {
+                                  onWebCreatePost!(context);
+                                } else {
+                                  Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                }
                                 break;
                               case HomeTranslationConstants.organizeEvent:
                                 Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                                 break;
                               case HomeTranslationConstants.shareComment:
-                                Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                if (kIsWeb && onWebShareComment != null) {
+                                  onWebShareComment!(context);
+                                } else {
+                                  Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                                }
                                 break;
                             }
                           });
@@ -307,6 +323,17 @@ class HomeController extends SintController implements HomeService {
           now.difference(_lastTimelineLoad!) < _timelineRefreshThreshold) {
         AppConfig.logger.d("Timeline data still fresh, skipping reload");
         // Just scroll to top without reloading
+        if(timelineServiceImpl?.getScrollController().hasClients ?? false) {
+          await timelineServiceImpl?.getScrollController().animateTo(
+              0.0, curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 500));
+        }
+        return;
+      }
+
+      // Skip if timeline was already loaded by TimelineController.onReady
+      if (_timelineReady.value) {
+        _lastTimelineLoad = now;
         if(timelineServiceImpl?.getScrollController().hasClients ?? false) {
           await timelineServiceImpl?.getScrollController().animateTo(
               0.0, curve: Curves.easeOut,

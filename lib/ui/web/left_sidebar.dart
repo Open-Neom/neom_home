@@ -132,11 +132,12 @@ class _LeftSidebarState extends State<LeftSidebar> {
 
   @override
   Widget build(BuildContext context) {
-    final double sidebarWidth = widget.expanded ? 220 : 72;
+    final double sidebarWidth = widget.expanded ? 240 : 72;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: sidebarWidth,
+      padding: EdgeInsets.only(left: widget.expanded ? 15 : 0),
       decoration: BoxDecoration(
         gradient: AppTheme.appBoxDecoration.gradient,
         border: Border(
@@ -219,6 +220,20 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     label: HomeTranslationConstants.navBooks.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.libraryHome),
+                  ),
+                if (AppFlavour.showDirectory())
+                  _NavItem(
+                    icon: Icons.business_outlined,
+                    label: HomeTranslationConstants.navDirectory.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.directory),
+                  ),
+                if (AppFlavour.showBooking())
+                  _NavItem(
+                    icon: Icons.calendar_month_outlined,
+                    label: HomeTranslationConstants.navBooking.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.booking),
                   ),
                 if (AppConfig.instance.appInUse == AppInUse.e)
                   _NavItem(
@@ -334,6 +349,15 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     ),
                     child: const Divider(color: Colors.white12, height: 1),
                   ),
+                  if (AppFlavour.showReleaseUpload() && _isSupportOrAbove)
+                    _NavItem(
+                      icon: AppFlavour.getAppItemIcon(),
+                      label: AppConfig.instance.appInUse == AppInUse.e
+                          ? HomeTranslationConstants.navUploadWork.tr
+                          : HomeTranslationConstants.navUpload.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed(AppRouteConstants.releaseUpload),
+                    ),
                   if (AppFlavour.showNupale())
                     _NavItem(
                       icon: FontAwesomeIcons.bookOpenReader,
@@ -347,13 +371,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       label: HomeTranslationConstants.navCasete.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.caseteHome),
-                    ),
-                  if (AppFlavour.showReleaseUpload() && _isSupportOrAbove)
-                    _NavItem(
-                      icon: AppFlavour.getAppItemIcon(),
-                      label: HomeTranslationConstants.navUpload.tr,
-                      expanded: widget.expanded,
-                      onTap: () => Sint.toNamed(AppRouteConstants.releaseUpload),
                     ),
                   if (AppFlavour.showWallet())
                     _NavItem(

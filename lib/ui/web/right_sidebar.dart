@@ -11,9 +11,9 @@ import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
+import 'package:neom_core/utils/enums/subscription_status.dart';
 import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
-import 'package:neom_core/utils/enums/subscription_status.dart';
 import 'package:sint/sint.dart';
 
 import 'widgets/web_mini_releases.dart';
@@ -31,8 +31,8 @@ class RightSidebar extends StatelessWidget {
     final profile = hasUser ? Sint.find<UserService>().profile : null;
 
     return Container(
-      width: 300,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      width: 320,
+      padding: const EdgeInsets.only(left: 16, right: 30, top: 20, bottom: 20),
       decoration: AppTheme.appBoxDecoration,
       child: ListView(
         // NeverScrollableScrollPhysics: prevents sidebar from stealing
@@ -42,14 +42,27 @@ class RightSidebar extends StatelessWidget {
         children: [
           // A. Mini profile card
           if (profile != null && profile.id.isNotEmpty)
-            _MiniProfileCard(
-              name: profile.name,
-              photoUrl: profile.photoUrl,
-              subscriptionLabel: hasUser && Sint.find<UserService>().user.subscriptionId.isNotEmpty
-                  ? AppProperties.getGeneralSubscriptionName()
-                  : CommonTranslationConstants.freeAccount.tr,
-              onTap: () => Sint.toNamed(AppRouteConstants.profile),
-            ),
+            Builder(builder: (_) {
+              String subLabel = CommonTranslationConstants.freeAccount.tr;
+              if (hasUser) {
+                final userSub = Sint.find<UserService>().userSubscription;
+                if (userSub != null && userSub.status == SubscriptionStatus.active) {
+                  final levelName = userSub.level?.name ?? '';
+                  final displayLevel = levelName.isNotEmpty
+                      ? '${levelName[0].toUpperCase()}${levelName.substring(1)}'
+                      : '';
+                  subLabel = displayLevel.isNotEmpty
+                      ? '${AppProperties.getGeneralSubscriptionName()} — $displayLevel'
+                      : AppProperties.getGeneralSubscriptionName();
+                }
+              }
+              return _MiniProfileCard(
+                name: profile.name,
+                photoUrl: profile.photoUrl,
+                subscriptionLabel: subLabel,
+                onTap: () => Sint.toNamed(AppRouteConstants.profile),
+              );
+            }),
 
           const SizedBox(height: 24),
 
@@ -63,17 +76,23 @@ class RightSidebar extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // D. Quick actions (EMXI y Gigmeout)
+          // D. FIL Guadalajara CTA (solo EMXI)
+          if (AppConfig.instance.appInUse == AppInUse.e) ...[
+            const _FilGuadalajaraCta(),
+            const SizedBox(height: 24),
+          ],
+
+          // E. Quick actions (EMXI y Gigmeout)
           if (AppConfig.instance.appInUse == AppInUse.e
               || AppConfig.instance.appInUse == AppInUse.g) ...[
             const _QuickActionsSection(),
             const SizedBox(height: 24),
           ],
 
-          // E. Featured books (conditional)
+          // F. Featured books (conditional)
           _FeaturedBooksSection(),
 
-          // F. Literary games (solo Emxi)
+          // G. Literary games (solo Emxi)
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
             const SizedBox(height: 24),
             const WebSidebarGames(),
@@ -81,7 +100,7 @@ class RightSidebar extends StatelessWidget {
 
           const SizedBox(height: 32),
 
-          // G. Footer
+          // H. Footer
           _buildFooter(),
         ],
       ),
@@ -457,6 +476,92 @@ class _TopBookTile extends StatelessWidget {
       height: 50,
       color: Colors.grey.shade900,
       child: const Icon(Icons.menu_book, color: Colors.white38, size: 16),
+    );
+  }
+}
+
+/// FIL Guadalajara 2025 call-to-action card.
+class _FilGuadalajaraCta extends StatefulWidget {
+  const _FilGuadalajaraCta();
+
+  @override
+  State<_FilGuadalajaraCta> createState() => _FilGuadalajaraCtaState();
+}
+
+class _FilGuadalajaraCtaState extends State<_FilGuadalajaraCta> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => Sint.toNamed('/fil/fil-guadalajara-2026'),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _hovered
+                  ? [const Color(0xFF6A1B9A), const Color(0xFF8E24AA)]
+                  : [const Color(0xFF4A148C), const Color(0xFF7B1FA2)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: _hovered
+                ? [BoxShadow(color: const Color(0xFF7B1FA2).withValues(alpha: 0.4), blurRadius: 12, offset: const Offset(0, 4))]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.menu_book_rounded, color: Colors.amberAccent, size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'FIL Guadalajara 2026',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios, color: Colors.white.withValues(alpha: 0.6), size: 12),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Quiero participar en la\nFeria Internacional del Libro',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.amberAccent.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.amberAccent.withValues(alpha: 0.4)),
+                ),
+                child: const Text(
+                  'Espacios limitados',
+                  style: TextStyle(color: Colors.amberAccent, fontSize: 10, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
