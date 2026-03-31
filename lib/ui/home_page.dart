@@ -24,6 +24,9 @@ class HomePage extends StatelessWidget {
   final bool addCentralActionButton;
   final Widget? miniPlayer;
 
+  /// Optional mini Neom Chamber player (frequency generator mini bar).
+  final Widget? miniNeomPlayer;
+
   /// Optional Spotify-like web player builders (forwarded to HomeWebPage).
   final WebBottomPlayerBuilder? webBottomPlayerBuilder;
   final WebNowPlayingBuilder? webNowPlayingFullBuilder;
@@ -32,13 +35,18 @@ class HomePage extends StatelessWidget {
   /// Optional chat bubble widget (e.g. SaiaChatBubble) for web bottom-right.
   final Widget? chatBubble;
 
+  /// Optional onboarding overlay (e.g. CyberneomOnboardingOverlay) shown on first visit.
+  final Widget? onboardingOverlay;
+
   const HomePage({super.key, required this.tabs,
     this.addCentralActionButton = false,
     this.miniPlayer,
+    this.miniNeomPlayer,
     this.webBottomPlayerBuilder,
     this.webNowPlayingFullBuilder,
     this.webQueuePanelBuilder,
     this.chatBubble,
+    this.onboardingOverlay,
   });
 
   @override
@@ -48,10 +56,12 @@ class HomePage extends StatelessWidget {
       return HomeWebPage(
         tabs: tabs,
         miniPlayer: miniPlayer,
+        miniNeomPlayer: miniNeomPlayer,
         webBottomPlayerBuilder: webBottomPlayerBuilder,
         webNowPlayingFullBuilder: webNowPlayingFullBuilder,
         webQueuePanelBuilder: webQueuePanelBuilder,
         chatBubble: chatBubble,
+        onboardingOverlay: onboardingOverlay,
       );
     }
     return _buildMobileHome(context);
@@ -86,6 +96,10 @@ class HomePage extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               controller: controller.pageController,
               children: pageWidgets,
+            ),
+            if(miniNeomPlayer != null) Positioned(
+              left: 0, right: 0, bottom: miniPlayer != null ? 68 : 0,
+              child: miniNeomPlayer!,
             ),
             if(miniPlayer != null) Obx(()=> (controller.timelineReady
                 && controller.mediaPlayerEnabled) ?

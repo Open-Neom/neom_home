@@ -89,6 +89,12 @@ class RightSidebar extends StatelessWidget {
             const SizedBox(height: 24),
           ],
 
+          // E2. Cyberneom: Experiencias & Estados
+          if (AppConfig.instance.appInUse == AppInUse.c) ...[
+            const _CyberneomStatesSection(),
+            const SizedBox(height: 24),
+          ],
+
           // F. Featured books (conditional)
           _FeaturedBooksSection(),
 
@@ -564,4 +570,160 @@ class _FilGuadalajaraCtaState extends State<_FilGuadalajaraCta> {
       ),
     );
   }
+}
+
+/// Cyberneom sidebar section: Experiencias (free) + Estados (pro).
+class _CyberneomStatesSection extends StatelessWidget {
+  const _CyberneomStatesSection();
+
+  static const _experiences = [
+    _StateEntry('/flocking/fullscreen', 'NeuroFlocking', Icons.groups, Color(0xFF6A0DAD), ''),
+    _StateEntry('/breathing/fullscreen', 'Neuro Respiración', Icons.air, Color(0xFF00695C), ''),
+    _StateEntry('/fractal/fullscreen', 'Fractales', Icons.auto_awesome, Color(0xFF1565C0), ''),
+    _StateEntry('/neomatics/fullscreen', 'Neomatics', Icons.grid_on, Color(0xFFBF360C), ''),
+    _StateEntry('/neuromandala/fullscreen', 'NeuroMandala', Icons.blur_circular, Color(0xFF4A148C), ''),
+  ];
+
+  // ── Free states ──
+  static const _freeStates = [
+    _StateEntry('first-contact', 'Primer Contacto', Icons.auto_awesome, Color(0xFF6A0DAD), '5 min'),
+    _StateEntry('focus', 'Enfoque Total', Icons.psychology, Color(0xFF9E9E9E), '25 min'),
+    _StateEntry('calm', 'Calma de Emergencia', Icons.spa, Color(0xFFFF9800), '10 min'),
+    _StateEntry('sleep', 'Sueño Profundo', Icons.bedtime, Color(0xFF1A237E), '20 min'),
+  ];
+
+  // ── Pro states ──
+  static const _proStates = [
+    _StateEntry('meditate', 'Meditación', Icons.self_improvement, Color(0xFF1A237E), '15 min'),
+    _StateEntry('energy', 'Activación', Icons.bolt, Color(0xFFFFC107), '8 min'),
+    _StateEntry('create', 'Flujo Creativo', Icons.palette, Color(0xFF6A0DAD), '20 min'),
+    _StateEntry('relief', 'Alivio', Icons.healing, Color(0xFF2E7D32), '15 min'),
+    _StateEntry('presence', 'La Presencia', Icons.visibility, Color(0xFF000000), '10 min'),
+    _StateEntry('lucid', 'Sueño Lúcido', Icons.nights_stay, Color(0xFF311B92), '30 min'),
+    _StateEntry('heart', 'Coherencia', Icons.favorite, Color(0xFF2E7D32), '12 min'),
+    _StateEntry('f432', '432 Hz', Icons.music_note, Color(0xFF1A237E), '15 min'),
+    _StateEntry('f528', '528 Hz', Icons.music_note, Color(0xFF2E8B57), '15 min'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // ── Experiencias Neom ──
+        Text(
+          'EXPERIENCIAS',
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ..._experiences.map((e) => _buildStateChip(context, e)),
+
+        const SizedBox(height: 20),
+
+        // ── Estados Gratuitos ──
+        Text(
+          'ESTADOS',
+          style: TextStyle(
+            color: Colors.grey[500],
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 1.5,
+          ),
+        ),
+        const SizedBox(height: 8),
+        ..._freeStates.map((e) => _buildStateChip(context, e)),
+
+        const SizedBox(height: 16),
+
+        // ── Estados Pro ──
+        Row(
+          children: [
+            Text(
+              'PRO',
+              style: TextStyle(
+                color: Colors.amber[600],
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.5,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Icon(Icons.lock_outline, size: 12, color: Colors.amber[600]),
+          ],
+        ),
+        const SizedBox(height: 8),
+        ..._proStates.map((e) => _buildStateChip(context, e, isPro: true)),
+      ],
+    );
+  }
+
+  Widget _buildStateChip(BuildContext context, _StateEntry entry, {bool isPro = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: () => Sint.toNamed(entry.id.startsWith('/') ? entry.id : '/x/${entry.id}'),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+            decoration: BoxDecoration(
+              color: entry.color.withAlpha(20),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: entry.color.withAlpha(40)),
+            ),
+            child: Row(
+              children: [
+                Icon(entry.icon, color: entry.color, size: 18),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    entry.name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Text(
+                  entry.duration,
+                  style: TextStyle(color: Colors.grey[500], fontSize: 10),
+                ),
+                if (isPro) ...[
+                  const SizedBox(width: 4),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withAlpha(40),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                    child: const Text(
+                      'PRO',
+                      style: TextStyle(color: Colors.amber, fontSize: 8, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _StateEntry {
+  final String id;
+  final String name;
+  final IconData icon;
+  final Color color;
+  final String duration;
+  const _StateEntry(this.id, this.name, this.icon, this.color, this.duration);
 }

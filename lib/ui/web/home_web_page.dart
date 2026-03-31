@@ -37,6 +37,9 @@ class HomeWebPage extends StatefulWidget {
   final List<HomeTabItem> tabs;
   final Widget? miniPlayer;
 
+  /// Optional mini Neom Chamber player.
+  final Widget? miniNeomPlayer;
+
   /// Optional Spotify-like web player builders (injected from app layer).
   final WebBottomPlayerBuilder? webBottomPlayerBuilder;
   final WebNowPlayingBuilder? webNowPlayingFullBuilder;
@@ -45,14 +48,19 @@ class HomeWebPage extends StatefulWidget {
   /// Optional chat bubble widget (e.g. SaiaChatBubble) for bottom-right corner.
   final Widget? chatBubble;
 
+  /// Optional onboarding overlay (e.g. CyberneomOnboardingOverlay) shown on first visit.
+  final Widget? onboardingOverlay;
+
   const HomeWebPage({
     super.key,
     required this.tabs,
     this.miniPlayer,
+    this.miniNeomPlayer,
     this.webBottomPlayerBuilder,
     this.webNowPlayingFullBuilder,
     this.webQueuePanelBuilder,
     this.chatBubble,
+    this.onboardingOverlay,
   });
 
   @override
@@ -117,7 +125,7 @@ class _HomeWebPageState extends State<HomeWebPage> {
     );
   }
 
-  /// Whether the Spotify-like web player is available (builders provided).
+  /// Whether the web player is available (builders provided).
   bool get _hasWebPlayer => widget.webBottomPlayerBuilder != null;
 
   @override
@@ -225,6 +233,9 @@ class _HomeWebPageState extends State<HomeWebPage> {
                       ),
                     ),),
 
+                    // ─── Mini Neom Chamber player (above audio player) ───
+                    if (widget.miniNeomPlayer != null) widget.miniNeomPlayer!,
+
                     // ─── Bottom player bar (Spotify-style, 80px) ───
                     if (_hasWebPlayer)
                       Obx(() => (controller.timelineReady && controller.mediaPlayerEnabled)
@@ -286,6 +297,10 @@ class _HomeWebPageState extends State<HomeWebPage> {
                         child: const AppCircularProgressIndicator(showLogo: false),
                       )
                     : const SizedBox.shrink()),
+
+                // ─── Onboarding overlay (first visit, covers everything) ───
+                if (widget.onboardingOverlay != null)
+                  Positioned.fill(child: widget.onboardingOverlay!),
               ],
             ),
           ),

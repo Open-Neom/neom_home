@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
+import 'package:neom_core/domain/use_cases/release_upload_service.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/ui/widgets/images/web_network_image_stub.dart'
@@ -201,13 +202,66 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   onTap: () => widget.onTabSelected(1),
                 ),
                 if (AppConfig.instance.appInUse == AppInUse.c)
-                  _NavItem(
-                    icon: Icons.blur_circular,
-                    label: HomeTranslationConstants.navChamber.tr,
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.generator),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: widget.expanded ? 6 : 4, vertical: 8),
+                    child: Tooltip(
+                      message: widget.expanded ? '' : HomeTranslationConstants.navChamber.tr,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () => Sint.toNamed(AppRouteConstants.generator),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: widget.expanded ? 12 : 0,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary.withAlpha(60),
+                                  Theme.of(context).colorScheme.primary.withAlpha(30),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary.withAlpha(100),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: widget.expanded
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.center,
+                              children: [
+                                Icon(FontAwesomeIcons.om,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 22,
+                                ),
+                                if (widget.expanded) ...[
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Text(
+                                      HomeTranslationConstants.navChamber.tr,
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                if (AppConfig.instance.appInUse == AppInUse.c)
+                if (AppConfig.instance.appInUse == AppInUse.c
+                    && Sint.isRegistered<UserService>()
+                    && Sint.find<UserService>().user.userRole.value >= UserRole.admin.value)
                   _NavItem(
                     icon: Icons.compare_arrows,
                     label: HomeTranslationConstants.navInter.tr,
@@ -349,14 +403,18 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     ),
                     child: const Divider(color: Colors.white12, height: 1),
                   ),
-                  if (AppFlavour.showReleaseUpload() && _isSupportOrAbove)
+                  if (AppFlavour.showReleaseUpload() && (_isCreatorOrSupport || _isSupportOrAbove))
                     _NavItem(
                       icon: AppFlavour.getAppItemIcon(),
-                      label: AppConfig.instance.appInUse == AppInUse.e
-                          ? HomeTranslationConstants.navUploadWork.tr
-                          : HomeTranslationConstants.navUpload.tr,
+                      label: HomeTranslationConstants.navUploadWork.tr,
                       expanded: widget.expanded,
-                      onTap: () => Sint.toNamed(AppRouteConstants.releaseUpload),
+                      onTap: () {
+                        if (kIsWeb && Sint.isRegistered<ReleaseUploadService>()) {
+                          Sint.find<ReleaseUploadService>().showUploadModal(context);
+                        } else {
+                          Sint.toNamed(AppRouteConstants.releaseUpload);
+                        }
+                      },
                     ),
                   if (AppFlavour.showNupale())
                     _NavItem(
