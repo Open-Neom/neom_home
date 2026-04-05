@@ -1,21 +1,22 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
+import 'package:neom_commons/utils/auth_guard.dart';
+import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
+import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/domain/model/literature_books.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
-import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
-import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
-import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
-import 'package:neom_core/utils/enums/subscription_status.dart';
-import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
+import 'package:neom_core/utils/enums/subscription_status.dart';
 import 'package:sint/sint.dart';
 
+import '../../utils/constants/home_translation_constants.dart';
 import 'widgets/web_mini_releases.dart';
 import 'widgets/web_sidebar_games.dart';
 import 'widgets/web_suggested_users.dart';
@@ -76,7 +77,6 @@ class RightSidebar extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // D. FIL Guadalajara CTA (solo EMXI)
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
             const _FilGuadalajaraCta(),
             const SizedBox(height: 24),
@@ -504,7 +504,8 @@ class _FilGuadalajaraCtaState extends State<_FilGuadalajaraCta> {
       onExit: (_) => setState(() => _hovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
-        onTap: () => Sint.toNamed('/fil/fil-guadalajara-2026'),
+        onTap: () => Sint.toNamed(AppRouteConstants.filGuadalajara),
+        onLongPress: () => kDebugMode ? Sint.toNamed(AppRouteConstants.fil) : {},
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.all(14),

@@ -9,8 +9,6 @@ import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/text_utilities.dart';
-import 'package:neom_core/app_config.dart';
-import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/app_media_item_firestore.dart';
 import 'package:neom_core/data/firestore/app_release_item_firestore.dart';
@@ -22,6 +20,7 @@ import 'package:neom_core/domain/use_cases/mate_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/media_item_type.dart';
 import 'package:neom_core/utils/enums/verification_level.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:sint/sint.dart';
 
 /// Instagram-style search panel overlay for web.
@@ -84,13 +83,13 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
       // Load media items and release items in parallel
       futures.add(AppMediaItemFirestore().fetchAll().then((items) {
         _allMediaItems = items;
-      }).catchError((e, st) {
+      }).catchError((Object e, StackTrace st) {
         NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.media');
       }));
 
       futures.add(AppReleaseItemFirestore().retrieveAll().then((items) {
         _allReleaseItems = items;
-      }).catchError((e, st) {
+      }).catchError((Object e, StackTrace st) {
         NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.releases');
       }));
 

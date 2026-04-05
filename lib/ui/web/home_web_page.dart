@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:neom_commons/app_flavour.dart';
-import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
 import 'package:neom_commons/ui/widgets/web/web_keyboard_manager.dart';
@@ -15,7 +14,6 @@ import 'left_sidebar.dart';
 import 'right_sidebar.dart';
 import 'widgets/web_notification_panel.dart';
 import 'widgets/web_search_panel.dart';
-import 'widgets/web_stories_row.dart';
 
 /// Builder types for audio player widgets injected from the app layer.
 /// This avoids coupling neom_home to neom_audio_player.

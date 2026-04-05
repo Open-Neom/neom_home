@@ -4,30 +4,28 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
-import 'package:neom_core/domain/use_cases/release_upload_service.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
-import 'package:neom_commons/ui/widgets/custom_image.dart';
-import 'package:neom_commons/ui/widgets/images/web_network_image_stub.dart'
-    if (dart.library.html) 'package:neom_commons/ui/widgets/images/web_network_image_impl.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
+import 'package:neom_commons/ui/widgets/custom_image.dart';
+import 'package:neom_commons/utils/app_alerts.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
+import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_core/app_config.dart';
-import 'package:neom_core/utils/enums/app_in_use.dart';
-import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_core/data/firestore/inbox_firestore.dart';
-import 'package:neom_commons/utils/app_alerts.dart';
-import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_core/domain/use_cases/login_service.dart';
+import 'package:neom_core/domain/use_cases/release_upload_service.dart';
 import 'package:neom_core/domain/use_cases/settings_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/profile_type.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 import 'package:neom_core/utils/enums/user_role.dart';
 import 'package:neom_core/utils/enums/verification_level.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:sint/sint.dart';
 
 import '../../utils/constants/home_translation_constants.dart';
@@ -410,8 +408,10 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       expanded: widget.expanded,
                       onTap: () {
                         if (kIsWeb && Sint.isRegistered<ReleaseUploadService>()) {
+                          AppConfig.logger.d("Show Web UploadModal");
                           Sint.find<ReleaseUploadService>().showUploadModal(context);
                         } else {
+                          AppConfig.logger.d("Going to Mobile Upload Flow");
                           Sint.toNamed(AppRouteConstants.releaseUpload);
                         }
                       },

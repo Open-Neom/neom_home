@@ -4,8 +4,9 @@ import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/domain/model/app_release_item.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
-import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:sint/sint.dart';
+
+import '../../../utils/constants/home_translation_constants.dart';
 
 /// Compact release shelf for the right sidebar.
 /// Shows up to 4 release covers in a horizontal row.

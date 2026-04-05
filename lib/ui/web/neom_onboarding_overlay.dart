@@ -29,15 +29,15 @@ class OnboardingStateCard {
   });
 }
 
-/// Full-screen onboarding overlay for Cyberneom web.
+/// Full-screen onboarding overlay for Open Neom web.
 ///
 /// 3 steps:
 ///   1. "Descubre tu Frecuencia" — simulated mic pitch detection
 ///   2. "Siente el Sonido" — breathing-synced pulsing circles
 ///   3. "Elige tu Estado" — 4 free state cards → navigate to /x/{stateId}
 ///
-/// Shows only once per device (Hive flag `cyberneom_onboarded` in `settings` box).
-class CyberneomOnboardingOverlay extends StatefulWidget {
+/// Shows only once per device (Hive flag `Open Neom_onboarded` in `settings` box).
+class NeomOnboardingOverlay extends StatefulWidget {
   /// Free state cards to show in step 3.
   final List<OnboardingStateCard> stateCards;
 
@@ -46,7 +46,7 @@ class CyberneomOnboardingOverlay extends StatefulWidget {
 
   /// Called when overlay is dismissed (skip, "Explorar primero", or state tap).
   /// The app layer should set the Hive flag here:
-  ///   `Hive.box('settings').put('cyberneom_onboarded', true)`
+  ///   `Hive.box('settings').put('Open Neom_onboarded', true)`
   final VoidCallback? onDismiss;
 
   /// Audio callbacks — the app layer connects these to NeomSineEngine.
@@ -63,7 +63,7 @@ class CyberneomOnboardingOverlay extends StatefulWidget {
   /// Subsequent visits: skip demo, go straight to state selection.
   final bool isFirstVisit;
 
-  const CyberneomOnboardingOverlay({
+  const NeomOnboardingOverlay({
     super.key,
     required this.stateCards,
     this.isFirstVisit = true,
@@ -76,12 +76,12 @@ class CyberneomOnboardingOverlay extends StatefulWidget {
   });
 
   @override
-  State<CyberneomOnboardingOverlay> createState() =>
-      _CyberneomOnboardingOverlayState();
+  State<NeomOnboardingOverlay> createState() =>
+      _NeomOnboardingOverlayState();
 }
 
-class _CyberneomOnboardingOverlayState
-    extends State<CyberneomOnboardingOverlay> with TickerProviderStateMixin {
+class _NeomOnboardingOverlayState
+    extends State<NeomOnboardingOverlay> with TickerProviderStateMixin {
   // ── Navigation ───────────────────────────────────────────────
   final PageController _pageController = PageController();
   int _currentStep = 0;
@@ -107,9 +107,9 @@ class _CyberneomOnboardingOverlayState
   late AnimationController _fadeController;
 
   // ── Theme (derived from AppColor at runtime) ────────────────
-  Color get _bgDark => AppColor.getMain().withAlpha(255); // #4F1964 for Cyberneom
+  Color get _bgDark => AppColor.getMain().withAlpha(255); // #4F1964 for Open Neom
   Color get _bgMid => Color.lerp(AppColor.getMain(), Colors.black, 0.4)!;
-  Color get _accent => AppColor.getAccentColor(); // #8C3CB4 for Cyberneom
+  Color get _accent => AppColor.getAccentColor(); // #8C3CB4 for Open Neom
 
   @override
   void initState() {
@@ -548,7 +548,7 @@ class _CyberneomOnboardingOverlayState
               height: 260,
               child: AnimatedBuilder(
                 animation: _breathController,
-                builder: (_, __) => CustomPaint(
+                builder: (_, _) => CustomPaint(
                   painter: _BreathingCirclesPainter(
                     progress: _breathController.value,
                     color: freqColor,

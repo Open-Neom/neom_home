@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/models/literary_game_info.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
-import 'package:neom_home/utils/constants/home_translation_constants.dart';
 import 'package:sint/sint.dart';
+
+import '../../../utils/constants/home_translation_constants.dart';
 
 /// Compact literary games section for the right sidebar (300px).
 /// Shows 3 random games as clickable rows with colored accents.
