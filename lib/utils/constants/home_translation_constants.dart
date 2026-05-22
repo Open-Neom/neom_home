@@ -33,6 +33,7 @@ class HomeTranslationConstants {
   static const String navSearch = 'navSearch';
   static const String navEvents = 'navEvents';
   static const String navChamber = 'navChamber';
+  static const String navLevitation = 'navLevitation';
   static const String navInter = 'navInter';
   static const String navBooks = 'navBooks';
   static const String navDirectory = 'navDirectory';
@@ -43,7 +44,7 @@ class HomeTranslationConstants {
   static const String navBlog = 'navBlog';
   static const String navVst = 'navVst';
   static const String navDaw = 'navDaw';
-  static const String navBands = 'navBands';
+  static const String navCollectives = 'navCollectives';
   static const String navNotifications = 'navNotifications';
   static const String navMessages = 'navMessages';
   static const String navCreate = 'navCreate';

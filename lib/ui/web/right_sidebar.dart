@@ -36,10 +36,7 @@ class RightSidebar extends StatelessWidget {
       padding: const EdgeInsets.only(left: 16, right: 30, top: 20, bottom: 20),
       decoration: AppTheme.appBoxDecoration,
       child: ListView(
-        // NeverScrollableScrollPhysics: prevents sidebar from stealing
-        // mouse-wheel events — scroll is forwarded to the central feed
-        // by the Listener in HomeWebPage (Facebook-style global scroll).
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         children: [
           // A. Mini profile card
           if (profile != null && profile.id.isNotEmpty)

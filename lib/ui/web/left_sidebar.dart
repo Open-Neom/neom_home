@@ -19,6 +19,7 @@ import 'package:neom_core/domain/use_cases/login_service.dart';
 import 'package:neom_core/domain/use_cases/release_upload_service.dart';
 import 'package:neom_core/domain/use_cases/settings_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
+import 'package:neom_core/utils/app_gates.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/profile_type.dart';
@@ -199,7 +200,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   isActive: widget.currentTabIndex == 1,
                   onTap: () => widget.onTabSelected(1),
                 ),
-                if (AppConfig.instance.appInUse == AppInUse.c)
+                if (AppFlavour.showGenerator())
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: widget.expanded ? 6 : 4, vertical: 8),
                     child: Tooltip(
@@ -257,16 +258,21 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       ),
                     ),
                   ),
-                if (AppConfig.instance.appInUse == AppInUse.c
-                    && Sint.isRegistered<UserService>()
-                    && Sint.find<UserService>().user.userRole.value >= UserRole.admin.value)
+                if (AppFlavour.showLevitation())
+                  _NavItem(
+                    icon: Icons.waves,
+                    label: HomeTranslationConstants.navLevitation.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.levitationLab),
+                  ),
+                if (AppFlavour.showInterComm() && AppGates.canUseHiddenBeta() && _isSupportOrAbove)
                   _NavItem(
                     icon: Icons.compare_arrows,
                     label: HomeTranslationConstants.navInter.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed('/inter'),
                   ),
-                if (AppConfig.instance.appInUse == AppInUse.e)
+                if (AppFlavour.showBooksLibrary())
                   _NavItem(
                     icon: Icons.menu_book_outlined,
                     label: HomeTranslationConstants.navBooks.tr,
@@ -280,14 +286,14 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.directory),
                   ),
-                if (AppFlavour.showBooking())
+                if (AppFlavour.showBooking() && AppGates.canUseHiddenBeta())
                   _NavItem(
                     icon: Icons.calendar_month_outlined,
                     label: HomeTranslationConstants.navBooking.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.booking),
                   ),
-                if (AppConfig.instance.appInUse == AppInUse.e)
+                if (AppFlavour.showGalley())
                   _NavItem(
                     icon: Icons.palette,
                     label: HomeTranslationConstants.navGallery.tr,
@@ -301,7 +307,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.audioPlayer),
                   ),
-                if (AppFlavour.showBlog())
+                if (AppFlavour.showGames())
                   _NavItem(
                     icon: FontAwesomeIcons.gamepad,
                     label: HomeTranslationConstants.navGames.tr,
@@ -315,14 +321,14 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
-                if (AppFlavour.showVst() && _isSupportOrAbove)
+                if (AppFlavour.showVst() && AppGates.canUseHiddenBeta())
                   _NavItem(
                     icon: FontAwesomeIcons.guitar,
                     label: HomeTranslationConstants.navVst.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.vstHome),
                   ),
-                if (AppFlavour.showDaw() && _isSupportOrAbove)
+                if (AppFlavour.showDaw() && AppGates.canUseHiddenBeta())
                   _NavItem(
                     icon: FontAwesomeIcons.sliders,
                     label: HomeTranslationConstants.navDaw.tr,
@@ -332,9 +338,9 @@ class _LeftSidebarState extends State<LeftSidebar> {
                 if (AppFlavour.showBands() && _isArtistNonSubscriber)
                   _NavItem(
                     icon: Icons.people,
-                    label: HomeTranslationConstants.navBands.tr,
+                    label: HomeTranslationConstants.navCollectives.tr,
                     expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.bands),
+                    onTap: () => Sint.toNamed(AppRouteConstants.collectives),
                   ),
 
                 // Divider
@@ -376,7 +382,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     });
                   },
                 ),
-                if (AppFlavour.showAppBarAddBtn())
+                if (AppFlavour.showAdd())
                   _NavItem(
                     icon: Icons.add_circle_outline,
                     label: HomeTranslationConstants.navCreate.tr,
@@ -385,8 +391,6 @@ class _LeftSidebarState extends State<LeftSidebar> {
                       AuthGuard.protect(context, () {
                         if (Sint.isRegistered<HomeController>()) {
                           Sint.find<HomeController>().modalBottomAddMenu(context);
-                        } else {
-                          Sint.toNamed(AppRouteConstants.generator);
                         }
                       });
                     },
@@ -458,7 +462,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     icon: Icons.hub,
                     label: HomeTranslationConstants.navErp.tr,
                     expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.erpDashboard),
+                    onTap: () => Sint.toNamed(AppRouteConstants.erp),
                   ),
                 ],
               ],
@@ -504,9 +508,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     label: AppTranslationConstants.logout.tr,
                     expanded: widget.expanded,
                     onTap: () {
-                      if (Sint.isRegistered<LoginService>()) {
-                        Sint.find<LoginService>().signOut();
-                      }
+                      Sint.find<LoginService>().signOut();
                     },
                   ),
               ],

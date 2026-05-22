@@ -275,9 +275,11 @@ class _HomeWebPageState extends State<HomeWebPage> {
 
                 // ─── Full-screen Now Playing overlay (Spotify-style) ───
                 if (_showFullNowPlaying && widget.webNowPlayingFullBuilder != null)
-                  widget.webNowPlayingFullBuilder!(
-                    onClose: () => setState(() => _showFullNowPlaying = false),
-                    onToggleQueue: _toggleQueue,
+                  Positioned.fill(
+                    child: widget.webNowPlayingFullBuilder!(
+                      onClose: () => setState(() => _showFullNowPlaying = false),
+                      onToggleQueue: _toggleQueue,
+                    ),
                   ),
 
                 // ─── Itzli Chat Bubble (bottom-right) ───
