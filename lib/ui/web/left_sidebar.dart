@@ -21,7 +21,6 @@ import 'package:neom_core/domain/use_cases/settings_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/app_gates.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
-import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/profile_type.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 import 'package:neom_core/utils/enums/user_role.dart';
