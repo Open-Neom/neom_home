@@ -6,14 +6,17 @@ import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
+import 'package:neom_commons/utils/user_role_label.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
+import 'package:neom_core/data/firestore/inbox_firestore.dart';
 import 'package:neom_core/domain/model/literature_books.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/subscription_status.dart';
+import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:sint/sint.dart';
 
 import '../../utils/constants/home_translation_constants.dart';
@@ -43,7 +46,8 @@ class RightSidebar extends StatelessWidget {
             Builder(builder: (_) {
               String subLabel = CommonTranslationConstants.freeAccount.tr;
               if (hasUser) {
-                final userSub = Sint.find<UserService>().userSubscription;
+                final userService = Sint.find<UserService>();
+                final userSub = userService.userSubscription;
                 if (userSub != null && userSub.status == SubscriptionStatus.active) {
                   final levelName = userSub.level?.name ?? '';
                   final displayLevel = levelName.isNotEmpty
@@ -52,6 +56,10 @@ class RightSidebar extends StatelessWidget {
                   subLabel = displayLevel.isNotEmpty
                       ? '${AppProperties.getGeneralSubscriptionName()} — $displayLevel'
                       : AppProperties.getGeneralSubscriptionName();
+                } else if (userService.user.userRole.isStaff) {
+                  // Staff (admin, developer, ERP…) don't pay a subscription but
+                  // are not "free" — show their role instead.
+                  subLabel = userService.user.userRole.label;
                 }
               }
               return _MiniProfileCard(
@@ -76,6 +84,12 @@ class RightSidebar extends StatelessWidget {
 
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
             const _FilGuadalajaraCta(),
+            const SizedBox(height: 24),
+          ],
+
+          // Support agent CTA above tools (Herramientas) for Emxi
+          if (AppConfig.instance.appInUse == AppInUse.e) ...[
+            const _SupportAgentCta(),
             const SizedBox(height: 24),
           ],
 
@@ -560,6 +574,102 @@ class _FilGuadalajaraCtaState extends State<_FilGuadalajaraCta> {
                 child: const Text(
                   'Espacios limitados',
                   style: TextStyle(color: Colors.amberAccent, fontSize: 10, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SupportAgentCta extends StatefulWidget {
+  const _SupportAgentCta();
+
+  @override
+  State<_SupportAgentCta> createState() => _SupportAgentCtaState();
+}
+
+class _SupportAgentCtaState extends State<_SupportAgentCta> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          AuthGuard.protect(
+            context,
+            () async {
+              try {
+                final pid = Sint.isRegistered<UserService>()
+                    ? Sint.find<UserService>().profile.id
+                    : '';
+                if (pid.isEmpty) return;
+                final inbox = await InboxFirestore().getOrCreateSupportRoom(pid);
+                Sint.toNamed(AppRouteConstants.inboxRoom, arguments: [inbox]);
+              } catch (e, st) {
+                NeomErrorLogger.recordError(e, st,
+                    module: 'neom_home', operation: '_SupportAgentCta.onTap');
+              }
+            },
+            redirectRoute: AppRouteConstants.home,
+          );
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _hovered
+                  ? [const Color(0xFF00796B), const Color(0xFF009688)]
+                  : [const Color(0xFF00695C), const Color(0xFF00897B)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF00796B).withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.support_agent, color: Colors.tealAccent, size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Hablar con un agente',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios, color: Colors.white.withValues(alpha: 0.6), size: 12),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '¿Tienes alguna duda o problema?\nInicia un chat con nuestro equipo de soporte.',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 12,
+                  height: 1.4,
                 ),
               ),
             ],

@@ -88,6 +88,18 @@ class _LeftSidebarState extends State<LeftSidebar> {
     return Sint.find<UserService>().user.userRole.value >= UserRole.erp.value;
   }
 
+  /// True if user has pos+ role (for POS)
+  bool get _isPosOrAbove {
+    if (!Sint.isRegistered<UserService>()) return false;
+    return Sint.find<UserService>().user.userRole.value >= UserRole.pos.value;
+  }
+
+  /// True if user has admin+ role (for Equipo)
+  bool get _isAdminOrAbove {
+    if (!Sint.isRegistered<UserService>()) return false;
+    return Sint.find<UserService>().user.userRole.value >= UserRole.admin.value;
+  }
+
   /// True if user is an artist profile and not a basic subscriber
   bool get _isArtistNonSubscriber {
     if (!Sint.isRegistered<UserService>()) return false;
@@ -458,11 +470,48 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     child: const Divider(color: Colors.white12, height: 1),
                   ),
                   _NavItem(
-                    icon: Icons.hub,
-                    label: HomeTranslationConstants.navErp.tr,
+                    icon: Icons.groups_2,
+                    label: 'CRM',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.erpCrm),
+                  ),
+                  _NavItem(
+                    icon: Icons.account_balance,
+                    label: 'ERP',
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.erp),
                   ),
+                  _NavItem(
+                    icon: Icons.view_kanban,
+                    label: 'Kanban',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.kanbanDashboard),
+                  ),
+                  _NavItem(
+                    icon: Icons.support_agent,
+                    label: 'A&S',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.erpSupport),
+                  ),
+                  if (_isPosOrAbove)
+                    _NavItem(
+                      icon: Icons.point_of_sale,
+                      label: 'POS',
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed('/pos'),
+                    ),
+                  if (_isAdminOrAbove)
+                    _NavItem(
+                      icon: Icons.groups,
+                      label: 'Equipo',
+                      expanded: widget.expanded,
+                      onTap: () async {
+                        final pid = _profileId;
+                        if (pid.isEmpty) return;
+                        final inbox = await InboxFirestore().getOrCreateTeamRoom(pid);
+                        Sint.toNamed(AppRouteConstants.inboxRoom, arguments: [inbox]);
+                      },
+                    ),
                 ],
               ],
             ),
