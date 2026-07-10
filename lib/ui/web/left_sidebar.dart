@@ -244,7 +244,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                                   ? MainAxisAlignment.start
                                   : MainAxisAlignment.center,
                               children: [
-                                Icon(FontAwesomeIcons.om,
+                                Icon(FontAwesomeIcons.om.data,
                                   color: Theme.of(context).colorScheme.primary,
                                   size: 22,
                                 ),
@@ -320,28 +320,28 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   ),
                 if (AppFlavour.showGames())
                   _NavItem(
-                    icon: FontAwesomeIcons.gamepad,
+                    icon: FontAwesomeIcons.gamepad.data,
                     label: HomeTranslationConstants.navGames.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.games),
                   ),
                 if (AppFlavour.showBlog())
                   _NavItem(
-                    icon: FontAwesomeIcons.filePen,
+                    icon: FontAwesomeIcons.filePen.data,
                     label: HomeTranslationConstants.navBlog.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
                 if (AppFlavour.showVst() && AppGates.canUseHiddenBeta())
                   _NavItem(
-                    icon: FontAwesomeIcons.guitar,
+                    icon: FontAwesomeIcons.guitar.data,
                     label: HomeTranslationConstants.navVst.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.vstHome),
                   ),
                 if (AppFlavour.showDaw() && AppGates.canUseHiddenBeta())
                   _NavItem(
-                    icon: FontAwesomeIcons.sliders,
+                    icon: FontAwesomeIcons.sliders.data,
                     label: HomeTranslationConstants.navDaw.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.dawProjects),
@@ -365,7 +365,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
 
                 // Notifications
                 _NavItem(
-                  icon: FontAwesomeIcons.bell,
+                  icon: FontAwesomeIcons.bell.data,
                   label: HomeTranslationConstants.navNotifications.tr,
                   expanded: widget.expanded,
                   badge: _unreadNotifications,
@@ -382,7 +382,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                   },
                 ),
                 _NavItem(
-                  icon: FontAwesomeIcons.comments,
+                  icon: FontAwesomeIcons.comments.data,
                   label: HomeTranslationConstants.navMessages.tr,
                   expanded: widget.expanded,
                   badge: _unreadInbox,
@@ -433,21 +433,21 @@ class _LeftSidebarState extends State<LeftSidebar> {
                     ),
                   if (AppFlavour.showNupale())
                     _NavItem(
-                      icon: FontAwesomeIcons.bookOpenReader,
+                      icon: FontAwesomeIcons.bookOpenReader.data,
                       label: HomeTranslationConstants.navNupale.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.nupaleHome),
                     ),
                   if (AppFlavour.showCasete())
                     _NavItem(
-                      icon: FontAwesomeIcons.solidFileAudio,
+                      icon: FontAwesomeIcons.solidFileAudio.data,
                       label: HomeTranslationConstants.navCasete.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.caseteHome),
                     ),
                   if (AppFlavour.showWallet())
                     _NavItem(
-                      icon: FontAwesomeIcons.coins,
+                      icon: FontAwesomeIcons.coins.data,
                       label: HomeTranslationConstants.navWallet.tr,
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.wallet),

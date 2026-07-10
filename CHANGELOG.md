@@ -1,5 +1,9 @@
 # Changelog — neom_home
 
+## [1.1.0] - 2026-07-09
+- Refactor left sidebar navigation design layout.
+
+
 ## Unreleased - System updates
 - Actualizaciones de estabilidad y compatibilidad.
 
