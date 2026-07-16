@@ -132,12 +132,17 @@ class _SuggestionRowState extends State<_SuggestionRow> {
   Future<void> _handleFollow() async {
     if (_isLoading || _isFollowing) return;
 
+    final userService = Sint.find<UserService>();
+    final myProfileId = userService.profile.id;
+
+    if (myProfileId.isEmpty) {
+      Sint.toNamed(AppRouteConstants.login);
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
-      final userService = Sint.find<UserService>();
-      final myProfileId = userService.profile.id;
-
       final success = await ProfileFirestore().followProfile(
         profileId: myProfileId,
         followedProfileId: widget.profile.id,
@@ -170,7 +175,10 @@ class _SuggestionRowState extends State<_SuggestionRow> {
       child: Row(
         children: [
           GestureDetector(
-            onTap: () => Sint.toNamed(AppRouteConstants.matePath(widget.profile.id), arguments: widget.profile.id),
+            onTap: () => Sint.toNamed(
+              AppRouteConstants.matePath(widget.profile.id, slug: widget.profile.slug),
+              arguments: widget.profile,
+            ),
             child: platformCircleAvatar(
               imageUrl: widget.profile.photoUrl.isNotEmpty ? widget.profile.photoUrl : AppProperties.getAppLogoUrl(),
               radius: 16,
@@ -179,8 +187,10 @@ class _SuggestionRowState extends State<_SuggestionRow> {
           const SizedBox(width: 10),
           Expanded(
             child: GestureDetector(
-              onTap: () => Sint.toNamed(AppRouteConstants.matePath(widget.profile.id), arguments: widget.profile.id),
-              child: Column(
+              onTap: () => Sint.toNamed(
+                AppRouteConstants.matePath(widget.profile.id, slug: widget.profile.slug),
+                arguments: widget.profile,
+              ),
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(

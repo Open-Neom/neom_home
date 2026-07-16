@@ -143,12 +143,12 @@ class _LeftSidebarState extends State<LeftSidebar> {
 
   @override
   Widget build(BuildContext context) {
-    final double sidebarWidth = widget.expanded ? 240 : 72;
+    final double sidebarWidth = widget.expanded ? 200 : 72;
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
       width: sidebarWidth,
-      padding: EdgeInsets.only(left: widget.expanded ? 15 : 0),
+      padding: EdgeInsets.only(left: widget.expanded ? 10 : 0),
       decoration: BoxDecoration(
         gradient: AppTheme.appBoxDecoration.gradient,
         border: Border(
@@ -256,7 +256,7 @@ class _LeftSidebarState extends State<LeftSidebar> {
                                       style: TextStyle(
                                         color: Theme.of(context).colorScheme.primary,
                                         fontWeight: FontWeight.w600,
-                                        fontSize: 14,
+                                        fontSize: 15,
                                       ),
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -689,7 +689,7 @@ class _NavItemState extends State<_NavItem> {
                       widget.label,
                       style: TextStyle(
                         color: widget.isActive ? Colors.white : AppColor.lightGrey,
-                        fontSize: 15,
+                        fontSize: 16,
                         fontWeight: widget.isActive ? FontWeight.w600 : FontWeight.w400,
                       ),
                       overflow: TextOverflow.ellipsis,

@@ -1,11 +1,11 @@
 # Changelog — neom_home
 
+## [2.0.1] - 2026-07-16
+- Update Home Web Page to support floating Winamp-style player layout and sidebars customization.
+- Add suggested users and upcoming events widgets.
+
 ## [1.1.0] - 2026-07-09
 - Refactor left sidebar navigation design layout.
-
-
-## Unreleased - System updates
-- Actualizaciones de estabilidad y compatibilidad.
 
 ## Unreleased - Show role instead of "free account" for staff
 - The web home mini-profile card no longer shows "Cuenta gratuita" for staff accounts. Priority is now: active subscription → plan name; else **staff role** (Admin, Desarrollador, Administrativo, Soporte, Editor, Super Administrador); else "Cuenta gratuita" (regular subscribers). An admin doesn't pay a subscription but isn't "free", so their role is shown.

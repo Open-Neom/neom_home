@@ -22,7 +22,8 @@ import 'package:sint/sint.dart';
 import '../../utils/constants/home_translation_constants.dart';
 import 'widgets/web_mini_releases.dart';
 import 'widgets/web_sidebar_games.dart';
-import 'widgets/web_suggested_users.dart';
+import 'widgets/web_suggested_users_nearby.dart';
+import 'widgets/web_upcoming_events.dart';
 
 /// Instagram-style right sidebar with real data.
 /// Shows: mini profile, suggested users, new releases, featured books, footer.
@@ -35,8 +36,8 @@ class RightSidebar extends StatelessWidget {
     final profile = hasUser ? Sint.find<UserService>().profile : null;
 
     return Container(
-      width: 320,
-      padding: const EdgeInsets.only(left: 16, right: 30, top: 20, bottom: 20),
+      width: 260,
+      padding: const EdgeInsets.only(left: 8, right: 10, top: 20, bottom: 20),
       decoration: AppTheme.appBoxDecoration,
       child: ListView(
         physics: const ClampingScrollPhysics(),
@@ -72,12 +73,17 @@ class RightSidebar extends StatelessWidget {
 
           const SizedBox(height: 24),
 
-          // B. Suggested users
-          const WebSuggestedUsers(),
+          // B. Upcoming Events (Proximity-based)
+          const WebUpcomingEvents(),
 
           const SizedBox(height: 24),
 
-          // C. Mini releases
+          // C. Suggested Users (Proximity-based)
+          const WebSuggestedUsersNearby(),
+
+          const SizedBox(height: 24),
+
+          // D. Mini releases
           const WebMiniReleases(),
 
           const SizedBox(height: 24),

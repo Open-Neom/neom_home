@@ -31,7 +31,7 @@ class WebMiniReleases extends StatelessWidget {
           children: [
             Text(
               HomeTranslationConstants.newReleases.tr,
-              style: TextStyle(color: Colors.grey[500], fontSize: 13, fontWeight: FontWeight.w600),
+              style: TextStyle(color: Colors.grey[500], fontSize: 14, fontWeight: FontWeight.w600),
             ),
             GestureDetector(
               onTap: () {
@@ -47,13 +47,11 @@ class WebMiniReleases extends StatelessWidget {
         ),
         const SizedBox(height: 12),
 
-        // Release covers row
-        Row(
-          children: items.asMap().entries.map((entry) => Expanded(
-            child: Padding(
-              padding: EdgeInsets.only(right: entry.key < items.length - 1 ? 8 : 0),
-              child: _ReleaseCover(item: entry.value),
-            ),
+        // Release covers list (Vertical)
+        Column(
+          children: items.map((item) => Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _ReleaseCover(item: item),
           )).toList(),
         ),
       ],
@@ -91,24 +89,81 @@ class _ReleaseCoverState extends State<_ReleaseCover> {
           AppFlavour.getMainItemDetailsRoute(widget.item.id),
           arguments: [widget.item],
         ),
-        child: AnimatedScale(
-          scale: _isHovered ? 1.05 : 1.0,
+        child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: platformNetworkImage(
-                imageUrl: widget.item.imgUrl.isNotEmpty
-                    ? widget.item.imgUrl
-                    : AppProperties.getAppLogoUrl(),
-                fit: BoxFit.cover,
-                errorWidget: Container(
-                  color: Colors.grey.shade900,
-                  child: const Icon(Icons.album, color: Colors.white38, size: 24),
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? Colors.white.withValues(alpha: 0.05)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: _isHovered
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : Colors.transparent,
+              width: 0.8,
+            ),
+          ),
+          child: Row(
+            children: [
+              // 1. Cover Image
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: platformNetworkImage(
+                    imageUrl: widget.item.imgUrl.isNotEmpty
+                        ? widget.item.imgUrl
+                        : AppProperties.getAppLogoUrl(),
+                    fit: BoxFit.cover,
+                    errorWidget: Container(
+                      color: Colors.grey.shade900,
+                      child: const Icon(Icons.album, color: Colors.white38, size: 24),
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+
+              // 2. Title & Artist Name
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      widget.item.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.item.ownerName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: Colors.grey[400],
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // 3. Play Icon Indicator
+              Icon(
+                Icons.play_arrow_rounded,
+                color: _isHovered ? Colors.white : Colors.grey[600],
+                size: 24,
+              ),
+            ],
           ),
         ),
       ),

@@ -6,6 +6,7 @@ import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
 import 'package:neom_commons/ui/widgets/web/web_keyboard_manager.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
+import 'package:neom_core/domain/use_cases/miniplayer_service.dart';
 import 'package:sint/sint.dart';
 
 import '../../domain/models/home_tab_item.dart';
@@ -170,7 +171,6 @@ class _HomeWebPageState extends State<HomeWebPage> {
                 // ─── Main layout: Column with content + bottom player ───
                 Column(
                   children: [
-                    // Top area: 3-column layout with FB-style global scroll
                     Expanded(
                       child: Listener(
                         onPointerSignal: (event) {
@@ -179,69 +179,68 @@ class _HomeWebPageState extends State<HomeWebPage> {
                           }
                         },
                         child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Left sidebar — collapses when panel overlays are open
-                          Obx(() => LeftSidebar(
-                            expanded: sidebarExpanded && !controller.hasOverlayPanel,
-                            currentTabIndex: controller.currentIndex,
-                            onTabSelected: (index) => controller.selectTab(index, context: context),
-                          )),
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Left sidebar — collapses when panel overlays are open
+                            Obx(() => LeftSidebar(
+                              expanded: sidebarExpanded && !controller.hasOverlayPanel,
+                              currentTabIndex: controller.currentIndex,
+                              onTabSelected: (index) => controller.selectTab(index, context: context),
+                            )),
 
-                          // Center feed
-                          Expanded(
-                            child: Container(
-                              decoration: AppTheme.appBoxDecoration,
-                              child: Center(
-                                child: ConstrainedBox(
-                                  key: _feedContentKey,
-                                  constraints: const BoxConstraints(maxWidth: 800),
-                                  child: Column(
-                                    children: [
-                                      // Stories row at the top — disabled temporarily
-                                      // const WebStoriesRow(),
+                            // Center feed
+                            Expanded(
+                              child: Container(
+                                decoration: AppTheme.appBoxDecoration,
+                                child: Column(
+                                  children: [
+                                    // Stories row at the top — disabled temporarily
+                                    // const WebStoriesRow(),
 
-                                      // Main content (tab pages)
-                                      Expanded(
-                                        child: PageView(
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          controller: controller.pageController,
-                                          children: pageWidgets,
-                                        ),
+                                    // Main content (tab pages)
+                                    Expanded(
+                                      child: PageView(
+                                        physics: const NeverScrollableScrollPhysics(),
+                                        controller: controller.pageController,
+                                        children: pageWidgets,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
-                          ),
 
-                          // Right sidebar OR Queue panel (mutually exclusive)
-                          if (_showQueue && widget.webQueuePanelBuilder != null)
-                            Container(
-                              width: 320,
-                              margin: const EdgeInsets.only(top: 8, right: 8, bottom: 8),
-                              child: widget.webQueuePanelBuilder!(
-                                onClose: () => setState(() => _showQueue = false),
-                              ),
-                            )
-                          else if (showRightSidebar)
-                            const RightSidebar(),
-                        ],
+                            // Right sidebar OR Queue panel (mutually exclusive)
+                            if (_showQueue && widget.webQueuePanelBuilder != null)
+                              Container(
+                                width: 320,
+                                margin: const EdgeInsets.only(top: 8, right: 8, bottom: 8),
+                                child: widget.webQueuePanelBuilder!(
+                                  onClose: () => setState(() => _showQueue = false),
+                                ),
+                              )
+                            else if (showRightSidebar)
+                              const RightSidebar(),
+                          ],
+                        ),
                       ),
-                    ),),
+                    ),
 
                     // ─── Mini Neom Chamber player (above audio player) ───
                     if (widget.miniNeomPlayer != null) widget.miniNeomPlayer!,
 
                     // ─── Bottom player bar (Spotify-style, 80px) ───
                     if (_hasWebPlayer)
-                      Obx(() => (controller.timelineReady && controller.mediaPlayerEnabled)
-                          ? widget.webBottomPlayerBuilder!(
-                              onQueueToggle: _toggleQueue,
-                              onArtworkTap: () => setState(() => _showFullNowPlaying = true),
-                            )
-                          : const SizedBox.shrink()),
+                      Obx(() {
+                        final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
+                        final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
+                        return (controller.timelineReady && controller.mediaPlayerEnabled && !retracted)
+                            ? widget.webBottomPlayerBuilder!(
+                                onQueueToggle: _toggleQueue,
+                                onArtworkTap: () => setState(() => _showFullNowPlaying = true),
+                              )
+                            : const SizedBox.shrink();
+                      }),
 
                     // Fallback: mobile-style miniPlayer (for apps without web player)
                     if (!_hasWebPlayer && widget.miniPlayer != null)
@@ -282,13 +281,37 @@ class _HomeWebPageState extends State<HomeWebPage> {
                     ),
                   ),
 
+                // ─── Floating compact player when retracted ───
+                if (_hasWebPlayer)
+                  Obx(() {
+                    final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
+                    final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
+                    return (controller.timelineReady && controller.mediaPlayerEnabled && retracted)
+                        ? Positioned(
+                            right: 24,
+                            bottom: 24,
+                            child: widget.webBottomPlayerBuilder!(
+                              onQueueToggle: _toggleQueue,
+                              onArtworkTap: () => setState(() => _showFullNowPlaying = true),
+                            ),
+                          )
+                        : const SizedBox.shrink();
+                  }),
+
                 // ─── Itzli Chat Bubble (bottom-right) ───
                 if (widget.chatBubble != null)
-                  Positioned(
-                    right: 24,
-                    bottom: _hasWebPlayer ? 104 : 24,
-                    child: widget.chatBubble!,
-                  ),
+                  Obx(() {
+                    final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
+                    final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
+                    final double bottomOffset = _hasWebPlayer
+                        ? (retracted ? 220.0 : 104.0)
+                        : 24.0;
+                    return Positioned(
+                      right: 24,
+                      bottom: bottomOffset,
+                      child: widget.chatBubble!,
+                    );
+                  }),
 
                 // ─── Loading overlay ───
                 Obx(() => controller.isLoading.value
