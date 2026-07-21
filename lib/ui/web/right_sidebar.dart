@@ -99,6 +99,11 @@ class RightSidebar extends StatelessWidget {
             const SizedBox(height: 24),
           ],
 
+          if (AppConfig.instance.appInUse == AppInUse.g) ...[
+            const _DawStudioCta(),
+            const SizedBox(height: 24),
+          ],
+
           // E. Quick actions (EMXI y Gigmeout)
           if (AppConfig.instance.appInUse == AppInUse.e
               || AppConfig.instance.appInUse == AppInUse.g) ...[
@@ -840,4 +845,105 @@ class _StateEntry {
   final Color color;
   final String duration;
   const _StateEntry(this.id, this.name, this.icon, this.color, this.duration);
+}
+
+class _DawStudioCta extends StatefulWidget {
+  const _DawStudioCta();
+
+  @override
+  State<_DawStudioCta> createState() => _DawStudioCtaState();
+}
+
+class _DawStudioCtaState extends State<_DawStudioCta> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          AuthGuard.protect(
+            context,
+            () => Sint.toNamed(AppRouteConstants.dawProjects),
+            redirectRoute: AppRouteConstants.dawProjects,
+          );
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _hovered
+                  ? [const Color(0xFF3F51B5), const Color(0xFF9C27B0)]
+                  : [const Color(0xFF303F9F), const Color(0xFF7B1FA2)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF7B1FA2).withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.music_note_rounded, color: Colors.cyanAccent, size: 20),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Estudio de Grabación',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white.withValues(alpha: 0.6),
+                    size: 12,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Entra a la DAW para crear, mezclar y publicar tus pistas.',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.cyanAccent.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.4)),
+                ),
+                child: const Text(
+                  'DAW Integrada',
+                  style: TextStyle(color: Colors.cyanAccent, fontSize: 10, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

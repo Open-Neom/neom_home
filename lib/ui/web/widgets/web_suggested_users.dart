@@ -191,6 +191,7 @@ class _SuggestionRowState extends State<_SuggestionRow> {
                 AppRouteConstants.matePath(widget.profile.id, slug: widget.profile.slug),
                 arguments: widget.profile,
               ),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(

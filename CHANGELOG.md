@@ -1,3 +1,6 @@
+
+## [2.0.0-unreleased] - 2026-07-21
+- Refactor and compatibility updates for left_sidebar.dart, right_sidebar.dart, web_suggested_users.dart, pubspec.lock.
 # Changelog — neom_home
 
 ## [2.0.1] - 2026-07-16

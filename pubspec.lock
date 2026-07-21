@@ -926,14 +926,14 @@ packages:
       path: "../neom_commons"
       relative: true
     source: path
-    version: "2.0.1"
+    version: "2.0.3"
   neom_core:
     dependency: "direct main"
     description:
       path: "../neom_core"
       relative: true
     source: path
-    version: "2.1.0"
+    version: "2.1.1"
   neom_google_places:
     dependency: transitive
     description:
@@ -1254,11 +1254,12 @@ packages:
     source: path
     version: "1.3.0"
   sint_sentinel:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "/Users/serzen/codebase_flutter/neom_modules/framework/sint_sentinel"
-      relative: false
-    source: path
+      name: sint_sentinel
+      sha256: "95df03be2d3fe28f2351b89faede14a7c576f45f46493c7197e51185f4b0ff63"
+      url: "https://pub.dev"
+    source: hosted
     version: "1.1.0"
   sky_engine:
     dependency: transitive
