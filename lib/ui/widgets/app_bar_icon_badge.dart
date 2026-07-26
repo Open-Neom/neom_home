@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 /// Widget reutilizable para mostrar un ícono con badge de contador.
 ///
@@ -6,7 +7,7 @@ import 'package:flutter/material.dart';
 /// mensajes sin leer, etc.
 class AppBarIconBadge extends StatelessWidget {
   /// El ícono a mostrar
-  final IconData icon;
+  final dynamic icon;
 
   /// Número a mostrar en el badge (0 = sin badge)
   final int count;
@@ -39,7 +40,7 @@ class AppBarIconBadge extends StatelessWidget {
       children: [
         IconButton(
           padding: EdgeInsets.zero,
-          icon: Icon(icon),
+          icon: icon is FaIconData ? FaIcon(icon) : Icon(icon as IconData),
           color: iconColor,
           onPressed: onPressed,
         ),

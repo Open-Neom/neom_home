@@ -62,7 +62,7 @@ class HomeAppBarLite extends StatelessWidget implements PreferredSizeWidget {
                 );
               }).toList();
             },
-            child: const Icon(FontAwesomeIcons.ellipsisVertical,
+            child: const FaIcon(FontAwesomeIcons.ellipsisVertical,
               color: Colors.white70,
             ),
           )

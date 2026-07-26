@@ -194,7 +194,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         ),
         if(AppFlavour.showAppBarDirectoryBtn()) IconButton(
             padding: EdgeInsets.zero,
-            icon: const Icon(FontAwesomeIcons.building),
+            icon: const FaIcon(FontAwesomeIcons.building),
             color: Colors.white70,
             onPressed: () {
               Sint.toNamed(AppRouteConstants.directory);
@@ -204,7 +204,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
         buildNotificationFeed(context),
         IconButton(
             padding: EdgeInsets.zero,
-            icon: const Icon(FontAwesomeIcons.magnifyingGlass),
+            icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: () {
               AuthGuard.protect(context, () {

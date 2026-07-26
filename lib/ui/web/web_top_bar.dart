@@ -126,7 +126,7 @@ class _WebTopBarState extends State<WebTopBar> {
                 onPressed: () => Sint.toNamed(AppRouteConstants.generator),
               ),
               IconButton(
-                icon: const Icon(FontAwesomeIcons.magnifyingGlass, size: 18),
+                icon: const FaIcon(FontAwesomeIcons.magnifyingGlass, size: 18),
                 color: Colors.white70,
                 tooltip: HomeTranslationConstants.navSearch.tr,
                 onPressed: () => Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]),
