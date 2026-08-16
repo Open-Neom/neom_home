@@ -57,4 +57,9 @@ class HomeTranslationConstants {
   static const String navErp = 'navErp';
   static const String navSettings = 'navSettings';
   static const String navLearning = 'navLearning';
+
+  // Web right sidebar — DAW studio card
+  static const String dawStudioCardTitle = 'dawStudioCardTitle';
+  static const String dawStudioCardSubtitle = 'dawStudioCardSubtitle';
+  static const String dawStudioCardBadge = 'dawStudioCardBadge';
 }

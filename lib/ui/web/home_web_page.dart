@@ -7,6 +7,7 @@ import 'package:neom_commons/ui/widgets/app_circular_progress_indicator.dart';
 import 'package:neom_commons/ui/widgets/web/web_keyboard_manager.dart';
 import 'package:neom_commons/utils/constants/app_page_id_constants.dart';
 import 'package:neom_core/domain/use_cases/miniplayer_service.dart';
+import 'package:neom_core/utils/assistant_overlay_registry.dart';
 import 'package:sint/sint.dart';
 
 import '../../domain/models/home_tab_item.dart';
@@ -286,9 +287,13 @@ class _HomeWebPageState extends State<HomeWebPage> {
                   Obx(() {
                     final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
                     final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
-                    return (controller.timelineReady && controller.mediaPlayerEnabled && retracted)
-                        ? Positioned(
-                            right: 24,
+                    final isAssistantOpen = AssistantOverlayRegistry.isOpen.value;
+                    final double rightOffset = isAssistantOpen ? 420.0 : 24.0;
+                    return (controller.timelineReady && controller.mediaPlayerEnabled && retracted && !_showFullNowPlaying)
+                        ? AnimatedPositioned(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOutCubic,
+                            right: rightOffset,
                             bottom: 24,
                             child: widget.webBottomPlayerBuilder!(
                               onQueueToggle: _toggleQueue,
@@ -301,10 +306,12 @@ class _HomeWebPageState extends State<HomeWebPage> {
                 // ─── Itzli Chat Bubble (bottom-right) ───
                 if (widget.chatBubble != null)
                   Obx(() {
+                    if (_showFullNowPlaying) return const SizedBox.shrink();
                     final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
+                    final hasPlayer = (miniPlayerController?.isActive ?? false);
                     final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
-                    final double bottomOffset = _hasWebPlayer
-                        ? (retracted ? 220.0 : 104.0)
+                    final double bottomOffset = hasPlayer
+                        ? (retracted ? 224.0 : 96.0)
                         : 24.0;
                     return Positioned(
                       right: 24,

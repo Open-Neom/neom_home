@@ -47,6 +47,9 @@ class HomeEsTranslations {
     HomeTranslationConstants.navErp: 'ERP',
     HomeTranslationConstants.navSettings: 'Configuración',
     HomeTranslationConstants.navLearning: 'Aprendizaje',
+    HomeTranslationConstants.dawStudioCardTitle: 'Estudio de Grabación',
+    HomeTranslationConstants.dawStudioCardSubtitle: 'Entra a la DAW para crear, mezclar y publicar tus pistas.',
+    HomeTranslationConstants.dawStudioCardBadge: 'DAW Integrada',
   };
 
 }

@@ -10,6 +10,7 @@ import 'package:neom_commons/utils/user_role_label.dart';
 import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/inbox_firestore.dart';
+import '../../utils/constants/home_translation_constants.dart';
 import 'package:neom_core/domain/model/literature_books.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
@@ -900,9 +901,9 @@ class _DawStudioCtaState extends State<_DawStudioCta> {
                 children: [
                   const Icon(Icons.music_note_rounded, color: Colors.cyanAccent, size: 20),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Estudio de Grabación',
+                      HomeTranslationConstants.dawStudioCardTitle.tr,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -920,7 +921,7 @@ class _DawStudioCtaState extends State<_DawStudioCta> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Entra a la DAW para crear, mezclar y publicar tus pistas.',
+                HomeTranslationConstants.dawStudioCardSubtitle.tr,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.9),
                   fontSize: 12,
@@ -935,9 +936,9 @@ class _DawStudioCtaState extends State<_DawStudioCta> {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.cyanAccent.withValues(alpha: 0.4)),
                 ),
-                child: const Text(
-                  'DAW Integrada',
-                  style: TextStyle(color: Colors.cyanAccent, fontSize: 10, fontWeight: FontWeight.w600),
+                child: Text(
+                  HomeTranslationConstants.dawStudioCardBadge.tr,
+                  style: const TextStyle(color: Colors.cyanAccent, fontSize: 10, fontWeight: FontWeight.w600),
                 ),
               ),
             ],

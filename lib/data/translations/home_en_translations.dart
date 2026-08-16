@@ -47,6 +47,9 @@ class HomeEnTranslations {
     HomeTranslationConstants.navErp: 'ERP',
     HomeTranslationConstants.navSettings: 'Settings',
     HomeTranslationConstants.navLearning: 'Learning',
+    HomeTranslationConstants.dawStudioCardTitle: 'Recording Studio',
+    HomeTranslationConstants.dawStudioCardSubtitle: 'Enter the DAW to create, mix, and publish your tracks.',
+    HomeTranslationConstants.dawStudioCardBadge: 'Built-in DAW',
   };
 
 }
