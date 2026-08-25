@@ -165,6 +165,8 @@ class HomeController extends SintController implements HomeService {
     _tabs = tabs;
   }
 
+  int get pageIndex => _getPageIndexFromVisualIndex(_currentIndex.value);
+
   int _getPageIndexFromVisualIndex(int visualIndex) {
     int pageIndex = 0;
     for (int i = 0; i < visualIndex; i++) {

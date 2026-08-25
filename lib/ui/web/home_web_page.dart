@@ -93,9 +93,10 @@ class _HomeWebPageState extends State<HomeWebPage> {
 
     // Forward to the active feed's scroll controller
     final scrollController = controller.timelineServiceImpl?.getScrollController();
-    if (scrollController != null && scrollController.hasClients) {
-      final newOffset = (scrollController.offset + event.scrollDelta.dy)
-          .clamp(0.0, scrollController.position.maxScrollExtent);
+    if (scrollController != null && scrollController.hasClients && scrollController.positions.length == 1) {
+      final pos = scrollController.position;
+      final newOffset = (pos.pixels + event.scrollDelta.dy)
+          .clamp(0.0, pos.maxScrollExtent);
       scrollController.jumpTo(newOffset);
     }
   }
@@ -200,11 +201,13 @@ class _HomeWebPageState extends State<HomeWebPage> {
 
                                     // Main content (tab pages)
                                     Expanded(
-                                      child: PageView(
-                                        physics: const NeverScrollableScrollPhysics(),
-                                        controller: controller.pageController,
+                                      child: Obx(() => IndexedStack(
+                                        index: controller.pageIndex.clamp(
+                                          0,
+                                          pageWidgets.isEmpty ? 0 : pageWidgets.length - 1,
+                                        ),
                                         children: pageWidgets,
-                                      ),
+                                      )),
                                     ),
                                   ],
                                 ),

@@ -92,11 +92,13 @@ class HomePage extends StatelessWidget {
         drawer: const AppDrawer(),
         body: Stack(
           children: [
-            PageView(
-              physics: const NeverScrollableScrollPhysics(),
-              controller: controller.pageController,
+            Obx(() => IndexedStack(
+              index: controller.pageIndex.clamp(
+                0,
+                pageWidgets.isEmpty ? 0 : pageWidgets.length - 1,
+              ),
               children: pageWidgets,
-            ),
+            )),
             if(miniNeomPlayer != null) Positioned(
               left: 0, right: 0, bottom: miniPlayer != null ? 68 : 0,
               child: miniNeomPlayer!,
