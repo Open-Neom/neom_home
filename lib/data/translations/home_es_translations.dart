@@ -42,7 +42,7 @@ class HomeEsTranslations {
     HomeTranslationConstants.navCasete: 'CASETE',
     HomeTranslationConstants.navUpload: 'Subir',
     HomeTranslationConstants.navUploadWork: 'Subir Obra',
-    HomeTranslationConstants.navWallet: 'Wallet',
+    HomeTranslationConstants.navWallet: 'Cartera',
     HomeTranslationConstants.navServices: 'Servicios',
     HomeTranslationConstants.navErp: 'ERP',
     HomeTranslationConstants.navSettings: 'Configuración',
