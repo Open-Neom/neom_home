@@ -40,7 +40,7 @@ class AppBarIconBadge extends StatelessWidget {
       children: [
         IconButton(
           padding: EdgeInsets.zero,
-          icon: icon is FaIconData ? FaIcon(icon) : Icon(icon as IconData),
+          icon: icon is FaIconData ? FaIcon(icon as FaIconData) : Icon(icon as IconData),
           color: iconColor,
           onPressed: onPressed,
         ),

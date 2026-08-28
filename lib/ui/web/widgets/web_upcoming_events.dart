@@ -129,9 +129,9 @@ class _WebUpcomingEventsState extends State<WebUpcomingEvents> {
                 margin: const EdgeInsets.only(bottom: 10),
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.03),
+                  color: Colors.white.withValues(alpha: 0.03),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.white.withOpacity(0.05)),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
                 ),
                 child: Row(
                   children: [
@@ -140,9 +140,9 @@ class _WebUpcomingEventsState extends State<WebUpcomingEvents> {
                       width: 44,
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       decoration: BoxDecoration(
-                        color: AppColor.getMain().withOpacity(0.12),
+                        color: AppColor.getMain().withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: AppColor.getMain().withOpacity(0.2)),
+                        border: Border.all(color: AppColor.getMain().withValues(alpha: 0.2)),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -188,7 +188,7 @@ class _WebUpcomingEventsState extends State<WebUpcomingEvents> {
                           Text(
                             '$hourStr${(event.place?.name ?? '').isNotEmpty ? ' • ${event.place!.name}' : ''}$distanceText',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.5),
+                              color: Colors.white.withValues(alpha: 0.5),
                               fontSize: 10,
                             ),
                             maxLines: 1,

@@ -255,7 +255,7 @@ class _NearbySuggestionRowState extends State<_NearbySuggestionRow> {
                   Text(
                     distanceStr,
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.4),
+                      color: Colors.white.withValues(alpha: 0.4),
                       fontSize: 10,
                     ),
                   ),
@@ -274,12 +274,12 @@ class _NearbySuggestionRowState extends State<_NearbySuggestionRow> {
                 decoration: BoxDecoration(
                   color: _isFollowing
                       ? Colors.transparent
-                      : AppColor.getMain().withOpacity(0.12),
+                      : AppColor.getMain().withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(6),
                   border: Border.all(
                     color: _isFollowing
-                        ? Colors.white.withOpacity(0.1)
-                        : AppColor.getMain().withOpacity(0.3),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColor.getMain().withValues(alpha: 0.3),
                   ),
                 ),
                 child: _isLoading
