@@ -1,3 +1,18 @@
+## [2026-09-03] - Pestanas del home y logo ausente
+- **Las pestanas no cambiaban de pagina.** `selectTab()` asignaba
+  `_currentIndex` unicamente dentro de `if (pageController.hasClients)`, pero
+  `home_page.dart` renderiza un `IndexedStack` gobernado por `pageIndex` (que
+  lee `_currentIndex`) y el `PageController` creado en `onInit` nunca se
+  conecta a ningun `PageView`. `hasClients` era false siempre, el bloque no se
+  ejecutaba jamas y tocar una pestana registraba "Selecting tab index: N" sin
+  hacer nada. La asignacion pasa fuera del `if`; el `jumpToPage` se conserva
+  para vistas que si tengan un `PageView` real.
+- **`home_appbar_lite` reventaba sin el logo.** `Image.asset` sobre
+  `AppAssets.logoCompanyWhite` sin `errorBuilder`: una app que no enviara ese
+  archivo mostraba la caja roja de error cruzando su app bar, en todas las
+  pantallas y para siempre. Ahora cae al nombre de la app.
+- Ambos verificados en dispositivo (Samsung S25, Android 16).
+
 ## [2026-07-25] - Dependencias Externas
 - Actualizacion de dependencias externas a sus versiones mas recientes y compatibles.
 

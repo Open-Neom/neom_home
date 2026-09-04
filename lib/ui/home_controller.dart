@@ -218,13 +218,23 @@ class HomeController extends SintController implements HomeService {
 
       int targetPageIndex = _getPageIndexFromVisualIndex(index);
 
+      // Set the visible index whatever the PageController is doing.
+      //
+      // home_page.dart renders an IndexedStack driven by [pageIndex], which
+      // reads _currentIndex — but this assignment used to live inside the
+      // hasClients branch below. The PageController is built in onInit and
+      // never attached to a PageView, so hasClients is false forever, the whole
+      // block was skipped, and tapping a tab logged "Selecting tab index: N"
+      // and then did nothing at all. Every app on this HomePage had dead tabs.
+      _currentIndex.value = index;
+
+      // Still honoured for any view that does drive a real PageView.
       if (pageController.hasClients) {
         if (pageController.positions.length > 1) {
           AppConfig.logger.w("PageController attached to multiple views. Skipping jump.");
         } else {
           pageController.jumpToPage(targetPageIndex);
         }
-        _currentIndex.value = index;
       }
     } catch (e, st) {
       NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: 'selectTab');

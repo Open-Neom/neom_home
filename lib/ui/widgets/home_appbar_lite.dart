@@ -10,6 +10,7 @@ import 'package:neom_commons/utils/constants/translations/app_translation_consta
 import 'package:neom_commons/utils/enums/dot_menu_choices.dart';
 import 'package:neom_commons/utils/share_utilities.dart';
 import 'package:neom_core/app_config.dart';
+import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/domain/use_cases/login_service.dart';
 import 'package:neom_core/domain/use_cases/settings_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
@@ -41,6 +42,18 @@ class HomeAppBarLite extends StatelessWidget implements PreferredSizeWidget {
           AppAssets.logoCompanyWhite,
           height: 22.5, ///previous height: 60, width: 150,
           fit: BoxFit.fitHeight,
+          // An app that never shipped this logo used to get Flutter's red
+          // error box across its app bar, on every screen, forever. A missing
+          // wordmark is not worth breaking the header over: fall back to the
+          // app name, which is what the logo says anyway.
+          errorBuilder: (context, error, stackTrace) => Text(
+            AppProperties.getAppName(),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
         ),
         onTap: () {
           AppAlerts.showAlert(context, message: "${AppTranslationConstants.version.tr} "
