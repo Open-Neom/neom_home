@@ -1,9 +1,7 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
-import 'package:neom_core/app_config.dart';
 import 'package:neom_core/data/firestore/event_firestore.dart';
 import 'package:neom_core/domain/model/event.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';

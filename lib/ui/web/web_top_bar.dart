@@ -36,7 +36,7 @@ class WebTopBar extends StatefulWidget implements PreferredSizeWidget {
   State<WebTopBar> createState() => _WebTopBarState();
 }
 
-class _WebTopBarState extends State<WebTopBar> {
+class _WebTopBarState extends State<WebTopBar> with WidgetsBindingObserver {
   Timer? _pollingTimer;
   int _unreadNotifications = 0;
   int _unreadInbox = 0;
@@ -49,17 +49,42 @@ class _WebTopBarState extends State<WebTopBar> {
       ? Sint.find<UserService>().profile.photoUrl
       : '';
 
+  /// How often unread counts are refreshed while the tab is visible.
+  static const _pollInterval = Duration(minutes: 2);
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (_profileId.isNotEmpty) {
       _loadCounts();
-      _pollingTimer = Timer.periodic(const Duration(minutes: 2), (_) => _loadCounts());
+      _startPolling();
+    }
+  }
+
+  void _startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(_pollInterval, (_) => _loadCounts());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (_profileId.isEmpty) return;
+    if (state == AppLifecycleState.resumed) {
+      // Counts went stale while away: refresh now, then resume polling.
+      _loadCounts();
+      _startPolling();
+    } else {
+      // Hidden tab / backgrounded app: stop spending Firestore reads.
+      _pollingTimer?.cancel();
+      _pollingTimer = null;
     }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pollingTimer?.cancel();
     super.dispose();
   }

@@ -42,7 +42,7 @@ class HomeAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<HomeAppBar> createState() => _HomeAppBarState();
 }
 
-class _HomeAppBarState extends State<HomeAppBar> {
+class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
 
   // Variable para controlar la notificación falsa (modo guest)
   bool showFakeNotification = false;
@@ -53,7 +53,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
   int _unreadNotificationsCount = 0;
   int _unreadInboxCount = 0;
   bool _isLoadingCounts = false;
-  bool _unreadLoaded = false;
 
   // Cache duration - fetch every 2 minutes instead of real-time
   static const _pollInterval = Duration(minutes: 2);
@@ -61,6 +60,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _startGuestTimer();
     if (widget.profileId.isNotEmpty) {
       // OPTIMIZED: Load counts once on init, then poll periodically
@@ -97,7 +97,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
 
   /// OPTIMIZED: Load counts with a single Future call instead of continuous streams
   Future<void> _loadUnreadCounts() async {
-    if (_unreadLoaded ||_isLoadingCounts || widget.profileId.isEmpty) return;
+    // Only guard against overlapping fetches — a permanent "already loaded"
+    // latch used to freeze the badges at their first value for the whole
+    // session, silently disabling both the poll and refreshUnreadCounts().
+    if (_isLoadingCounts || widget.profileId.isEmpty) return;
     _isLoadingCounts = true;
 
     try {
@@ -118,8 +121,6 @@ class _HomeAppBarState extends State<HomeAppBar> {
     } finally {
       _isLoadingCounts = false;
     }
-
-    _unreadLoaded = true;
   }
 
   /// Public method to refresh counts (can be called after viewing notifications/inbox)
@@ -142,7 +143,23 @@ class _HomeAppBarState extends State<HomeAppBar> {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (widget.profileId.isEmpty) return;
+    if (state == AppLifecycleState.resumed) {
+      // Counts are stale after time away: refresh once, then resume polling.
+      _loadUnreadCounts();
+      _startPollingTimer();
+    } else {
+      // Backgrounded/hidden: stop paying for Firestore reads nobody can see.
+      _pollingTimer?.cancel();
+      _pollingTimer = null;
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _guestTimer?.cancel();
     _pollingTimer?.cancel(); // OPTIMIZED: Cancel polling timer
     super.dispose();
@@ -207,9 +224,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
             icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: () {
-              AuthGuard.protect(context, () {
-                Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
-              });
+              Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
             },
         ),
         buildInboxIcon(context),

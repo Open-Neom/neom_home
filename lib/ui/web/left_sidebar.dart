@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
@@ -49,7 +48,7 @@ class LeftSidebar extends StatefulWidget {
   State<LeftSidebar> createState() => _LeftSidebarState();
 }
 
-class _LeftSidebarState extends State<LeftSidebar> {
+class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
   Timer? _pollingTimer;
   int _unreadNotifications = 0;
   int _unreadInbox = 0;
@@ -108,17 +107,42 @@ class _LeftSidebarState extends State<LeftSidebar> {
         && service.user.userRole != UserRole.subscriber;
   }
 
+  /// How often unread counts are refreshed while the tab is visible.
+  static const _pollInterval = Duration(minutes: 2);
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     if (_profileId.isNotEmpty) {
       _loadCounts();
-      _pollingTimer = Timer.periodic(const Duration(minutes: 2), (_) => _loadCounts());
+      _startPolling();
+    }
+  }
+
+  void _startPolling() {
+    _pollingTimer?.cancel();
+    _pollingTimer = Timer.periodic(_pollInterval, (_) => _loadCounts());
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (_profileId.isEmpty) return;
+    if (state == AppLifecycleState.resumed) {
+      // Counts went stale while away: refresh now, then resume polling.
+      _loadCounts();
+      _startPolling();
+    } else {
+      // Hidden tab / backgrounded app: stop spending Firestore reads.
+      _pollingTimer?.cancel();
+      _pollingTimer = null;
     }
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _pollingTimer?.cancel();
     super.dispose();
   }
