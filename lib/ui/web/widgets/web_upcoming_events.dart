@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
+import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_core/data/firestore/event_firestore.dart';
 import 'package:neom_core/domain/model/event.dart';
@@ -28,7 +29,7 @@ class _WebUpcomingEventsState extends State<WebUpcomingEvents> {
   }
 
   Future<void> _loadUpcomingEvents() async {
-    if (!Sint.isRegistered<UserService>()) {
+    if (!AuthGuard.isAuthenticated || !Sint.isRegistered<UserService>()) {
       if (mounted) setState(() => _loaded = true);
       return;
     }
@@ -119,8 +120,13 @@ class _WebUpcomingEventsState extends State<WebUpcomingEvents> {
           return MouseRegion(
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
-              onTap: () => Sint.toNamed(
-                '${AppRouteConstants.eventDetails}/${event.id}',
+              onTap: () => AuthGuard.protect(
+                context,
+                () => Sint.toNamed(
+                  '${AppRouteConstants.eventDetails}/${event.id}',
+                  arguments: event,
+                ),
+                redirectRoute: '${AppRouteConstants.eventDetails}/${event.id}',
                 arguments: event,
               ),
               child: Container(

@@ -233,7 +233,11 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   label: HomeTranslationConstants.navEvents.tr,
                   expanded: widget.expanded,
                   isActive: widget.currentTabIndex == 1,
-                  onTap: () => widget.onTabSelected(1),
+                  onTap: () => AuthGuard.protect(
+                    context,
+                    () => widget.onTabSelected(1),
+                    redirectRoute: AppRouteConstants.events,
+                  ),
                 ),
                 if (AppFlavour.showGenerator())
                   Padding(

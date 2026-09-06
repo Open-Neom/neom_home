@@ -133,7 +133,7 @@ class _HomeWebPageState extends State<HomeWebPage> {
   Widget build(BuildContext context) {
     final List<Widget> pageWidgets = widget.tabs
         .where((tab) => tab.page != null)
-        .map((tab) => tab.page!)
+        .map((tab) => tab.accessiblePage!)
         .toList();
 
     final screenWidth = MediaQuery.of(context).size.width;

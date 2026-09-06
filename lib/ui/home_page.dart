@@ -70,7 +70,7 @@ class HomePage extends StatelessWidget {
   Widget _buildMobileHome(BuildContext context){
     final List<Widget> pageWidgets = tabs
         .where((tab) => tab.page != null)
-        .map((tab) => tab.page!).toList();
+        .map((tab) => tab.accessiblePage!).toList();
 
     return SintBuilder<HomeController>(
       id: AppPageIdConstants.home,

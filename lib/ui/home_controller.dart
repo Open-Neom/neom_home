@@ -163,6 +163,12 @@ class HomeController extends SintController implements HomeService {
 
   void initTabs(List<HomeTabItem> tabs) {
     _tabs = tabs;
+    if (_currentIndex.value >= 0 && _currentIndex.value < tabs.length &&
+        tabs[_currentIndex.value].requiresAccount &&
+        !AuthGuard.isAuthenticated) {
+      _currentIndex.value = 0;
+      toIndex = 0;
+    }
   }
 
   int get pageIndex => _getPageIndexFromVisualIndex(_currentIndex.value);
@@ -187,10 +193,20 @@ class HomeController extends SintController implements HomeService {
 
   @override
   void selectTab(int index, {BuildContext? context}) async {
-    if (index >= _tabs.length) return;
+    if (index < 0 || index >= _tabs.length) return;
 
     AppConfig.logger.d("Selecting tab index: $index");
     HomeTabItem selectedTab = _tabs[index];
+    if (selectedTab.requiresAccount && !AuthGuard.isAuthenticated) {
+      if (context != null) {
+        AuthGuard.protect(
+          context,
+          () => selectTab(index, context: context),
+          redirectRoute: selectedTab.route ?? AppRouteConstants.events,
+        );
+      }
+      return;
+    }
     NeomFlowTracker.trackScreen('home_tab_${selectedTab.title}');
 
     if (selectedTab.isActionButton) {
@@ -516,6 +532,10 @@ class HomeController extends SintController implements HomeService {
 
   @override
   set currentIndex(int index) {
+    if (index >= 0 && index < _tabs.length &&
+        _tabs[index].requiresAccount && !AuthGuard.isAuthenticated) {
+      return;
+    }
     if(_currentIndex.value != index) {
       _currentIndex.value = index;
       AppConfig.logger.d("Current Index set to: $index");
