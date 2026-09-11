@@ -79,7 +79,7 @@ class _WebSuggestedUsersNearbyState extends State<WebSuggestedUsersNearby> {
 
       if (mounted) {
         setState(() {
-          _suggestions = sortedMates.take(5).toList();
+          _suggestions = sortedMates.take(3).toList();
           _loaded = true;
         });
       }

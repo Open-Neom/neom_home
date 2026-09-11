@@ -52,7 +52,7 @@ class _WebSuggestedUsersState extends State<WebSuggestedUsers> {
       final firestore = ProfileFirestore();
       final List<AppProfile> profiles = [];
 
-      for (final id in notFollowedBack.take(5)) {
+      for (final id in notFollowedBack.take(3)) {
         try {
           final p = await firestore.retrieve(id);
           if (p.id.isNotEmpty && p.name.isNotEmpty) {

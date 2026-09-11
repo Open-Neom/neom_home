@@ -9,7 +9,7 @@ import 'package:sint/sint.dart';
 import '../../../utils/constants/home_translation_constants.dart';
 
 /// Compact release shelf for the right sidebar.
-/// Shows up to 4 release covers in a horizontal row.
+/// Shows up to 3 release covers in a horizontal row.
 class WebMiniReleases extends StatelessWidget {
   const WebMiniReleases({super.key});
 
@@ -18,7 +18,7 @@ class WebMiniReleases extends StatelessWidget {
     if (!Sint.isRegistered<TimelineService>()) return const SizedBox.shrink();
 
     final controller = Sint.find<TimelineService>();
-    final items = controller.mainItems.values.take(4).toList();
+    final items = controller.mainItems.values.take(3).toList();
 
     if (items.isEmpty) return const SizedBox.shrink();
 
