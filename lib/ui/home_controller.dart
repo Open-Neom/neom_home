@@ -15,6 +15,7 @@ import 'package:neom_core/data/implementations/app_initialization_controller.dar
 import 'package:neom_core/domain/model/event.dart';
 import 'package:neom_core/domain/use_cases/home_service.dart';
 import 'package:neom_core/domain/use_cases/login_service.dart';
+import 'package:neom_core/domain/use_cases/media_player_service.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
@@ -208,6 +209,10 @@ class HomeController extends SintController implements HomeService {
       return;
     }
     NeomFlowTracker.trackScreen('home_tab_${selectedTab.title}');
+
+    if (index != 0 && Sint.isRegistered<MediaPlayerService>()) {
+      Sint.find<MediaPlayerService>().pauseAllVideos();
+    }
 
     if (selectedTab.isActionButton) {
       if(context != null) {
