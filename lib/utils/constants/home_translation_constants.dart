@@ -1,4 +1,26 @@
 class HomeTranslationConstants {
+  static const String onboardingVoiceTitle = 'homeOnboardingVoiceTitle';
+  static const String onboardingVoiceDescription =
+      'homeOnboardingVoiceDescription';
+  static const String onboardingVoiceHint = 'homeOnboardingVoiceHint';
+  static const String onboardingVoiceListening = 'homeOnboardingVoiceListening';
+  static const String onboardingVoiceStart = 'homeOnboardingVoiceStart';
+  static const String onboardingVoiceStop = 'homeOnboardingVoiceStop';
+  static const String onboardingVoiceNoPitch = 'homeOnboardingVoiceNoPitch';
+  static const String onboardingVoiceError = 'homeOnboardingVoiceError';
+  static const String onboardingVoiceUnavailable =
+      'homeOnboardingVoiceUnavailable';
+  static const String onboardingNext = 'homeOnboardingNext';
+  static const String onboardingListenTone = 'homeOnboardingListenTone';
+  static const String onboardingBinauralSlow = 'homeOnboardingBinauralSlow';
+  static const String onboardingBinauralFast = 'homeOnboardingBinauralFast';
+  static const String onboardingSpatialHint = 'homeOnboardingSpatialHint';
+  static const String onboardingPureTone = 'homeOnboardingPureTone';
+  static const String onboardingSpatial = 'homeOnboardingSpatial';
+  static const String onboardingPreparingAudio = 'homeOnboardingPreparingAudio';
+  static const String onboardingContinue = 'homeOnboardingContinue';
+  static const String onboardingChooseState = 'homeOnboardingChooseState';
+  static const String onboardingExploreFirst = 'homeOnboardingExploreFirst';
 
   static const String createPostMsg = 'createPostMsg';
   static const String organizeEvent = 'organizeEvent';
@@ -12,7 +34,8 @@ class HomeTranslationConstants {
 
   // Pending releases modal
   static const String pendingReleasesModalTitle = 'pendingReleasesModalTitle';
-  static const String pendingReleasesModalMessage = 'pendingReleasesModalMessage';
+  static const String pendingReleasesModalMessage =
+      'pendingReleasesModalMessage';
   static const String pendingReleasesModalHint = 'pendingReleasesModalHint';
   static const String reviewNow = 'reviewNow';
   static const String reviewLater = 'reviewLater';

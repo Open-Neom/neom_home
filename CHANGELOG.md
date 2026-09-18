@@ -1,3 +1,10 @@
+# Changelog — neom_home
+
+## [2.0.2] - 2026-09-18
+- Support internationalized strings and proper resource cleanup for `NeomOnboardingOverlay`.
+- Respect `AppFlavour.showBooksLibrary()` in `WebTopBar` and `RightSidebar`.
+- Pause all videos when switching away from the timeline tab.
+
 ## [2026-09-03] - Pestanas del home y logo ausente
 - **Las pestanas no cambiaban de pagina.** `selectTab()` asignaba
   `_currentIndex` unicamente dentro de `if (pageController.hasClients)`, pero

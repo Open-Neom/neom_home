@@ -118,7 +118,7 @@ class RightSidebar extends StatelessWidget {
           ],
 
           // F. Featured books (conditional)
-          _FeaturedBooksSection(),
+          if (AppFlavour.showBooksLibrary()) _FeaturedBooksSection(),
 
           // G. Literary games (solo Emxi)
           if (AppConfig.instance.appInUse == AppInUse.e) ...[

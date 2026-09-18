@@ -1,11 +1,40 @@
 import '../../utils/constants/home_translation_constants.dart';
 
-
 class HomeDeTranslations {
-
   static const Map<String, String> values = {
+    HomeTranslationConstants.onboardingVoiceTitle: 'Miss deine Stimmlage',
+    HomeTranslationConstants.onboardingVoiceDescription:
+        'Die Frequenz ändert sich mit dem Ton. Wir messen den Ton, den du jetzt hältst.',
+    HomeTranslationConstants.onboardingVoiceHint:
+        'Tippe auf das Mikrofon, erlaube den Zugriff und halte einige Sekunden einen gleichmäßigen Vokal.',
+    HomeTranslationConstants.onboardingVoiceListening:
+        'Aufnahme läuft… Halte einen gleichmäßigen Vokal. Du kannst die Messung stoppen.',
+    HomeTranslationConstants.onboardingVoiceStart: 'Meine Stimme messen',
+    HomeTranslationConstants.onboardingVoiceStop: 'Mikrofon stoppen',
+    HomeTranslationConstants.onboardingVoiceNoPitch:
+        'Kein stabiler Ton erkannt. Gehe näher ans Mikrofon und versuche es erneut.',
+    HomeTranslationConstants.onboardingVoiceError:
+        'Deine Stimme konnte nicht gemessen werden. Prüfe die Mikrofonberechtigung und versuche es erneut.',
+    HomeTranslationConstants.onboardingVoiceUnavailable:
+        'Die Mikrofonmessung ist hier nicht verfügbar. Du kannst weiter erkunden.',
+    HomeTranslationConstants.onboardingNext: 'Weiter',
+    HomeTranslationConstants.onboardingListenTone: 'Höre den erkannten Ton',
+    HomeTranslationConstants.onboardingBinauralSlow:
+        'Vergleiche den Klang mit einem binauralen Unterschied von 4 Hz.',
+    HomeTranslationConstants.onboardingBinauralFast:
+        'Höre jetzt einen binauralen Unterschied von 20 Hz.',
+    HomeTranslationConstants.onboardingSpatialHint:
+        'Höre, wie sich der Ton zwischen den Ohren bewegt.',
+    HomeTranslationConstants.onboardingPureTone: 'REINER TON',
+    HomeTranslationConstants.onboardingSpatial: 'RÄUMLICH',
+    HomeTranslationConstants.onboardingPreparingAudio:
+        'Audio wird vorbereitet…',
+    HomeTranslationConstants.onboardingContinue: 'Fortfahren',
+    HomeTranslationConstants.onboardingChooseState: 'Was möchtest du erkunden?',
+    HomeTranslationConstants.onboardingExploreFirst: 'Zuerst erkunden',
     HomeTranslationConstants.shareWriting: 'Einen Text teilen',
-    HomeTranslationConstants.shareWritingMsg: 'Drücken Sie Ihr Wesen der Community gegenüber aus und teilen Sie einen Ihrer Texte, um andere zu inspirieren.',
+    HomeTranslationConstants.shareWritingMsg:
+        'Drücken Sie Ihr Wesen der Community gegenüber aus und teilen Sie einen Ihrer Texte, um andere zu inspirieren.',
 
     // Web sidebar & sections
     HomeTranslationConstants.suggestionsForYou: 'Vorschläge für Sie',
@@ -48,8 +77,8 @@ class HomeDeTranslations {
     HomeTranslationConstants.navSettings: 'Einstellungen',
     HomeTranslationConstants.navLearning: 'Lernen',
     HomeTranslationConstants.dawStudioCardTitle: 'Aufnahmestudio',
-    HomeTranslationConstants.dawStudioCardSubtitle: 'Öffne die DAW, um deine Tracks zu erstellen, zu mischen und zu veröffentlichen.',
+    HomeTranslationConstants.dawStudioCardSubtitle:
+        'Öffne die DAW, um deine Tracks zu erstellen, zu mischen und zu veröffentlichen.',
     HomeTranslationConstants.dawStudioCardBadge: 'Integrierte DAW',
   };
-
 }

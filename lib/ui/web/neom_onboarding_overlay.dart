@@ -1,10 +1,11 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:sint/sint.dart';
+
+import '../../utils/constants/home_translation_constants.dart';
 
 /// Data model for a frequency state card in the onboarding overlay.
 /// Keeps this widget independent of neom_states — the app layer maps
@@ -32,7 +33,7 @@ class OnboardingStateCard {
 /// Full-screen onboarding overlay for Open Neom web.
 ///
 /// 3 steps:
-///   1. "Descubre tu Frecuencia" — simulated mic pitch detection
+///   1. Measure the pitch of a sustained voice sound through the host app.
 ///   2. "Siente el Sonido" — breathing-synced pulsing circles
 ///   3. "Elige tu Estado" — 4 free state cards → navigate to /x/{stateId}
 ///
@@ -52,12 +53,23 @@ class NeomOnboardingOverlay extends StatefulWidget {
   /// Audio callbacks — the app layer connects these to NeomSineEngine.
   /// Play the user's root frequency as a pure tone.
   final void Function(double frequencyHz)? onPlayFrequency;
+
   /// Play binaural beat: root frequency + beat offset.
   final void Function(double frequencyHz, double beatHz)? onPlayBinaural;
+
   /// Play frequency with spatial panning (L→R movement).
   final void Function(double frequencyHz)? onPlaySpatial;
+
   /// Stop all audio.
   final VoidCallback? onStopAudio;
+
+  /// The host owns capture and pitch detection. Updates and the final value
+  /// must come from the microphone; null means no stable tone was found.
+  final Future<double?> Function(ValueChanged<double> onPitch)?
+  onMeasureFrequency;
+
+  /// Cancels capture, including an outstanding browser permission request.
+  final Future<void> Function()? onCancelMeasurement;
 
   /// First visit: show audio demo with explanations.
   /// Subsequent visits: skip demo, go straight to state selection.
@@ -73,15 +85,16 @@ class NeomOnboardingOverlay extends StatefulWidget {
     this.onPlayBinaural,
     this.onPlaySpatial,
     this.onStopAudio,
+    this.onMeasureFrequency,
+    this.onCancelMeasurement,
   });
 
   @override
-  State<NeomOnboardingOverlay> createState() =>
-      _NeomOnboardingOverlayState();
+  State<NeomOnboardingOverlay> createState() => _NeomOnboardingOverlayState();
 }
 
-class _NeomOnboardingOverlayState
-    extends State<NeomOnboardingOverlay> with TickerProviderStateMixin {
+class _NeomOnboardingOverlayState extends State<NeomOnboardingOverlay>
+    with TickerProviderStateMixin {
   // ── Navigation ───────────────────────────────────────────────
   final PageController _pageController = PageController();
   int _currentStep = 0;
@@ -91,9 +104,11 @@ class _NeomOnboardingOverlayState
   bool _detectionComplete = false;
   double _detectedFrequency = 0;
   double _displayedFrequency = 0;
+  String _measurementError = '';
+  int _measurementRequest = 0;
+  bool _closed = false;
+  bool _audioStopped = false;
   late AnimationController _pulseController;
-  late AnimationController _counterController;
-  Timer? _counterTimer;
 
   // ── Step 2: Audio demo (pure → binaural 4Hz → binaural 20Hz → spatial) ──
   late AnimationController _breathController;
@@ -107,7 +122,8 @@ class _NeomOnboardingOverlayState
   late AnimationController _fadeController;
 
   // ── Theme (derived from AppColor at runtime) ────────────────
-  Color get _bgDark => AppColor.getMain().withAlpha(255); // #4F1964 for Open Neom
+  Color get _bgDark =>
+      AppColor.getMain().withAlpha(255); // #4F1964 for Open Neom
   Color get _bgMid => Color.lerp(AppColor.getMain(), Colors.black, 0.4)!;
   Color get _accent => AppColor.getAccentColor(); // #8C3CB4 for Open Neom
 
@@ -119,11 +135,6 @@ class _NeomOnboardingOverlayState
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     )..repeat(reverse: true);
-
-    _counterController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2000),
-    );
 
     _breathController = AnimationController(
       vsync: this,
@@ -139,55 +150,105 @@ class _NeomOnboardingOverlayState
 
   @override
   void dispose() {
+    _releaseResources();
     _pageController.dispose();
     _pulseController.dispose();
-    _counterController.dispose();
     _breathController.dispose();
     _fadeController.dispose();
-    _counterTimer?.cancel();
     _autoAdvanceTimer?.cancel();
     super.dispose();
   }
 
-  // ── Step 1: Simulated recording ──────────────────────────────
+  // ── Step 1: Real host-provided microphone measurement ───────
 
-  void _startRecording() {
-    final rng = Random();
-    _detectedFrequency = 150.0 + rng.nextDouble() * 250.0; // 150–400 Hz
-
+  Future<void> _startRecording() async {
+    if (_closed || _isRecording) return;
+    final measure = widget.onMeasureFrequency;
+    final request = ++_measurementRequest;
     setState(() {
-      _isRecording = true;
-      _displayedFrequency = _detectedFrequency + (rng.nextDouble() - 0.5) * 100;
+      _isRecording = measure != null;
+      _detectionComplete = false;
+      _detectedFrequency = 0;
+      _displayedFrequency = 0;
+      _measurementError = measure == null
+          ? HomeTranslationConstants.onboardingVoiceUnavailable.tr
+          : '';
     });
-
-    // Immediately start showing live frequency jitter
-    int tick = 0;
-    const totalTicks = 50; // 50 × 100ms = 5 seconds
-    _counterTimer = Timer.periodic(const Duration(milliseconds: 100), (t) {
-      tick++;
-      if (tick >= totalTicks) {
-        t.cancel();
+    if (measure == null) return;
+    widget.onStopAudio?.call(); // Do not measure the app's own output.
+    double? result;
+    String error = '';
+    try {
+      // Keep this call in the button gesture for browser microphone activation.
+      result = await measure((pitch) {
+        if (!mounted ||
+            _closed ||
+            request != _measurementRequest ||
+            !_isRecording ||
+            !pitch.isFinite ||
+            pitch <= 0) {
+          return;
+        }
         setState(() {
-          _displayedFrequency = _detectedFrequency;
-          _isRecording = false;
-          _detectionComplete = true;
+          _displayedFrequency = pitch;
         });
-      } else {
-        // Jitter decreases as we approach the end — converging to real value
-        final jitterRange = 80.0 * (1.0 - tick / totalTicks);
-        setState(() {
-          _displayedFrequency =
-              _detectedFrequency + (rng.nextDouble() - 0.5) * jitterRange;
-        });
+      });
+      if (result == null || !result.isFinite || result <= 0) {
+        result = null;
+        error = HomeTranslationConstants.onboardingVoiceNoPitch.tr;
       }
+    } catch (_) {
+      error = HomeTranslationConstants.onboardingVoiceError.tr;
+    } finally {
+      if (request == _measurementRequest) await _cancelCapture();
+    }
+    if (!mounted || _closed || request != _measurementRequest) return;
+    setState(() {
+      _isRecording = false;
+      _detectionComplete = result != null && error.isEmpty;
+      _detectedFrequency = _detectionComplete ? result! : 0;
+      _displayedFrequency = _detectedFrequency;
+      _measurementError = error;
     });
+  }
+
+  Future<void> _cancelCapture() async {
+    try {
+      await widget.onCancelMeasurement?.call();
+    } catch (_) {
+      // Cleanup is also used during dispose; it cannot update a removed view.
+    }
+  }
+
+  void _cancelRecording() {
+    ++_measurementRequest;
+    unawaited(_cancelCapture());
+    setState(() {
+      _isRecording = false;
+      _displayedFrequency = 0;
+      _detectionComplete = false;
+    });
+  }
+
+  void _releaseResources() {
+    _closed = true;
+    ++_measurementRequest;
+    _autoAdvanceTimer?.cancel();
+    unawaited(_cancelCapture());
+    if (!_audioStopped) {
+      _audioStopped = true;
+      widget.onStopAudio?.call();
+    }
   }
 
   // ── Step 2: Auto-advance timer ───────────────────────────────
 
   void _startStep2Timer() {
+    if (_closed || !_detectionComplete) return;
+    _audioStopped = false;
     const tickMs = 100;
-    final ticksPerPhase = _phaseDuration.inMilliseconds ~/ tickMs; // 30 ticks per 3s
+    final ticksPerPhase =
+        _phaseDuration.inMilliseconds ~/ tickMs; // 30 ticks per 3s
     final totalPhases = 4;
     final totalTicks = ticksPerPhase * totalPhases;
     int tick = 0;
@@ -195,55 +256,60 @@ class _NeomOnboardingOverlayState
     // Start Phase 0: Pure frequency
     setState(() {
       _step2Phase = 0;
-      _step2Label = 'Escucha tu frecuencia raíz: ${_detectedFrequency.toStringAsFixed(0)} Hz';
+      _step2Label =
+          '${HomeTranslationConstants.onboardingListenTone.tr}: ${_detectedFrequency.toStringAsFixed(1)} Hz';
       _step2Progress = 0;
     });
     widget.onPlayFrequency?.call(_detectedFrequency);
 
-    _autoAdvanceTimer = Timer.periodic(
-      const Duration(milliseconds: tickMs),
-      (t) {
-        tick++;
-        setState(() => _step2Progress = tick / totalTicks);
+    _autoAdvanceTimer = Timer.periodic(const Duration(milliseconds: tickMs), (
+      t,
+    ) {
+      if (!mounted || _closed) {
+        t.cancel();
+        return;
+      }
+      tick++;
+      setState(() => _step2Progress = tick / totalTicks);
 
-        // Phase transitions
-        if (tick == ticksPerPhase && _step2Phase == 0) {
-          // Phase 1: Binaural 4 Hz (Theta - meditación)
-          setState(() {
-            _step2Phase = 1;
-            _step2Label = 'Beat binaural a 4 Hz — frecuencia de meditación profunda';
-          });
-          widget.onPlayBinaural?.call(_detectedFrequency, 4.0);
-        } else if (tick == ticksPerPhase * 2 && _step2Phase == 1) {
-          // Phase 2: Binaural 20 Hz (Beta - concentración)
-          setState(() {
-            _step2Phase = 2;
-            _step2Label = 'Beat binaural a 20 Hz — frecuencia de concentración';
-          });
-          widget.onPlayBinaural?.call(_detectedFrequency, 20.0);
-        } else if (tick == ticksPerPhase * 3 && _step2Phase == 2) {
-          // Phase 3: Spatial panning (L → R movement)
-          setState(() {
-            _step2Phase = 3;
-            _step2Label = 'Espacialización — tu frecuencia moviéndose entre oídos';
-          });
-          widget.onPlaySpatial?.call(_detectedFrequency);
-        }
+      // Phase transitions
+      if (tick == ticksPerPhase && _step2Phase == 0) {
+        // Phase 1: Binaural 4 Hz (Theta - meditación)
+        setState(() {
+          _step2Phase = 1;
+          _step2Label = HomeTranslationConstants.onboardingBinauralSlow.tr;
+        });
+        widget.onPlayBinaural?.call(_detectedFrequency, 4.0);
+      } else if (tick == ticksPerPhase * 2 && _step2Phase == 1) {
+        // Phase 2: Binaural 20 Hz (Beta - concentración)
+        setState(() {
+          _step2Phase = 2;
+          _step2Label = HomeTranslationConstants.onboardingBinauralFast.tr;
+        });
+        widget.onPlayBinaural?.call(_detectedFrequency, 20.0);
+      } else if (tick == ticksPerPhase * 3 && _step2Phase == 2) {
+        // Phase 3: Spatial panning (L → R movement)
+        setState(() {
+          _step2Phase = 3;
+          _step2Label = HomeTranslationConstants.onboardingSpatialHint.tr;
+        });
+        widget.onPlaySpatial?.call(_detectedFrequency);
+      }
 
-        if (tick >= totalTicks) {
-          t.cancel();
-          // Don't stop audio — leave frequency playing for navigation
-          _dismiss();
-        }
-      },
-    );
+      if (tick >= totalTicks) {
+        t.cancel();
+        _dismiss();
+      }
+    });
   }
 
   // ── Navigation helpers ───────────────────────────────────────
 
   void _goToStep(int step) {
+    if (_closed || !_detectionComplete) return;
     _autoAdvanceTimer?.cancel();
     _fadeController.reverse().then((_) {
+      if (!mounted || _closed) return;
       _pageController.animateToPage(
         step,
         duration: const Duration(milliseconds: 500),
@@ -252,13 +318,13 @@ class _NeomOnboardingOverlayState
       setState(() => _currentStep = step);
       _fadeController.forward();
 
-      if (step == 1) _startStep2Timer();
+      if (step == 1 && widget.isFirstVisit) _startStep2Timer();
     });
   }
 
   void _dismiss() {
-    // Don't stop audio — frequency stays active during navigation
-    _autoAdvanceTimer?.cancel();
+    if (_closed) return;
+    _releaseResources();
     widget.onDismiss?.call();
   }
 
@@ -356,10 +422,10 @@ class _NeomOnboardingOverlayState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Descubre tu Frecuencia',
+            Text(
+              HomeTranslationConstants.onboardingVoiceTitle.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 36,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -367,10 +433,10 @@ class _NeomOnboardingOverlayState
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Tu voz es única. Descubre la frecuencia que te define.',
+            Text(
+              HomeTranslationConstants.onboardingVoiceDescription.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 18,
                 color: Colors.white70,
                 height: 1.4,
@@ -379,8 +445,8 @@ class _NeomOnboardingOverlayState
             const SizedBox(height: 8),
             Text(
               _isRecording
-                  ? 'Mantén un sonido constante con tu voz...'
-                  : 'Presiona el micrófono y mantén un sonido con tu voz\npara identificar tu frecuencia raíz',
+                  ? HomeTranslationConstants.onboardingVoiceListening.tr
+                  : HomeTranslationConstants.onboardingVoiceHint.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
@@ -393,9 +459,15 @@ class _NeomOnboardingOverlayState
 
             // Mic button
             if (!_detectionComplete)
-              GestureDetector(
-                onTap: _isRecording ? null : _startRecording,
-                child: AnimatedBuilder(
+              IconButton(
+                key: const ValueKey('onboarding-microphone'),
+                tooltip:
+                    (_isRecording
+                            ? HomeTranslationConstants.onboardingVoiceStop
+                            : HomeTranslationConstants.onboardingVoiceStart)
+                        .tr,
+                onPressed: _isRecording ? _cancelRecording : _startRecording,
+                icon: AnimatedBuilder(
                   animation: _pulseController,
                   builder: (_, child) {
                     final scale = _isRecording
@@ -411,15 +483,13 @@ class _NeomOnboardingOverlayState
                           color: _isRecording
                               ? _accent.withAlpha(77)
                               : _accent.withAlpha(38),
-                          border: Border.all(
-                            color: _accent,
-                            width: 2,
-                          ),
+                          border: Border.all(color: _accent, width: 2),
                           boxShadow: _isRecording
                               ? [
                                   BoxShadow(
                                     color: _accent.withAlpha(
-                                        (102 * _pulseController.value).round()),
+                                      (102 * _pulseController.value).round(),
+                                    ),
                                     blurRadius: 30,
                                     spreadRadius: 10,
                                   ),
@@ -427,7 +497,7 @@ class _NeomOnboardingOverlayState
                               : null,
                         ),
                         child: Icon(
-                          _isRecording ? Icons.mic : Icons.mic_none,
+                          _isRecording ? Icons.stop : Icons.mic_none,
                           size: 48,
                           color: _accent,
                         ),
@@ -437,11 +507,18 @@ class _NeomOnboardingOverlayState
                 ),
               ),
 
-            if (_isRecording) ...[
+            if (_measurementError.isNotEmpty) ...[
               const SizedBox(height: 24),
-              const Text(
-                'Escuchando...',
-                style: TextStyle(color: Colors.white54, fontSize: 16),
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  _measurementError,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.orangeAccent,
+                    fontSize: 16,
+                  ),
+                ),
               ),
             ],
 
@@ -458,7 +535,7 @@ class _NeomOnboardingOverlayState
             if (_detectionComplete) ...[
               const SizedBox(height: 40),
               _OnboardingButton(
-                label: 'Siguiente',
+                label: HomeTranslationConstants.onboardingNext.tr,
                 onTap: () => _goToStep(1),
               ),
             ],
@@ -480,7 +557,12 @@ class _NeomOnboardingOverlayState
       const Color(0xFFFFAB40), // Amber for beta/focus
       const Color(0xFF00E5FF), // Cyan for spatial
     ];
-    final phaseLabels = ['TONO PURO', 'BINAURAL 4 Hz', 'BINAURAL 20 Hz', 'ESPACIAL'];
+    final phaseLabels = [
+      HomeTranslationConstants.onboardingPureTone.tr,
+      'BINAURAL 4 Hz',
+      'BINAURAL 20 Hz',
+      HomeTranslationConstants.onboardingSpatial.tr,
+    ];
     final freqColor = phaseColors[_step2Phase.clamp(0, 3)];
     final phaseTag = phaseLabels[_step2Phase.clamp(0, 3)];
 
@@ -523,7 +605,10 @@ class _NeomOnboardingOverlayState
               duration: const Duration(milliseconds: 300),
               child: Container(
                 key: ValueKey('tag_$_step2Phase'),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: freqColor.withAlpha(30),
                   borderRadius: BorderRadius.circular(20),
@@ -563,7 +648,9 @@ class _NeomOnboardingOverlayState
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 400),
               child: Text(
-                _step2Label.isNotEmpty ? _step2Label : 'Preparando audio...',
+                _step2Label.isNotEmpty
+                    ? _step2Label
+                    : HomeTranslationConstants.onboardingPreparingAudio.tr,
                 key: ValueKey(_step2Label),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
@@ -578,17 +665,18 @@ class _NeomOnboardingOverlayState
             // Phase dots (4 dots)
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(4, (i) => Container(
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: i <= _step2Phase
-                      ? phaseColors[i]
-                      : Colors.white12,
+              children: List.generate(
+                4,
+                (i) => Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: i <= _step2Phase ? phaseColors[i] : Colors.white12,
+                  ),
                 ),
-              )),
+              ),
             ),
             const SizedBox(height: 24),
 
@@ -608,8 +696,8 @@ class _NeomOnboardingOverlayState
             const SizedBox(height: 24),
 
             _OnboardingButton(
-              label: 'Comenzar',
-              onTap: _dismiss, // Don't stop audio — keep frequency active
+              label: HomeTranslationConstants.onboardingContinue.tr,
+              onTap: _dismiss,
               secondary: true,
             ),
           ],
@@ -629,10 +717,10 @@ class _NeomOnboardingOverlayState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Que necesitas ahora?',
+            Text(
+              HomeTranslationConstants.onboardingChooseState.tr,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -652,6 +740,10 @@ class _NeomOnboardingOverlayState
                   return _StateCard(
                     card: card,
                     onTap: () {
+                      if (_closed) return;
+                      // Release this overlay's output before the host starts
+                      // the selected state. Dispose must not stop that new audio.
+                      _releaseResources();
                       widget.onDismiss?.call();
                       widget.onStateSelected?.call(card.id);
                     },
@@ -663,9 +755,9 @@ class _NeomOnboardingOverlayState
 
             TextButton(
               onPressed: _dismiss,
-              child: const Text(
-                'Explorar primero',
-                style: TextStyle(
+              child: Text(
+                HomeTranslationConstants.onboardingExploreFirst.tr,
+                style: const TextStyle(
                   color: Colors.white54,
                   fontSize: 16,
                   decoration: TextDecoration.underline,
@@ -800,9 +892,7 @@ class _StateCardState extends State<_StateCard> {
           width: 300,
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            color: _hovered
-                ? accent.withAlpha(38)
-                : Colors.white.withAlpha(13),
+            color: _hovered ? accent.withAlpha(38) : Colors.white.withAlpha(13),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: _hovered ? accent.withAlpha(153) : Colors.white12,

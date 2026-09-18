@@ -107,11 +107,12 @@ class _WebTopBarState extends State<WebTopBar> with WidgetsBindingObserver {
     }
   }
 
-  static List<({IconData icon, String label})> get _tabs => [
-    (icon: Icons.home_rounded, label: HomeTranslationConstants.navHome.tr),
-    (icon: Icons.event_rounded, label: HomeTranslationConstants.navEvents.tr),
-    (icon: Icons.menu_book_rounded, label: HomeTranslationConstants.navBooks.tr),
-    (icon: Icons.headphones_rounded, label: HomeTranslationConstants.navAudio.tr),
+  static List<({int index, IconData icon, String label})> get _tabs => [
+    (index: 0, icon: Icons.home_rounded, label: HomeTranslationConstants.navHome.tr),
+    (index: 1, icon: Icons.event_rounded, label: HomeTranslationConstants.navEvents.tr),
+    if (AppFlavour.showBooksLibrary())
+      (index: 2, icon: Icons.menu_book_rounded, label: HomeTranslationConstants.navBooks.tr),
+    (index: 3, icon: Icons.headphones_rounded, label: HomeTranslationConstants.navAudio.tr),
   ];
 
   @override
@@ -194,12 +195,12 @@ class _WebTopBarState extends State<WebTopBar> with WidgetsBindingObserver {
   }
 
   Widget _buildTab(int index) {
-    final isSelected = widget.currentTabIndex == index;
     final tab = _tabs[index];
+    final isSelected = widget.currentTabIndex == tab.index;
     return Tooltip(
       message: tab.label,
       child: InkWell(
-        onTap: () => widget.onTabSelected(index),
+        onTap: () => widget.onTabSelected(tab.index),
         child: Container(
           width: 80,
           height: 56,
