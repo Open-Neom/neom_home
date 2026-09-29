@@ -32,6 +32,12 @@ import '../utils/constants/home_translation_constants.dart';
 
 class HomeController extends SintController implements HomeService {
 
+  HomeController({this.enablePostLoginTasks = true});
+
+  /// Hosts with their own account lifecycle can avoid unscoped deferred
+  /// profile/catalogue jobs. The shared applications retain the default.
+  final bool enablePostLoginTasks;
+
   /// Callback for web post creation modal — set by the app shell (root_binding).
   /// When set, the "Create" button on web opens the modal instead of navigating.
   static void Function(BuildContext context)? onWebCreatePost;
@@ -392,7 +398,7 @@ class HomeController extends SintController implements HomeService {
     _timelineReady.value = isReady;
     _lastTimelineLoad = DateTime.now(); // OPTIMIZATION: Track initial load time
 
-    if(!AppConfig.instance.isGuestMode) {
+    if(enablePostLoginTasks && !AppConfig.instance.isGuestMode) {
       // OPTIMIZATION: Defer profile features loading to not block UI
       if(startingHome) {
         Future.delayed(const Duration(milliseconds: 500), () {
