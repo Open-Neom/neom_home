@@ -30,12 +30,17 @@ class HomeAppBarLite extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: AppColor.surfaceElevated,
       elevation: 0.0,
       automaticallyImplyLeading: false,
-      leading: IconButton(
-        icon: CircleAvatar(
-          maxRadius: 60,
-          backgroundImage: AssetImage(AppAssets.icon),
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.white24,
+            backgroundImage: AssetImage(AppAssets.icon),
+          ),
+          onPressed: () => Scaffold.of(context).openDrawer(),
         ),
-        onPressed: ()=> Scaffold.of(context).openDrawer(),
       ),
       title: GestureDetector(
         child: Image.asset(

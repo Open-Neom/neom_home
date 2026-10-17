@@ -81,14 +81,23 @@ class HomePage extends StatelessWidget {
         backgroundColor: AppFlavour.getBackgroundColor(),
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(50.0), // Altura del AppBar
-          child: Obx(()=>  (controller.userServiceImpl == null) ? HomeAppBarLite()
-              : (controller.currentIndex != 0 || (controller.timelineServiceImpl?.showAppBar ?? false))
-              ? HomeAppBar(
-              profileImg: (controller.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
-                  ? controller.userServiceImpl?.profile.photoUrl ?? '' : AppProperties.getAppLogoUrl(),
-              profileId: controller.userServiceImpl?.profile.id ?? ''
-          ) : const SizedBox.shrink(),
-        ),),
+          child: Obx(() {
+            final currentTab = controller.currentIndex;
+            final showTimelineBar = controller.timelineServiceImpl?.showAppBar ?? false;
+            if (controller.userServiceImpl == null && !AppFlavour.alwaysShowHomeAppBar()) {
+              return const HomeAppBarLite();
+            }
+            if (currentTab != 0 || showTimelineBar || AppFlavour.alwaysShowHomeAppBar()) {
+              return HomeAppBar(
+                profileImg: (controller.userServiceImpl?.profile.photoUrl.isNotEmpty ?? false)
+                    ? controller.userServiceImpl?.profile.photoUrl ?? ''
+                    : AppProperties.getAppLogoUrl(),
+                profileId: controller.userServiceImpl?.profile.id ?? '',
+              );
+            }
+            return const SizedBox.shrink();
+          }),
+        ),
         drawer: const AppDrawer(),
         body: Stack(
           children: [
@@ -116,16 +125,16 @@ class HomePage extends StatelessWidget {
         ),
         bottomNavigationBar: NeomBottomAppBar(
           backgroundColor: AppColor.surfaceElevated,
-          color: Colors.white54,
+          color: Colors.white70,
           selectedColor: Colors.white,
-          height: 55,
+          height: AppFlavour.getBottomBarHeight(),
           notchedShape: const CircularNotchedRectangle(),
           onTabSelected: (int index) => controller.selectTab(index, context: context),
           items: tabs.map((tab) => NeomBottomAppBarItem(
               iconData: tab.icon,
               text: tab.title.tr
           )).toList(),
-          showText: false,
+          showText: AppFlavour.showBottomBarLabels(),
           currentIndex: controller.currentIndex,
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

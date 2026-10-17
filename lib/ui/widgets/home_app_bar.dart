@@ -167,28 +167,96 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final String effectiveProfileImg = widget.profileImg.isNotEmpty
+        ? widget.profileImg
+        : AppProperties.getAppLogoUrl();
+
     return AppBar(
       titleSpacing: 0,
-      backgroundColor: AppColor.surfaceElevated,
+      backgroundColor: AppFlavour.getHomeAppBarColor(),
       elevation: 0.0,
       automaticallyImplyLeading: false,
-      leading: IconButton(
-        icon: platformCircleAvatar(
-            imageUrl: widget.profileImg.isNotEmpty
-                ? widget.profileImg : AppProperties.getAppLogoUrl(),
-            radius: 60,
+      leading: Padding(
+        padding: const EdgeInsets.only(left: 8),
+        child: IconButton(
+          padding: EdgeInsets.zero,
+          icon: effectiveProfileImg.isNotEmpty
+              ? platformCircleAvatar(
+                  imageUrl: effectiveProfileImg,
+                  radius: 18,
+                )
+              : CircleAvatar(
+                  radius: 18,
+                  backgroundColor: Colors.white24,
+                  backgroundImage: AssetImage(AppAssets.icon),
+                ),
+          onPressed: () {
+            if (!AppFlavour.requireAuthForDrawer()) {
+              Scaffold.of(context).openDrawer();
+              return;
+            }
+            AuthGuard.protect(context, () {
+              Scaffold.of(context).openDrawer();
+            });
+          },
         ),
-        onPressed: () {
-          AuthGuard.protect(context, () {
-            Scaffold.of(context).openDrawer();
-          });
-        },
       ),
       title: GestureDetector(
-          child: Image.asset(
-            AppAssets.logoCompanyWhite,
-            height: 25,
-            fit: BoxFit.contain,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Image.asset(
+                  AppAssets.logoCompanyWhite,
+                  height: 25,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) => Text(
+                    AppProperties.getAppName(),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+              if (AppFlavour.useLocalMeshNeighborBadge() &&
+                  Sint.isRegistered<RxInt>(tag: 'blup_neighbor_count')) ...[
+                const SizedBox(width: 8),
+                Obx(() {
+                  final count = Sint.find<RxInt>(tag: 'blup_neighbor_count').value;
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 7,
+                          height: 7,
+                          decoration: BoxDecoration(
+                            color: count > 0 ? const Color(0xFF80FFDB) : Colors.white70,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        Text(
+                          count == 1 ? '1 vecino' : '$count vecinos',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ],
           ),
           onTap: () {
             AppAlerts.showAlert(context, message: "${AppTranslationConstants.version.tr} "
@@ -197,6 +265,19 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
       ),
       actionsIconTheme: const IconThemeData(size: 18),
       actions: <Widget>[
+        if (AppFlavour.showAppBarLocationManagerBtn())
+          IconButton(
+            padding: EdgeInsets.zero,
+            tooltip: 'Gestor de ruta y tránsito',
+            icon: const Icon(Icons.add_location_alt_outlined, size: 22),
+            color: Colors.white,
+            onPressed: () {
+              final route = AppFlavour.getAppBarLocationManagerRoute();
+              if (route.isNotEmpty) {
+                Sint.toNamed(route);
+              }
+            },
+          ),
         if(AppFlavour.showAppBarAddBtn()) IconButton(
             padding: EdgeInsets.zero,
             icon: const Icon(Icons.add_box_outlined, size: 25,),
@@ -219,14 +300,15 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
         ),
         _buildCartBadge(),
         buildNotificationFeed(context),
-        IconButton(
+        if (AppFlavour.showAppBarSearchBtn())
+          IconButton(
             padding: EdgeInsets.zero,
             icon: const FaIcon(FontAwesomeIcons.magnifyingGlass),
             color: Colors.white70,
             onPressed: () {
               Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
             },
-        ),
+          ),
         buildInboxIcon(context),
       ],
     );
@@ -242,8 +324,13 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
       icon: FontAwesomeIcons.bell,
       count: displayCount,
       onPressed: () {
+        final targetRoute = AppFlavour.getNotificationsRoute();
+        if (!AppFlavour.requireAuthForNotifications()) {
+          Sint.toNamed(targetRoute);
+          return;
+        }
         AuthGuard.protect(context, () {
-          Sint.toNamed(AppRouteConstants.feedActivity);
+          Sint.toNamed(targetRoute);
           // Refresh counts after viewing notifications
           Future.delayed(const Duration(seconds: 1), () => refreshUnreadCounts());
         });
@@ -253,6 +340,20 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
 
   /// OPTIMIZED: Construye el ícono de inbox/mensajes con badge usando polling en lugar de streams.
   Widget buildInboxIcon(BuildContext context) {
+    if (AppFlavour.useLocalMeshNeighborBadge() &&
+        Sint.isRegistered<RxInt>(tag: 'blup_neighbor_count')) {
+      return Obx(() {
+        final bleCount = Sint.find<RxInt>(tag: 'blup_neighbor_count').value;
+        return AppBarIconBadge(
+          icon: FontAwesomeIcons.comments,
+          count: bleCount,
+          onPressed: () {
+            Sint.toNamed(AppRouteConstants.inbox);
+          },
+        );
+      });
+    }
+
     int displayCount = widget.profileId.isEmpty && showFakeNotification
         ? 1
         : _unreadInboxCount;
@@ -261,6 +362,10 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
       icon: FontAwesomeIcons.comments,
       count: displayCount,
       onPressed: () {
+        if (!AppFlavour.requireAuthForInbox()) {
+          Sint.toNamed(AppRouteConstants.inbox);
+          return;
+        }
         AuthGuard.protect(context, () {
           Sint.toNamed(AppRouteConstants.inbox);
           // Refresh counts after viewing inbox
