@@ -309,10 +309,14 @@ class _HomeWebPageState extends State<HomeWebPage> {
                 // ─── Itzli Chat Bubble (bottom-right) ───
                 if (widget.chatBubble != null)
                   Obx(() {
-                    if (_showFullNowPlaying) return const SizedBox.shrink();
+                    // Always subscribe to at least one Rx before any early return
+                    // so SINT Obx never throws ObxError when MiniPlayerService is
+                    // unregistered or _showFullNowPlaying is active.
+                    final _ = AssistantOverlayRegistry.isOpen.value;
                     final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
                     final hasPlayer = (miniPlayerController?.isActive ?? false);
                     final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
+                    if (_showFullNowPlaying) return const SizedBox.shrink();
                     final double bottomOffset = hasPlayer
                         ? (retracted ? 224.0 : 96.0)
                         : 24.0;

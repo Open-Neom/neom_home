@@ -59,6 +59,7 @@ class HomeTranslationConstants {
   static const String navLevitation = 'navLevitation';
   static const String navInter = 'navInter';
   static const String navBooks = 'navBooks';
+  static const String navFounding = 'navFounding';
   static const String navDirectory = 'navDirectory';
   static const String navBooking = 'navBooking';
   static const String navGallery = 'navGallery';

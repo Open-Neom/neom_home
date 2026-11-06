@@ -318,6 +318,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.libraryHome),
                   ),
+                if (AppFlavour.showFounding())
+                  _NavItem(
+                    icon: Icons.rocket_launch_outlined,
+                    label: HomeTranslationConstants.navFounding.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.foundingHome),
+                  ),
                 if (AppFlavour.showDirectory())
                   _NavItem(
                     icon: Icons.business_outlined,
@@ -339,7 +346,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.museumHome),
                   ),
-                if (!kReleaseMode || _isSupportOrAbove)
+                if (AppFlavour.showCasete() || !kReleaseMode || _isSupportOrAbove)
                   _NavItem(
                     icon: Icons.headphones_outlined,
                     label: HomeTranslationConstants.navAudio.tr,

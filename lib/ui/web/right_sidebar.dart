@@ -14,8 +14,10 @@ import 'package:neom_core/domain/model/literature_books.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_core/utils/enums/ad_placement.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/subscription_status.dart';
+import 'package:neom_core/utils/neom_ad_registry.dart';
 import 'package:neom_core/utils/neom_error_logger.dart';
 import 'package:sint/sint.dart';
 
@@ -87,6 +89,14 @@ class RightSidebar extends StatelessWidget {
           const WebMiniReleases(),
 
           const SizedBox(height: 24),
+
+          if (NeomAdRegistry.buildAdSlotFn != null) ...[
+            NeomAdRegistry.buildAdSlotFn!(
+              placement: AdPlacement.feedSidebarWeb,
+              slotIndex: 1,
+            ),
+            const SizedBox(height: 20),
+          ],
 
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
             const _FilGuadalajaraCta(),

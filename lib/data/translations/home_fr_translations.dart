@@ -56,6 +56,7 @@ class HomeFrTranslations {
     HomeTranslationConstants.navLevitation: 'Lévitation',
     HomeTranslationConstants.navInter: 'Interface',
     HomeTranslationConstants.navBooks: 'Livres',
+    HomeTranslationConstants.navFounding: 'Financement',
     HomeTranslationConstants.navDirectory: 'Repertoire',
     HomeTranslationConstants.navBooking: 'Reservations',
     HomeTranslationConstants.navGallery: 'Galerie',
