@@ -45,8 +45,10 @@ class _WebStoriesRowState extends State<WebStoriesRow> {
     }
     try {
       final profile = Sint.find<UserService>().profile;
-      final followingIds = [profile.id,
-        ...List<String>.from(profile.following ?? [])];
+      final followingIds = <String>{
+        profile.id.trim(),
+        ...(profile.following ?? const <String>[]).map((id) => id.trim()),
+      }.where((id) => id.isNotEmpty).toList();
       final stories = await _fetchActiveStories(followingIds);
 
       if (mounted) {

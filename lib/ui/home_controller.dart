@@ -1,4 +1,6 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'dart:async';
+
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
@@ -59,7 +61,20 @@ class HomeController extends SintController implements HomeService {
   final RxBool _mediaPlayerEnabled = true.obs;
   Event event = Event();
 
-  late PageController pageController;
+  PageController? _pageController;
+  PageController get pageController =>
+      _pageController ??= PageController(initialPage: _getPageIndexFromVisualIndex(toIndex));
+  set pageController(PageController value) {
+    if (!identical(_pageController, value)) {
+      _pageController?.dispose();
+      _pageController = value;
+    }
+  }
+
+  bool _isClosed = false;
+  Timer? _profileFeaturesTimer;
+  Timer? _pendingReleasesTimer;
+  Timer? _audioInitTimer;
 
   final RxInt _currentIndex = 0.obs;
   int toIndex =  0;
@@ -89,6 +104,41 @@ class HomeController extends SintController implements HomeService {
   DateTime? _lastTimelineLoad;
   static const _timelineRefreshThreshold = Duration(minutes: 5);
 
+  static final RegExp _unsafeHomeRouteChars = RegExp(
+    r'[\x00-\x1F\x7F-\x9F\u061C\u200B-\u200F\u202A-\u202E\u2066-\u2069\uFEFF]',
+  );
+  static final RegExp _rawHomeTraversalRegex = RegExp(
+    r'(?:^|/)\.\.(?:/|$|\?|#)|%2e%2e|%2f|%5c|%00',
+    caseSensitive: false,
+  );
+
+  @visibleForTesting
+  static String sanitizeInternalHomeRoute(Object? raw) {
+    if (raw is! String) return '';
+    final trimmed = raw.trim();
+    if (trimmed.isEmpty ||
+        trimmed.length > 512 ||
+        !trimmed.startsWith('/') ||
+        trimmed.startsWith('//') ||
+        trimmed.contains('\\') ||
+        trimmed.contains('://') ||
+        _unsafeHomeRouteChars.hasMatch(trimmed) ||
+        _rawHomeTraversalRegex.hasMatch(trimmed)) {
+      return '';
+    }
+    final parsed = Uri.tryParse(trimmed);
+    if (parsed == null || parsed.hasScheme || parsed.hasAuthority) return '';
+    var normalizedPath = parsed.path;
+    while (normalizedPath.length > 1 && normalizedPath.endsWith('/')) {
+      normalizedPath = normalizedPath.substring(0, normalizedPath.length - 1);
+    }
+    if (normalizedPath == AppRouteConstants.home ||
+        normalizedPath == AppRouteConstants.root) {
+      return '';
+    }
+    return trimmed;
+  }
+
   @override
   void onInit() {
     super.onInit();
@@ -96,26 +146,46 @@ class HomeController extends SintController implements HomeService {
 
     try {
 
-      if(Sint.arguments != null) {
-        if (Sint.arguments[0] is int) {
-          toIndex = Sint.arguments[0] as int;
-        } else if (Sint.arguments[0] is Event) {
-          event = Sint.arguments[0] as  Event;
-        } else if (Sint.arguments[0] is String) {
-          toRoute = Sint.arguments[0] as String;
+      final args = Sint.arguments;
+      if (args != null) {
+        final dynamic firstArg = args is List
+            ? (args.isNotEmpty ? args.first : null)
+            : args;
+        if (firstArg is int) {
+          toIndex = (!firstArg.isFinite || firstArg < 0)
+              ? 0
+              : firstArg.clamp(0, 32);
+        } else if (firstArg is Event) {
+          event = firstArg;
+        } else if (firstArg is String) {
+          toRoute = sanitizeInternalHomeRoute(firstArg);
+        } else if (args is Map) {
+          final rawIdx = args['index'];
+          if (rawIdx is num && rawIdx.isFinite && rawIdx >= 0) {
+            toIndex = rawIdx.toInt().clamp(0, 32);
+          }
+          final rawRoute = args['route'];
+          if (rawRoute is String && rawRoute.trim().isNotEmpty) {
+            toRoute = sanitizeInternalHomeRoute(rawRoute);
+          }
+          final rawEvent = args['event'];
+          if (rawEvent is Event) {
+            event = rawEvent;
+          }
         }
       }
 
-      if (AppConfig.instance.appInUse ==  AppInUse.d) {
+      if (AppConfig.instance.appInUse == AppInUse.d) {
         toIndex = 2;
       }
 
-      if(toIndex > 0) {
+      if (toIndex > 0) {
         _currentIndex.value = toIndex;
       }
 
-      pageController = PageController(initialPage: _getPageIndexFromVisualIndex(toIndex));
-      pageController.addListener(() {
+      _pageController?.dispose();
+      _pageController = PageController(initialPage: _getPageIndexFromVisualIndex(toIndex));
+      _pageController!.addListener(() {
         // int newIndex = pageController.page!.toInt();
         // if (_currentIndex.value != newIndex) {
         //   _currentIndex.value = newIndex;
@@ -155,7 +225,8 @@ class HomeController extends SintController implements HomeService {
         // await timelineController.gotoEventDetails(event);
       }
 
-      if(toRoute.isNotEmpty) Sint.offNamed(toRoute);
+      final safeRoute = sanitizeInternalHomeRoute(toRoute);
+      if (safeRoute.isNotEmpty) Sint.offNamed(safeRoute);
     } catch (e, st) {
       NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: 'onReady');
     }
@@ -163,8 +234,22 @@ class HomeController extends SintController implements HomeService {
 
   @override
   void onClose() {
+    _isClosed = true;
+    _profileFeaturesTimer?.cancel();
+    _profileFeaturesTimer = null;
+    _pendingReleasesTimer?.cancel();
+    _pendingReleasesTimer = null;
+    _audioInitTimer?.cancel();
+    _audioInitTimer = null;
     NeomFlowTracker.flushAll();
-    pageController.dispose();
+    _pageController?.dispose();
+    _pageController = null;
+    isLoading.close();
+    _mediaPlayerEnabled.close();
+    _currentIndex.close();
+    _timelineReady.close();
+    showNotificationPanel.close();
+    showSearchPanel.close();
     super.onClose();
   }
 
@@ -265,89 +350,89 @@ class HomeController extends SintController implements HomeService {
       }
     } catch (e, st) {
       NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: 'selectTab');
+    } finally {
+      if (!_isClosed) {
+        isLoading.value = false;
+        update([AppPageIdConstants.home]);
+      }
     }
-
-    isLoading.value = false;
-    update([AppPageIdConstants.home]);
   }
 
   @override
   Future<void> modalBottomAddMenu(BuildContext context) async {
-    await showModalBottomSheet(
-        elevation: 0,
-        backgroundColor: AppTheme.canvasColor50(context),
-        context: context,
-        builder: (BuildContext ctx) {
-          return Column(
-            children: <Widget>[
-              Container(
-                height: 300,
-                margin: const EdgeInsets.symmetric(horizontal: 15),
-                decoration: BoxDecoration(
-                    color: AppColor.surfaceElevated,
-                    borderRadius: const BorderRadius.all(Radius.circular(10.0))
-                ),
-                child: ListView.separated(
-                    separatorBuilder:  (context, index) => const Divider(),
-                    itemCount: HomeConstants.bottomMenuItems.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        leading: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.all(Radius.circular(30)),
-                            color: Colors.teal[100],
-                          ),
-                          child: Icon(HomeConstants.bottomMenuItems[index].icon, color: Colors.white),
-                        ),
-                        trailing: const Icon(Icons.arrow_forward_ios, size: 18,),
-                        title: Text(HomeConstants.bottomMenuItems[index].title.tr,
-                          style: const TextStyle(color: Colors.white, fontSize: 18),
-                        ),
-                        subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr,
-                          style: const TextStyle(fontSize: 15),),
-                        onTap: () {
-                          Navigator.pop(ctx);
-                          AuthGuard.protect(context, () {
-                            switch (HomeConstants.bottomMenuItems[index].title) {
-                              case CommonTranslationConstants.createPost:
-                                if (kIsWeb && onWebCreatePost != null) {
-                                  onWebCreatePost!(context);
-                                } else {
-                                  Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                                }
-                                break;
-                              case HomeTranslationConstants.organizeEvent:
-                                Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                                break;
-                              case HomeTranslationConstants.shareComment:
-                                if (kIsWeb && onWebShareComment != null) {
-                                  onWebShareComment!(context);
-                                } else {
-                                  Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
-                                }
-                                break;
+    await Sint.bottomSheet(
+      Column(
+        children: <Widget>[
+          Container(
+            height: 300,
+            margin: const EdgeInsets.symmetric(horizontal: 15),
+            decoration: BoxDecoration(
+                color: AppColor.surfaceElevated,
+                borderRadius: const BorderRadius.all(Radius.circular(10.0))
+            ),
+            child: ListView.separated(
+                separatorBuilder:  (context, index) => const Divider(),
+                itemCount: HomeConstants.bottomMenuItems.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    leading: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        color: Colors.teal[100],
+                      ),
+                      child: Icon(HomeConstants.bottomMenuItems[index].icon, color: Colors.white),
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 18,),
+                    title: Text(HomeConstants.bottomMenuItems[index].title.tr,
+                      style: const TextStyle(color: Colors.white, fontSize: 18),
+                    ),
+                    subtitle: Text(HomeConstants.bottomMenuItems[index].subtitle.tr,
+                      style: const TextStyle(fontSize: 15),),
+                    onTap: () {
+                      Sint.pop();
+                      AuthGuard.protect(context, () {
+                        switch (HomeConstants.bottomMenuItems[index].title) {
+                          case CommonTranslationConstants.createPost:
+                            if (kIsWeb && onWebCreatePost != null) {
+                              onWebCreatePost!(context);
+                            } else {
+                              Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
                             }
-                          });
-                        },
-                      );
-                    }
-                ),
-              ),
-              Container(
-                height: 43, width: 43,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.all(Radius.circular(30))
-                ),
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                child: GestureDetector(
-                  onTap: () => Navigator.pop(ctx),
-                  child: Icon(Icons.close, size: 25, color: Colors.grey[900])
-                )
-              ),
-            ],
-          );
-        });
+                            break;
+                          case HomeTranslationConstants.organizeEvent:
+                            Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                            break;
+                          case HomeTranslationConstants.shareComment:
+                            if (kIsWeb && onWebShareComment != null) {
+                              onWebShareComment!(context);
+                            } else {
+                              Sint.toNamed(HomeConstants.bottomMenuItems[index].appRoute);
+                            }
+                            break;
+                        }
+                      });
+                    },
+                  );
+                }
+            ),
+          ),
+          Container(
+            height: 43, width: 43,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(30))
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            child: GestureDetector(
+              onTap: () => Sint.pop(),
+              child: Icon(Icons.close, size: 25, color: Colors.grey[900])
+            )
+          ),
+        ],
+      ),
+      elevation: 0,
+      backgroundColor: AppTheme.canvasColor50(context),
+    );
   }
 
   void gotoEvent(Event event) {
@@ -398,24 +483,33 @@ class HomeController extends SintController implements HomeService {
     _timelineReady.value = isReady;
     _lastTimelineLoad = DateTime.now(); // OPTIMIZATION: Track initial load time
 
-    if(enablePostLoginTasks && !AppConfig.instance.isGuestMode) {
+    if (enablePostLoginTasks && !AppConfig.instance.isGuestMode) {
       // OPTIMIZATION: Defer profile features loading to not block UI
-      if(startingHome) {
-        Future.delayed(const Duration(milliseconds: 500), () {
+      if (startingHome) {
+        _profileFeaturesTimer?.cancel();
+        _profileFeaturesTimer = Timer(const Duration(milliseconds: 500), () {
+          if (_isClosed) return;
           _loadUserProfileFeatures();
         });
       }
       // OPTIMIZATION: Defer post-login tasks
-      Future.microtask(() => AppInitializationController.runPostLoginTasks());
+      Future.microtask(() {
+        if (_isClosed) return;
+        AppInitializationController.runPostLoginTasks();
+      });
 
       // Check for pending releases if user has support role or higher
-      Future.delayed(const Duration(seconds: 2), () {
+      _pendingReleasesTimer?.cancel();
+      _pendingReleasesTimer = Timer(const Duration(seconds: 2), () {
+        if (_isClosed) return;
         _checkPendingReleasesForSupportUsers();
       });
     }
 
     // OPTIMIZATION: Defer audio handler initialization
-    Future.delayed(const Duration(seconds: 1), () {
+    _audioInitTimer?.cancel();
+    _audioInitTimer = Timer(const Duration(seconds: 1), () {
+      if (_isClosed) return;
       AppInitializationController.initAudioHandler();
     });
   }
@@ -441,12 +535,10 @@ class HomeController extends SintController implements HomeService {
 
   /// Shows a modal alerting the user about pending releases
   void _showPendingReleasesModal(int count) {
-    final context = Sint.context;
-    if (context == null) return;
+    if (Sint.context == null) return;
 
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
+    Sint.dialog(
+      AlertDialog(
         backgroundColor: AppColor.surfaceElevated,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -502,7 +594,7 @@ class HomeController extends SintController implements HomeService {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
+            onPressed: () => Sint.pop(),
             child: Text(
               HomeTranslationConstants.reviewLater.tr,
               style: TextStyle(color: Colors.grey[400]),
@@ -510,7 +602,7 @@ class HomeController extends SintController implements HomeService {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(ctx).pop();
+              Sint.pop();
               // Navigate to Requests page with pending releases tab (index 3)
               Sint.toNamed(AppRouteConstants.request, arguments: [3]);
             },

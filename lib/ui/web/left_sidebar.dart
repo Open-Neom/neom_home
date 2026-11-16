@@ -218,14 +218,12 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   label: HomeTranslationConstants.navSearch.tr,
                   expanded: widget.expanded,
                   onTap: () {
-                    AuthGuard.protect(context, () {
-                      // Web: toggle search panel overlay (Instagram-style)
-                      if (kIsWeb && Sint.isRegistered<HomeController>()) {
-                        Sint.find<HomeController>().toggleSearchPanel();
-                      } else {
-                        Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
-                      }
-                    });
+                    // Desktop/Web shell: toggle search panel overlay (Instagram-style)
+                    if (Sint.isRegistered<HomeController>()) {
+                      Sint.find<HomeController>().toggleSearchPanel();
+                    } else {
+                      Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
+                    }
                   },
                 ),
                 _NavItem(
@@ -406,13 +404,15 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   badge: _unreadNotifications,
                   onTap: () {
                     AuthGuard.protect(context, () {
-                      // Web: toggle notification panel overlay (Instagram-style)
-                      if (kIsWeb && Sint.isRegistered<HomeController>()) {
+                      // Desktop/Web shell: toggle notification panel overlay (Instagram-style)
+                      if (Sint.isRegistered<HomeController>()) {
                         Sint.find<HomeController>().toggleNotificationPanel();
                       } else {
                         Sint.toNamed(AppRouteConstants.feedActivity);
                       }
-                      Future.delayed(const Duration(seconds: 1), _loadCounts);
+                      Future.delayed(const Duration(seconds: 1), () {
+                        if (mounted) _loadCounts();
+                      });
                     });
                   },
                 ),
@@ -424,7 +424,9 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   onTap: () {
                     AuthGuard.protect(context, () {
                       Sint.toNamed(AppRouteConstants.inbox);
-                      Future.delayed(const Duration(seconds: 1), _loadCounts);
+                      Future.delayed(const Duration(seconds: 1), () {
+                        if (mounted) _loadCounts();
+                      });
                     });
                   },
                 ),

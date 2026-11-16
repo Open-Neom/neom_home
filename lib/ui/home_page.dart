@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/app_drawer.dart';
@@ -51,8 +50,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
-    // Use web layout on wide screens
-    if (kIsWeb && MediaQuery.of(context).size.width > 900) {
+    // Use 3-column desktop/tablet shell on wide viewports across Web, macOS, Windows, Linux & iPadOS
+    if (MediaQuery.sizeOf(context).width > 900) {
       return HomeWebPage(
         tabs: tabs,
         miniPlayer: miniPlayer,

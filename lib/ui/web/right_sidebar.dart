@@ -151,13 +151,25 @@ class RightSidebar extends StatelessWidget {
       children: [
         Wrap(
           children: [
-            _footerLink(CommonTranslationConstants.aboutApp.tr),
+            _footerLink(
+              CommonTranslationConstants.aboutApp.tr,
+              onTap: () => Sint.toNamed(AppRouteConstants.about),
+            ),
             _footerDot(),
-            _footerLink(CommonTranslationConstants.help.tr),
+            _footerLink(
+              CommonTranslationConstants.help.tr,
+              onTap: () => Sint.toNamed(AppRouteConstants.supportEntry),
+            ),
             _footerDot(),
-            _footerLink(CommonTranslationConstants.privacy.tr),
+            _footerLink(
+              CommonTranslationConstants.privacy.tr,
+              onTap: () => Sint.toNamed(AppRouteConstants.termsConditions),
+            ),
             _footerDot(),
-            _footerLink(CommonTranslationConstants.conditions.tr),
+            _footerLink(
+              CommonTranslationConstants.conditions.tr,
+              onTap: () => Sint.toNamed(AppRouteConstants.termsConditions),
+            ),
           ],
         ),
         const SizedBox(height: 12),
@@ -169,10 +181,16 @@ class RightSidebar extends StatelessWidget {
     );
   }
 
-  Widget _footerLink(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 2),
-      child: Text(text, style: TextStyle(color: Colors.grey[600], fontSize: 11)),
+  Widget _footerLink(String text, {VoidCallback? onTap}) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.only(right: 2),
+          child: Text(text, style: TextStyle(color: Colors.grey[600], fontSize: 11)),
+        ),
+      ),
     );
   }
 

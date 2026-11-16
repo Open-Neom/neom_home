@@ -329,10 +329,12 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
           Sint.toNamed(targetRoute);
           return;
         }
-        AuthGuard.protect(context, () {
-          Sint.toNamed(targetRoute);
+        AuthGuard.protect(context, () async {
+          unawaited(Sint.toNamed(targetRoute));
           // Refresh counts after viewing notifications
-          Future.delayed(const Duration(seconds: 1), () => refreshUnreadCounts());
+          await Future<void>.delayed(const Duration(seconds: 1));
+          if (!mounted) return;
+          refreshUnreadCounts();
         });
       },
     );
@@ -366,10 +368,12 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
           Sint.toNamed(AppRouteConstants.inbox);
           return;
         }
-        AuthGuard.protect(context, () {
-          Sint.toNamed(AppRouteConstants.inbox);
+        AuthGuard.protect(context, () async {
+          unawaited(Sint.toNamed(AppRouteConstants.inbox));
           // Refresh counts after viewing inbox
-          Future.delayed(const Duration(seconds: 1), () => refreshUnreadCounts());
+          await Future<void>.delayed(const Duration(seconds: 1));
+          if (!mounted) return;
+          refreshUnreadCounts();
         });
       },
     );
