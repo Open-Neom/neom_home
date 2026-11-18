@@ -358,6 +358,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.games),
                   ),
+                if (AppFlavour.showLearning())
+                  _NavItem(
+                    icon: Icons.school_outlined,
+                    label: 'learning'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.learning),
+                  ),
                 if (AppFlavour.showBlog())
                   _NavItem(
                     icon: Icons.edit_note,
@@ -365,6 +372,18 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
+                _NavItem(
+                  icon: Icons.forum_outlined,
+                  label: 'forumTitle'.tr,
+                  expanded: widget.expanded,
+                  onTap: () => Sint.toNamed('/foro'),
+                ),
+                _NavItem(
+                  icon: Icons.groups_3_outlined,
+                  label: 'community.communities'.tr,
+                  expanded: widget.expanded,
+                  onTap: () => Sint.toNamed(AppRouteConstants.communities),
+                ),
                 if (AppFlavour.showVst() && AppGates.canUseHiddenBeta())
                   _NavItem(
                     icon: Icons.music_note,
@@ -475,6 +494,18 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.nupaleHome),
                     ),
+                  _NavItem(
+                    icon: Icons.auto_stories_outlined,
+                    label: 'app.publisher.title'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/publisher'),
+                  ),
+                  _NavItem(
+                    icon: Icons.insights_outlined,
+                    label: 'analytics.dashboard'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.creatorAnalytics),
+                  ),
                   if (AppFlavour.showCasete())
                     _NavItem(
                       icon: Icons.audiotrack,
@@ -537,7 +568,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed('/pos'),
                     ),
-                  if (_isAdminOrAbove)
+                  if (_isAdminOrAbove) ...[
                     _NavItem(
                       icon: Icons.groups,
                       label: 'Equipo',
@@ -549,6 +580,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                         Sint.toNamed(AppRouteConstants.inboxRoom, arguments: [inbox]);
                       },
                     ),
+                    _NavItem(
+                      icon: Icons.fact_check_outlined,
+                      label: 'testsCatalogTitle'.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed('/tests'),
+                    ),
+                  ],
                 ],
               ],
             ),
