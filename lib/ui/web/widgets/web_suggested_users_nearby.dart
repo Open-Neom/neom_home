@@ -1,3 +1,4 @@
+import 'package:neom_core/data/api/app_accounts.dart';
 import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
@@ -47,7 +48,7 @@ class _WebSuggestedUsersNearbyState extends State<WebSuggestedUsersNearby> {
       final userPos = myProfile.position;
 
       // Fetch profiles
-      final profilesMap = await ProfileFirestore().retrieveAllProfiles(limit: 50);
+      final profilesMap = await AppProfiles.repository.retrieveAllProfiles(limit: 50);
       final allProfiles = profilesMap.values.toList();
 
       final following = myProfile.following ?? [];

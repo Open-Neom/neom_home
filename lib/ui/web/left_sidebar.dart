@@ -20,6 +20,7 @@ import 'package:neom_core/domain/use_cases/settings_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/app_gates.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
+import 'package:neom_core/utils/enums/app_in_use.dart';
 import 'package:neom_core/utils/enums/profile_type.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 import 'package:neom_core/utils/enums/user_role.dart';
@@ -99,12 +100,23 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
     return Sint.find<UserService>().user.userRole.value >= UserRole.admin.value;
   }
 
-  /// True if user is an artist profile and not a basic subscriber
+  /// True if user is an artist profile (in Gigmeout all artist profiles can manage bands)
   bool get _isArtistNonSubscriber {
     if (!Sint.isRegistered<UserService>()) return false;
     final service = Sint.find<UserService>();
+    if (AppConfig.instance.appInUse == AppInUse.g) {
+      return service.profile.type == ProfileType.appArtist;
+    }
     return service.profile.type == ProfileType.appArtist
         && service.user.userRole != UserRole.subscriber;
+  }
+
+  bool get _hasApprovedRoom {
+    if (!Sint.isRegistered<UserService>()) return false;
+    final service = Sint.find<UserService>();
+    return service.user.hasApprovedRehearsalRoom ||
+        service.profile.hasApprovedRehearsalRoom ||
+        service.profile.type == ProfileType.facilitator;
   }
 
   /// How often unread counts are refreshed while the tab is visible.
@@ -325,12 +337,20 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.directory),
                   ),
-                if (AppFlavour.showBooking() && AppGates.canUseHiddenBeta())
+                if (AppFlavour.showBooking() &&
+                    (AppConfig.instance.appInUse == AppInUse.g || AppGates.canUseHiddenBeta()))
                   _NavItem(
                     icon: Icons.calendar_month_outlined,
                     label: HomeTranslationConstants.navBooking.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.booking),
+                  ),
+                if (AppConfig.instance.appInUse == AppInUse.g && _profileId.isNotEmpty)
+                  _NavItem(
+                    icon: _hasApprovedRoom ? Icons.meeting_room_outlined : Icons.add_business_outlined,
+                    label: _hasApprovedRoom ? 'Mi Sala de Ensayo' : 'Registrar Sala',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(_hasApprovedRoom ? '/booking/host' : '/booking/register-room'),
                   ),
                 if (AppFlavour.showGalley())
                   _NavItem(
@@ -339,12 +359,19 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.museumHome),
                   ),
-                if (!kReleaseMode || _isSupportOrAbove)
+                if (AppConfig.instance.appInUse == AppInUse.g || !kReleaseMode || _isSupportOrAbove)
                   _NavItem(
                     icon: Icons.headphones_outlined,
                     label: HomeTranslationConstants.navAudio.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.audioPlayer),
+                  ),
+                if (AppConfig.instance.appInUse == AppInUse.g && _profileId.isNotEmpty)
+                  _NavItem(
+                    icon: Icons.library_music_outlined,
+                    label: 'Songmates',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.mates),
                   ),
                 if (AppFlavour.showGames())
                   _NavItem(
@@ -435,6 +462,22 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     },
                   ),
 
+                if (AppConfig.instance.appInUse == AppInUse.g && _profileId.isNotEmpty && !_isCreatorOrSupport) ...[
+                  if (AppFlavour.showWallet())
+                    _NavItem(
+                      icon: Icons.account_balance_wallet_outlined,
+                      label: HomeTranslationConstants.navWallet.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed(AppRouteConstants.wallet),
+                    ),
+                  if (AppFlavour.showCasete())
+                    _NavItem(
+                      icon: Icons.analytics_outlined,
+                      label: HomeTranslationConstants.navCasete.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed(AppRouteConstants.caseteHome),
+                    ),
+                ],
                 // Subscriber/Creator options
                 if (_isCreatorOrSupport) ...[
                   Padding(

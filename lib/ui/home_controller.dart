@@ -231,7 +231,7 @@ class HomeController extends SintController implements HomeService {
     }
 
     if (selectedTab.route != null) {
-      Sint.offNamed(selectedTab.route!);
+      Sint.toNamed(selectedTab.route!);
       return;
     }
 

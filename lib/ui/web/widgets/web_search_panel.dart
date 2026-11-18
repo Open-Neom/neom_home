@@ -10,8 +10,8 @@ import 'package:neom_commons/utils/constants/app_assets.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/text_utilities.dart';
 import 'package:neom_core/app_properties.dart';
+import 'package:neom_core/data/api/app_release_items.dart';
 import 'package:neom_core/data/firestore/app_media_item_firestore.dart';
-import 'package:neom_core/data/firestore/app_release_item_firestore.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/domain/model/app_media_item.dart';
 import 'package:neom_core/domain/model/app_profile.dart';
@@ -87,7 +87,7 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
         NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.media');
       }));
 
-      futures.add(AppReleaseItemFirestore().retrieveAll().then((items) {
+      futures.add(AppReleaseItems.repository.retrieveAll().then((items) {
         _allReleaseItems = items;
       }).catchError((Object e, StackTrace st) {
         NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.releases');
