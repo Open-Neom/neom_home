@@ -16,6 +16,7 @@ import 'left_sidebar.dart';
 import 'right_sidebar.dart';
 import 'widgets/web_notification_panel.dart';
 import 'widgets/web_search_panel.dart';
+import 'widgets/web_stories_row.dart';
 
 /// Builder types for audio player widgets injected from the app layer.
 /// This avoids coupling neom_home to neom_audio_player.
@@ -196,8 +197,10 @@ class _HomeWebPageState extends State<HomeWebPage> {
                                 decoration: AppTheme.appBoxDecoration,
                                 child: Column(
                                   children: [
-                                    // Stories row at the top — disabled temporarily
-                                    // const WebStoriesRow(),
+                                    // Ephemeral 24h stories row at the top of Home feed
+                                    Obx(() => controller.currentIndex == 0
+                                        ? const WebStoriesRow()
+                                        : const SizedBox.shrink()),
 
                                     // Main content (tab pages)
                                     Expanded(
@@ -309,10 +312,14 @@ class _HomeWebPageState extends State<HomeWebPage> {
                 // ─── Itzli Chat Bubble (bottom-right) ───
                 if (widget.chatBubble != null)
                   Obx(() {
-                    if (_showFullNowPlaying) return const SizedBox.shrink();
+                    // Always subscribe to at least one Rx before any early return
+                    // so SINT Obx never throws ObxError when MiniPlayerService is
+                    // unregistered or _showFullNowPlaying is active.
+                    final _ = AssistantOverlayRegistry.isOpen.value;
                     final miniPlayerController = Sint.isRegistered<MiniPlayerService>() ? Sint.find<MiniPlayerService>() : null;
                     final hasPlayer = (miniPlayerController?.isActive ?? false);
                     final retracted = (miniPlayerController?.isWebPlayerRetractedValue ?? false) && screenWidth >= 900;
+                    if (_showFullNowPlaying) return const SizedBox.shrink();
                     final double bottomOffset = hasPlayer
                         ? (retracted ? 224.0 : 96.0)
                         : 24.0;

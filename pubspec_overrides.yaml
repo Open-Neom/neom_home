@@ -5,3 +5,5 @@ dependency_overrides:
     path: ../../main/neom_commons
   sint:
     path: ../../framework/sint
+  sint_sentinel:
+    path: ../../framework/sint_sentinel

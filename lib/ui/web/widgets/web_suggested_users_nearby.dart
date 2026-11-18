@@ -1,8 +1,8 @@
-import 'package:neom_core/data/api/app_accounts.dart';
 import 'package:flutter/material.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_core/app_properties.dart';
+import 'package:neom_core/data/api/app_accounts.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/domain/model/app_profile.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';

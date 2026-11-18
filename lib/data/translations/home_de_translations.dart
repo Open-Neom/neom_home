@@ -55,6 +55,7 @@ class HomeDeTranslations {
     HomeTranslationConstants.navLevitation: 'Levitation',
     HomeTranslationConstants.navInter: 'Schnittstelle',
     HomeTranslationConstants.navBooks: 'Bücher',
+    HomeTranslationConstants.navFounding: 'Crowdfunding',
     HomeTranslationConstants.navDirectory: 'Verzeichnis',
     HomeTranslationConstants.navBooking: 'Buchungen',
     HomeTranslationConstants.navGallery: 'Galerie',

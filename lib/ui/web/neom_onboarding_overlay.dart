@@ -337,18 +337,20 @@ class _NeomOnboardingOverlayState extends State<NeomOnboardingOverlay>
       child: Stack(
         children: [
           // Animated gradient background
-          AnimatedBuilder(
-            animation: _breathController,
-            builder: (_, _) => Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    _bgDark,
-                    Color.lerp(_bgDark, _bgMid, _breathController.value)!,
-                    _bgMid,
-                  ],
+          RepaintBoundary(
+            child: AnimatedBuilder(
+              animation: _breathController,
+              builder: (_, _) => Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      _bgDark,
+                      Color.lerp(_bgDark, _bgMid, _breathController.value)!,
+                      _bgMid,
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -628,17 +630,19 @@ class _NeomOnboardingOverlayState extends State<NeomOnboardingOverlay>
             const SizedBox(height: 32),
 
             // Pulsing circles — color changes with phase
-            SizedBox(
-              width: 260,
-              height: 260,
-              child: AnimatedBuilder(
-                animation: _breathController,
-                builder: (_, _) => CustomPaint(
-                  painter: _BreathingCirclesPainter(
-                    progress: _breathController.value,
-                    color: freqColor,
+            RepaintBoundary(
+              child: SizedBox(
+                width: 260,
+                height: 260,
+                child: AnimatedBuilder(
+                  animation: _breathController,
+                  builder: (_, _) => CustomPaint(
+                    painter: _BreathingCirclesPainter(
+                      progress: _breathController.value,
+                      color: freqColor,
+                    ),
+                    size: const Size(260, 260),
                   ),
-                  size: const Size(260, 260),
                 ),
               ),
             ),

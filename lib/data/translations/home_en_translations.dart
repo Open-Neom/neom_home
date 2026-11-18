@@ -56,6 +56,7 @@ class HomeEnTranslations {
     HomeTranslationConstants.navLevitation: 'Levitation',
     HomeTranslationConstants.navInter: 'Interface',
     HomeTranslationConstants.navBooks: 'Books',
+    HomeTranslationConstants.navFounding: 'Crowdfunding',
     HomeTranslationConstants.navDirectory: 'Directory',
     HomeTranslationConstants.navBooking: 'Booking',
     HomeTranslationConstants.navGallery: 'Gallery',

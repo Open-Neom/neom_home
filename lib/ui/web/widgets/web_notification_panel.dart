@@ -7,6 +7,7 @@ import 'package:neom_commons/ui/widgets/custom_image.dart';
 import 'package:neom_commons/utils/constants/translations/app_translation_constants.dart';
 import 'package:neom_commons/utils/constants/translations/common_translation_constants.dart';
 import 'package:neom_commons/utils/datetime_utilities.dart';
+import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/activity_feed_firestore.dart';
 import 'package:neom_core/domain/model/activity_feed.dart';
@@ -21,8 +22,9 @@ import 'package:sint/sint.dart';
 /// Loads data directly from Firestore (no dependency on neom_notifications).
 class WebNotificationPanel extends StatefulWidget {
   final VoidCallback onClose;
+  final VoidCallback? onOpenAccountNotices;
 
-  const WebNotificationPanel({super.key, required this.onClose});
+  const WebNotificationPanel({super.key, required this.onClose, this.onOpenAccountNotices});
 
   @override
   State<WebNotificationPanel> createState() => _WebNotificationPanelState();
@@ -49,8 +51,19 @@ class _WebNotificationPanelState extends State<WebNotificationPanel> {
     }
 
     try {
-      final personal = await ActivityFeedFirestore().retrieve(_profileId);
-      final global = await ActivityFeedFirestore().retrieveGlobal();
+      List<ActivityFeed> personal = [];
+      try {
+        personal = await ActivityFeedFirestore().retrieve(_profileId);
+      } catch (e) {
+        AppConfig.logger.d('Error retrieving personal notifications: $e');
+      }
+
+      List<ActivityFeed> global = [];
+      try {
+        global = await ActivityFeedFirestore().retrieveGlobal();
+      } catch (e) {
+        AppConfig.logger.d('Error retrieving global activity feed: $e');
+      }
       final filtered = global.where((item) => item.profileId != _profileId).toList();
 
       final merged = [...personal, ...filtered];
@@ -112,6 +125,20 @@ class _WebNotificationPanelState extends State<WebNotificationPanel> {
               ),
             ),
             const Divider(color: Colors.white12, height: 1),
+
+            ListTile(
+              leading: const Icon(Icons.account_circle_outlined, color: Colors.white70),
+              title: Text('accountNotifications'.tr, style: const TextStyle(color: Colors.white)),
+              trailing: const Icon(Icons.chevron_right, color: Colors.white70),
+              onTap: () {
+                widget.onClose();
+                if (widget.onOpenAccountNotices != null) {
+                  widget.onOpenAccountNotices!();
+                } else {
+                  Sint.toNamed(AppRouteConstants.accountNotifications);
+                }
+              },
+            ),
 
             // Content
             Expanded(

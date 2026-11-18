@@ -230,14 +230,12 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   label: HomeTranslationConstants.navSearch.tr,
                   expanded: widget.expanded,
                   onTap: () {
-                    AuthGuard.protect(context, () {
-                      // Web: toggle search panel overlay (Instagram-style)
-                      if (kIsWeb && Sint.isRegistered<HomeController>()) {
-                        Sint.find<HomeController>().toggleSearchPanel();
-                      } else {
-                        Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
-                      }
-                    });
+                    // Desktop/Web shell: toggle search panel overlay (Instagram-style)
+                    if (Sint.isRegistered<HomeController>()) {
+                      Sint.find<HomeController>().toggleSearchPanel();
+                    } else {
+                      Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
+                    }
                   },
                 ),
                 _NavItem(
@@ -330,6 +328,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.libraryHome),
                   ),
+                if (AppFlavour.showFounding())
+                  _NavItem(
+                    icon: Icons.rocket_launch_outlined,
+                    label: HomeTranslationConstants.navFounding.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.foundingHome),
+                  ),
                 if (AppFlavour.showDirectory())
                   _NavItem(
                     icon: Icons.business_outlined,
@@ -359,7 +364,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.museumHome),
                   ),
-                if (AppConfig.instance.appInUse == AppInUse.g || !kReleaseMode || _isSupportOrAbove)
+                if (AppFlavour.showCasete() || !kReleaseMode || _isSupportOrAbove)
                   _NavItem(
                     icon: Icons.headphones_outlined,
                     label: HomeTranslationConstants.navAudio.tr,
@@ -380,6 +385,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.games),
                   ),
+                if (AppFlavour.showLearning())
+                  _NavItem(
+                    icon: Icons.school_outlined,
+                    label: 'learning'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.learning),
+                  ),
                 if (AppFlavour.showBlog())
                   _NavItem(
                     icon: Icons.edit_note,
@@ -387,6 +399,18 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
+                _NavItem(
+                  icon: Icons.forum_outlined,
+                  label: 'forumTitle'.tr,
+                  expanded: widget.expanded,
+                  onTap: () => Sint.toNamed('/foro'),
+                ),
+                _NavItem(
+                  icon: Icons.groups_3_outlined,
+                  label: 'community.communities'.tr,
+                  expanded: widget.expanded,
+                  onTap: () => Sint.toNamed(AppRouteConstants.communities),
+                ),
                 if (AppFlavour.showVst() && AppGates.canUseHiddenBeta())
                   _NavItem(
                     icon: Icons.music_note,
@@ -426,13 +450,15 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   badge: _unreadNotifications,
                   onTap: () {
                     AuthGuard.protect(context, () {
-                      // Web: toggle notification panel overlay (Instagram-style)
-                      if (kIsWeb && Sint.isRegistered<HomeController>()) {
+                      // Desktop/Web shell: toggle notification panel overlay (Instagram-style)
+                      if (Sint.isRegistered<HomeController>()) {
                         Sint.find<HomeController>().toggleNotificationPanel();
                       } else {
                         Sint.toNamed(AppRouteConstants.feedActivity);
                       }
-                      Future.delayed(const Duration(seconds: 1), _loadCounts);
+                      Future.delayed(const Duration(seconds: 1), () {
+                        if (mounted) _loadCounts();
+                      });
                     });
                   },
                 ),
@@ -444,7 +470,9 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                   onTap: () {
                     AuthGuard.protect(context, () {
                       Sint.toNamed(AppRouteConstants.inbox);
-                      Future.delayed(const Duration(seconds: 1), _loadCounts);
+                      Future.delayed(const Duration(seconds: 1), () {
+                        if (mounted) _loadCounts();
+                      });
                     });
                   },
                 ),
@@ -509,6 +537,18 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed(AppRouteConstants.nupaleHome),
                     ),
+                  _NavItem(
+                    icon: Icons.auto_stories_outlined,
+                    label: 'app.publisher.title'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/publisher'),
+                  ),
+                  _NavItem(
+                    icon: Icons.insights_outlined,
+                    label: 'analytics.dashboard'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.creatorAnalytics),
+                  ),
                   if (AppFlavour.showCasete())
                     _NavItem(
                       icon: Icons.audiotrack,
@@ -571,7 +611,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                       expanded: widget.expanded,
                       onTap: () => Sint.toNamed('/pos'),
                     ),
-                  if (_isAdminOrAbove)
+                  if (_isAdminOrAbove) ...[
                     _NavItem(
                       icon: Icons.groups,
                       label: 'Equipo',
@@ -583,6 +623,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                         Sint.toNamed(AppRouteConstants.inboxRoom, arguments: [inbox]);
                       },
                     ),
+                    _NavItem(
+                      icon: Icons.fact_check_outlined,
+                      label: 'testsCatalogTitle'.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed('/tests'),
+                    ),
+                  ],
                 ],
               ],
             ),
