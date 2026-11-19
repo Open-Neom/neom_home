@@ -21,6 +21,7 @@ import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/app_gates.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/app_in_use.dart';
+import 'package:neom_core/utils/enums/itemlist_type.dart';
 import 'package:neom_core/utils/enums/profile_type.dart';
 import 'package:neom_core/utils/enums/search_type.dart';
 import 'package:neom_core/utils/enums/user_role.dart';
@@ -370,6 +371,16 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     label: HomeTranslationConstants.navAudio.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.audioPlayer),
+                  ),
+                if (AppConfig.instance.appInUse == AppInUse.g && _profileId.isNotEmpty)
+                  _NavItem(
+                    icon: Icons.queue_music_rounded,
+                    label: 'Mis Giglists',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(
+                      AppRouteConstants.lists,
+                      arguments: [ItemlistType.giglist],
+                    ),
                   ),
                 if (AppConfig.instance.appInUse == AppInUse.g && _profileId.isNotEmpty)
                   _NavItem(
