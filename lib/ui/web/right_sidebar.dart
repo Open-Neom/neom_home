@@ -99,6 +99,8 @@ class RightSidebar extends StatelessWidget {
           ],
 
           if (AppConfig.instance.appInUse == AppInUse.e) ...[
+            const _FilAgendaMeetingCta(),
+            const SizedBox(height: 14),
             const _FilGuadalajaraCta(),
             const SizedBox(height: 24),
           ],
@@ -532,6 +534,112 @@ class _TopBookTile extends StatelessWidget {
       height: 50,
       color: Colors.grey.shade900,
       child: const Icon(Icons.menu_book, color: Colors.white38, size: 16),
+    );
+  }
+}
+
+/// Direct public booking CTA for EMXI meetings at FIL Guadalajara 2026.
+class _FilAgendaMeetingCta extends StatefulWidget {
+  const _FilAgendaMeetingCta();
+
+  @override
+  State<_FilAgendaMeetingCta> createState() => _FilAgendaMeetingCtaState();
+}
+
+class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => Sint.toNamed(AppRouteConstants.publicAgenda),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _hovered
+                  ? [const Color(0xFF991B1B), const Color(0xFFB91C1C)]
+                  : [const Color(0xFF7F1D1D), const Color(0xFF991B1B)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF991B1B).withValues(alpha: 0.45),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(
+                    Icons.calendar_month_rounded,
+                    color: Colors.amberAccent,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 8),
+                  const Expanded(
+                    child: Text(
+                      'Agendar Reunión · FIL GDL 2026',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white.withValues(alpha: 0.65),
+                    size: 12,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Agendar reunión con EMXI en Stand M10 o Área de Profesionales',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.92),
+                  fontSize: 12,
+                  height: 1.35,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.amberAccent.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: Colors.amberAccent.withValues(alpha: 0.4),
+                  ),
+                ),
+                child: const Text(
+                  '28 nov – 6 dic · Ver horarios',
+                  style: TextStyle(
+                    color: Colors.amberAccent,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
