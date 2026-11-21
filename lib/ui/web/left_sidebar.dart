@@ -101,17 +101,6 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
     return Sint.find<UserService>().user.userRole.value >= UserRole.admin.value;
   }
 
-  /// True if user is an artist profile (in Gigmeout all artist profiles can manage bands)
-  bool get _isArtistNonSubscriber {
-    if (!Sint.isRegistered<UserService>()) return false;
-    final service = Sint.find<UserService>();
-    if (AppConfig.instance.appInUse == AppInUse.g) {
-      return service.profile.type == ProfileType.appArtist;
-    }
-    return service.profile.type == ProfileType.appArtist
-        && service.user.userRole != UserRole.subscriber;
-  }
-
   bool get _hasApprovedRoom {
     if (!Sint.isRegistered<UserService>()) return false;
     final service = Sint.find<UserService>();
@@ -436,10 +425,10 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.dawProjects),
                   ),
-                if (AppFlavour.showBands() && _isArtistNonSubscriber)
+                if (AppFlavour.showBands())
                   _NavItem(
                     icon: Icons.people,
-                    label: HomeTranslationConstants.navCollectives.tr,
+                    label: AppTranslationConstants.collectives.tr,
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.collectives),
                   ),
