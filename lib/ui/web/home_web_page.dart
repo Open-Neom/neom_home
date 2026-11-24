@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -16,7 +17,6 @@ import 'left_sidebar.dart';
 import 'right_sidebar.dart';
 import 'widgets/web_notification_panel.dart';
 import 'widgets/web_search_panel.dart';
-import 'widgets/web_stories_row.dart';
 
 /// Builder types for audio player widgets injected from the app layer.
 /// This avoids coupling neom_home to neom_audio_player.
@@ -143,6 +143,7 @@ class _HomeWebPageState extends State<HomeWebPage> {
 
     return SintBuilder<HomeController>(
       id: AppPageIdConstants.home,
+      autoRemove: false,
       initState: (_) {
         Sint.find<HomeController>().initTabs(widget.tabs);
       },
@@ -191,28 +192,21 @@ class _HomeWebPageState extends State<HomeWebPage> {
                               onTabSelected: (index) => controller.selectTab(index, context: context),
                             )),
 
-                            // Center feed
+                            // Center feed — ReleaseShelf sits at the top of
+                            // TimelinePage instead of an ephemeral stories bar.
                             Expanded(
                               child: Container(
                                 decoration: AppTheme.appBoxDecoration,
-                                child: Column(
-                                  children: [
-                                    // Ephemeral 24h stories row at the top of Home feed
-                                    Obx(() => controller.currentIndex == 0
-                                        ? const WebStoriesRow()
-                                        : const SizedBox.shrink()),
-
-                                    // Main content (tab pages)
-                                    Expanded(
-                                      child: Obx(() => IndexedStack(
-                                        index: controller.pageIndex.clamp(
-                                          0,
-                                          pageWidgets.isEmpty ? 0 : pageWidgets.length - 1,
-                                        ),
-                                        children: pageWidgets,
-                                      )),
+                                child: SafeArea(
+                                  top: !kIsWeb,
+                                  bottom: false,
+                                  child: Obx(() => IndexedStack(
+                                    index: controller.pageIndex.clamp(
+                                      0,
+                                      pageWidgets.isEmpty ? 0 : pageWidgets.length - 1,
                                     ),
-                                  ],
+                                    children: pageWidgets,
+                                  )),
                                 ),
                               ),
                             ),

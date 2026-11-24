@@ -73,6 +73,7 @@ class HomePage extends StatelessWidget {
 
     return SintBuilder<HomeController>(
       id: AppPageIdConstants.home,
+      autoRemove: false,
       initState: (_) {
         Sint.find<HomeController>().initTabs(tabs);
       },

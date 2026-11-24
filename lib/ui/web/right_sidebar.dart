@@ -112,6 +112,16 @@ class RightSidebar extends StatelessWidget {
           ],
 
           if (AppConfig.instance.appInUse == AppInUse.g) ...[
+            const _BrandAgendaMeetingCta(
+              title: 'Agendar Reunión · Gigmeout',
+              subtitle:
+                  'Agenda 30 min con el equipo de Gigmeout (artistas, venues, Giglab o alianzas)',
+              badge: 'Lun – Vie · 10:00 a 18:00',
+              gradientColors: [Color(0xFF3B0764), Color(0xFF6D28D9)],
+              hoverColors: [Color(0xFF4C1D95), Color(0xFF7C3AED)],
+              accentColor: Color(0xFF38BDF8),
+            ),
+            const SizedBox(height: 14),
             const _DawStudioCta(),
             const SizedBox(height: 24),
           ],
@@ -123,8 +133,18 @@ class RightSidebar extends StatelessWidget {
             const SizedBox(height: 24),
           ],
 
-          // E2. Cyberneom: Experiencias & Estados
+          // E2. Cyberneom: Experiencias & Estados + Agenda
           if (AppConfig.instance.appInUse == AppInUse.c) ...[
+            const _BrandAgendaMeetingCta(
+              title: 'Agendar Reunión · Cyberneom',
+              subtitle:
+                  'Agenda 30 min con el equipo de Cyberneom (alianzas, investigación o proyectos)',
+              badge: 'Lun – Vie · 10:00 a 18:00',
+              gradientColors: [Color(0xFF1E1B4B), Color(0xFF3730A3)],
+              hoverColors: [Color(0xFF312E81), Color(0xFF4F46E5)],
+              accentColor: Color(0xFFA5B4FC),
+            ),
+            const SizedBox(height: 14),
             const _CyberneomStatesSection(),
             const SizedBox(height: 24),
           ],
@@ -539,14 +559,46 @@ class _TopBookTile extends StatelessWidget {
 }
 
 /// Direct public booking CTA for EMXI meetings at FIL Guadalajara 2026.
-class _FilAgendaMeetingCta extends StatefulWidget {
+class _FilAgendaMeetingCta extends StatelessWidget {
   const _FilAgendaMeetingCta();
 
   @override
-  State<_FilAgendaMeetingCta> createState() => _FilAgendaMeetingCtaState();
+  Widget build(BuildContext context) {
+    return const _BrandAgendaMeetingCta(
+      title: 'Agendar Reunión · FIL GDL 2026',
+      subtitle: 'Agendar reunión con EMXI en Stand M10 o Área de Profesionales',
+      badge: '28 nov – 6 dic · Ver horarios',
+      gradientColors: [Color(0xFF7F1D1D), Color(0xFF991B1B)],
+      hoverColors: [Color(0xFF991B1B), Color(0xFFB91C1C)],
+      accentColor: Colors.amberAccent,
+    );
+  }
 }
 
-class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
+/// Branded public booking CTA card linking directly to `/agendar` across
+/// EMXI, Gigmeout, and Cyberneom.
+class _BrandAgendaMeetingCta extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final String badge;
+  final List<Color> gradientColors;
+  final List<Color> hoverColors;
+  final Color accentColor;
+
+  const _BrandAgendaMeetingCta({
+    required this.title,
+    required this.subtitle,
+    required this.badge,
+    required this.gradientColors,
+    required this.hoverColors,
+    required this.accentColor,
+  });
+
+  @override
+  State<_BrandAgendaMeetingCta> createState() => _BrandAgendaMeetingCtaState();
+}
+
+class _BrandAgendaMeetingCtaState extends State<_BrandAgendaMeetingCta> {
   bool _hovered = false;
 
   @override
@@ -562,9 +614,7 @@ class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: _hovered
-                  ? [const Color(0xFF991B1B), const Color(0xFFB91C1C)]
-                  : [const Color(0xFF7F1D1D), const Color(0xFF991B1B)],
+              colors: _hovered ? widget.hoverColors : widget.gradientColors,
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -572,7 +622,7 @@ class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
             boxShadow: _hovered
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF991B1B).withValues(alpha: 0.45),
+                      color: widget.gradientColors.last.withValues(alpha: 0.45),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -584,16 +634,16 @@ class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
             children: [
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.calendar_month_rounded,
-                    color: Colors.amberAccent,
+                    color: widget.accentColor,
                     size: 20,
                   ),
                   const SizedBox(width: 8),
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'Agendar Reunión · FIL GDL 2026',
-                      style: TextStyle(
+                      widget.title,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w700,
@@ -610,7 +660,7 @@ class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Agendar reunión con EMXI en Stand M10 o Área de Profesionales',
+                widget.subtitle,
                 style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.92),
                   fontSize: 12,
@@ -621,16 +671,16 @@ class _FilAgendaMeetingCtaState extends State<_FilAgendaMeetingCta> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.amberAccent.withValues(alpha: 0.18),
+                  color: widget.accentColor.withValues(alpha: 0.18),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: Colors.amberAccent.withValues(alpha: 0.4),
+                    color: widget.accentColor.withValues(alpha: 0.4),
                   ),
                 ),
-                child: const Text(
-                  '28 nov – 6 dic · Ver horarios',
+                child: Text(
+                  widget.badge,
                   style: TextStyle(
-                    color: Colors.amberAccent,
+                    color: widget.accentColor,
                     fontSize: 10,
                     fontWeight: FontWeight.w600,
                   ),

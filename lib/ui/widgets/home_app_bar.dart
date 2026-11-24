@@ -379,36 +379,37 @@ class _HomeAppBarState extends State<HomeAppBar> with WidgetsBindingObserver {
     );
   }
 
-  /// Cart badge icon — only visible when ShopCartService is registered (e.g. EMXI).
+  /// Cart badge icon — only visible when ShopCartService is registered AND
+  /// has at least one item, keeping the top bar uncluttered when the cart is empty.
   Widget _buildCartBadge() {
     try {
       final cartService = Sint.find<ShopCartService>();
       return Obx(() {
         final count = cartService.itemCount;
+        if (count <= 0) return const SizedBox.shrink();
         return IconButton(
           padding: EdgeInsets.zero,
           icon: Stack(
             clipBehavior: Clip.none,
             children: [
               const Icon(Icons.shopping_cart_outlined, size: 22),
-              if (count > 0)
-                Positioned(
-                  right: -6,
-                  top: -4,
-                  child: Container(
-                    padding: const EdgeInsets.all(3),
-                    decoration: BoxDecoration(
-                      color: AppColor.bondiBlue,
-                      shape: BoxShape.circle,
-                    ),
-                    constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
-                    child: Text(
-                      count > 9 ? '9+' : '$count',
-                      style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
+              Positioned(
+                right: -6,
+                top: -4,
+                child: Container(
+                  padding: const EdgeInsets.all(3),
+                  decoration: BoxDecoration(
+                    color: AppColor.bondiBlue,
+                    shape: BoxShape.circle,
+                  ),
+                  constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
+                  child: Text(
+                    count > 9 ? '9+' : '$count',
+                    style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
                 ),
+              ),
             ],
           ),
           color: Colors.white70,

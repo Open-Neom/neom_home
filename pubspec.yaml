@@ -19,7 +19,7 @@ dependencies:
   neom_commons: ^2.0.0
 
   # TRANSITIVE DEPENDENCIES FOR PUB.DEV PUBLISHING
-  sint: ^2.0.2
+  sint: ^2.3.0
 
 
   intl: ^0.20.3

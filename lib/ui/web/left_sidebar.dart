@@ -410,18 +410,20 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.blog),
                   ),
-                _NavItem(
-                  icon: Icons.forum_outlined,
-                  label: 'forumTitle'.tr,
-                  expanded: widget.expanded,
-                  onTap: () => Sint.toNamed('/foro'),
-                ),
-                _NavItem(
-                  icon: Icons.groups_3_outlined,
-                  label: 'community.communities'.tr,
-                  expanded: widget.expanded,
-                  onTap: () => Sint.toNamed(AppRouteConstants.communities),
-                ),
+                if (AppFlavour.showForum())
+                  _NavItem(
+                    icon: Icons.forum_outlined,
+                    label: 'forumTitle'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/foro'),
+                  ),
+                if (AppFlavour.showCommunities())
+                  _NavItem(
+                    icon: Icons.groups_3_outlined,
+                    label: 'community.communities'.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.communities),
+                  ),
                 if (AppFlavour.showVst() && AppGates.canUseHiddenBeta())
                   _NavItem(
                     icon: Icons.music_note,
