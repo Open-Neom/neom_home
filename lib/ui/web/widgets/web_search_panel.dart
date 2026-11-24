@@ -12,10 +12,12 @@ import 'package:neom_commons/utils/text_utilities.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/api/app_release_items.dart';
 import 'package:neom_core/data/firestore/app_media_item_firestore.dart';
+import 'package:neom_core/data/firestore/collective_firestore.dart';
 import 'package:neom_core/data/firestore/profile_firestore.dart';
 import 'package:neom_core/domain/model/app_media_item.dart';
 import 'package:neom_core/domain/model/app_profile.dart';
 import 'package:neom_core/domain/model/app_release_item.dart';
+import 'package:neom_core/domain/model/collective.dart';
 import 'package:neom_core/domain/use_cases/mate_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
 import 'package:neom_core/utils/enums/media_item_type.dart';
@@ -46,11 +48,13 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
 
   // Cached data — only followers + following (lightweight)
   Map<String, AppProfile> _nearProfiles = {};
+  Map<String, Collective> _allCollectives = {};
   Map<String, AppMediaItem> _allMediaItems = {};
   Map<String, AppReleaseItem> _allReleaseItems = {};
 
   // Filtered results
   List<AppProfile> _filteredProfiles = [];
+  List<Collective> _filteredCollectives = [];
   List<AppMediaItem> _filteredMediaItems = [];
   List<AppReleaseItem> _filteredReleaseItems = [];
 
@@ -93,6 +97,14 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
         NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.releases');
       }));
 
+      if (AppFlavour.showBands()) {
+        futures.add(CollectiveFirestore().getCollectives(limit: 30).then((items) {
+          _allCollectives = items;
+        }).catchError((Object e, StackTrace st) {
+          NeomErrorLogger.recordError(e, st, module: 'neom_home', operation: '_loadData.collectives');
+        }));
+      }
+
       await Future.wait(futures);
 
       // Show followers/following + recent releases/media when no query
@@ -126,6 +138,10 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
     _filteredProfiles = _nearProfiles.values
         .where((p) => p.name.isNotEmpty && p.isActive)
         .take(8)
+        .toList();
+    _filteredCollectives = _allCollectives.values
+        .where((c) => c.name.trim().isNotEmpty && c.isActive)
+        .take(4)
         .toList();
     _filteredMediaItems = _allMediaItems.values.take(4).toList();
     _filteredReleaseItems = _allReleaseItems.values.take(4).toList();
@@ -165,7 +181,26 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
       ).take(10).toList();
     }
 
-    // Filter media and releases locally
+    // Filter collectives, media, and releases locally
+    final normalizedQuery = TextUtilities.normalizeString(_searchQuery).toLowerCase();
+    _filteredCollectives = _allCollectives.values.where((c) {
+      if (!c.isActive || c.name.trim().isEmpty) return false;
+      final name = TextUtilities.normalizeString(c.name).toLowerCase();
+      if (name.contains(normalizedQuery)) return true;
+      final desc = TextUtilities.normalizeString(c.description).toLowerCase();
+      if (desc.contains(normalizedQuery)) return true;
+      final genreMatch = c.genres?.entries.any((g) =>
+              TextUtilities.normalizeString(g.key).toLowerCase().contains(normalizedQuery) ||
+              TextUtilities.normalizeString(g.value.name).toLowerCase().contains(normalizedQuery)) ??
+          false;
+      if (genreMatch) return true;
+      final memberMatch = c.members?.values.any((m) =>
+              TextUtilities.normalizeString(m.name).toLowerCase().contains(normalizedQuery) ||
+              TextUtilities.normalizeString(m.instrument?.name ?? '').toLowerCase().contains(normalizedQuery)) ??
+          false;
+      return memberMatch;
+    }).take(6).toList();
+
     _filteredMediaItems = _allMediaItems.values.where((item) =>
         item.name.toLowerCase().contains(_searchQuery) ||
         item.ownerName.toLowerCase().contains(_searchQuery)
@@ -265,6 +300,7 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
 
   Widget _buildResults() {
     final hasProfiles = _filteredProfiles.isNotEmpty;
+    final hasCollectives = _filteredCollectives.isNotEmpty;
     final hasMedia = _filteredMediaItems.isNotEmpty;
     final hasReleases = _filteredReleaseItems.isNotEmpty;
 
@@ -275,7 +311,7 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
       ));
     }
 
-    if (!hasProfiles && !hasMedia && !hasReleases) {
+    if (!hasProfiles && !hasCollectives && !hasMedia && !hasReleases) {
       return Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -299,6 +335,11 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
           _buildSectionHeader(AppTranslationConstants.profiles.tr),
           ..._filteredProfiles.map(_buildProfileTile),
         ],
+        // Bands / Collectives section
+        if (hasCollectives) ...[
+          _buildSectionHeader(AppTranslationConstants.collectives.tr),
+          ..._filteredCollectives.map(_buildCollectiveTile),
+        ],
         // Releases section
         if (hasReleases) ...[
           _buildSectionHeader(AppTranslationConstants.releases.tr),
@@ -311,6 +352,98 @@ class _WebSearchPanelState extends State<WebSearchPanel> {
         ],
         const SizedBox(height: 20),
       ],
+    );
+  }
+
+  Widget _buildCollectiveTile(Collective collective) {
+    final filledMembers = collective.members?.values
+            .where((m) => m.profileId.trim().isNotEmpty)
+            .length ??
+        0;
+    final memberCount = filledMembers > 0
+        ? filledMembers
+        : (collective.memberProfileIds.isNotEmpty
+            ? collective.memberProfileIds.length
+            : (collective.members?.length ?? 0));
+
+    return InkWell(
+      onTap: () {
+        widget.onClose();
+        Sint.toNamed(
+          AppRouteConstants.collectivePath(collective.id, slug: collective.slug),
+          arguments: [collective],
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: SizedBox(
+                width: 44,
+                height: 44,
+                child: collective.photoUrl.trim().isNotEmpty
+                    ? platformNetworkImage(
+                        imageUrl: collective.photoUrl,
+                        fit: BoxFit.cover,
+                        width: 44,
+                        height: 44,
+                        errorWidget: Image(
+                          fit: BoxFit.cover,
+                          image: const AssetImage(AppAssets.mainItemCover),
+                        ),
+                      )
+                    : platformNetworkImage(
+                        imageUrl: AppProperties.getAppLogoUrl(),
+                        fit: BoxFit.cover,
+                        width: 44,
+                        height: 44,
+                      ),
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          collective.name,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      if (memberCount > 0) ...[
+                        const SizedBox(width: 6),
+                        Icon(Icons.people_outline, size: 13, color: Colors.grey[400]),
+                        const SizedBox(width: 2),
+                        Text(
+                          '$memberCount',
+                          style: TextStyle(color: Colors.grey[400], fontSize: 12),
+                        ),
+                      ],
+                    ],
+                  ),
+                  if (collective.description.trim().isNotEmpty)
+                    Text(
+                      collective.description.trim(),
+                      style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
