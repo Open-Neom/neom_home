@@ -84,6 +84,16 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
     return Sint.find<UserService>().user.userRole.value >= UserRole.support.value;
   }
 
+  /// True for privileged roles strictly above `subscriber` (editor, support,
+  /// erp, pos, developer, admin, superAdmin) — used for Experimental features.
+  bool get _isAboveSubscriber {
+    if (AppConfig.instance.isGuestMode || !Sint.isRegistered<UserService>()) {
+      return false;
+    }
+    return Sint.find<UserService>().user.userRole.value >
+        UserRole.subscriber.value;
+  }
+
   bool get _hasApprovedRoom {
     if (!Sint.isRegistered<UserService>()) return false;
     final service = Sint.find<UserService>();
@@ -290,7 +300,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     onTap: () => widget.onTabSelected(3),
                   ),
                   _NavItem(
-                    icon: Icons.spa_outlined,
+                    icon: Icons.dynamic_feed_outlined,
                     label: 'cyberTabAgora'.tr,
                     expanded: widget.expanded,
                     isActive: widget.currentTabIndex == 4,
@@ -668,12 +678,6 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                       onTap: () => Sint.toNamed(AppRouteConstants.nupaleHome),
                     ),
                   _NavItem(
-                    icon: Icons.auto_stories_outlined,
-                    label: 'app.publisher.title'.tr,
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed('/publisher'),
-                  ),
-                  _NavItem(
                     icon: Icons.insights_outlined,
                     label: 'analytics.dashboard'.tr,
                     expanded: widget.expanded,
@@ -701,6 +705,45 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                       onTap: () => Sint.toNamed(AppRouteConstants.services),
                     ),
                   ],
+                ],
+                if (_isAboveSubscriber &&
+                    AppConfig.instance.appInUse == AppInUse.e) ...[
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: widget.expanded ? 16 : 12,
+                      vertical: 8,
+                    ),
+                    child: const Divider(color: Colors.white12, height: 1),
+                  ),
+                  if (widget.expanded)
+                    const Padding(
+                      padding: EdgeInsets.fromLTRB(16, 2, 16, 4),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.science_outlined,
+                            size: 13,
+                            color: Colors.amberAccent,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'EXPERIMENTAL',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.9,
+                              color: Colors.amberAccent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  _NavItem(
+                    icon: Icons.auto_stories_outlined,
+                    label: 'Neom DesignCraft',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/publisher'),
+                  ),
                 ],
                 if (AdmineomSsoLauncher.canAccess(minimumRole: UserRole.support)) ...[
                   Padding(
