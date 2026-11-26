@@ -6,6 +6,7 @@ import 'package:neom_commons/app_flavour.dart';
 import 'package:neom_commons/ui/theme/app_color.dart';
 import 'package:neom_commons/ui/theme/app_theme.dart';
 import 'package:neom_commons/ui/widgets/custom_image.dart';
+import 'package:neom_commons/utils/admineom_sso_launcher.dart';
 import 'package:neom_commons/utils/app_alerts.dart';
 import 'package:neom_commons/utils/auth_guard.dart';
 import 'package:neom_commons/utils/constants/app_assets.dart';
@@ -77,28 +78,10 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
         || service.user.userRole.value >= UserRole.support.value;
   }
 
-  /// True if user has support+ role (for Release Upload)
+  /// True if user has support+ role (for Release Upload and Admineom SSO)
   bool get _isSupportOrAbove {
     if (!Sint.isRegistered<UserService>()) return false;
     return Sint.find<UserService>().user.userRole.value >= UserRole.support.value;
-  }
-
-  /// True if user has erp+ role (for ERP Dashboard)
-  bool get _isErpOrAbove {
-    if (!Sint.isRegistered<UserService>()) return false;
-    return Sint.find<UserService>().user.userRole.value >= UserRole.erp.value;
-  }
-
-  /// True if user has pos+ role (for POS)
-  bool get _isPosOrAbove {
-    if (!Sint.isRegistered<UserService>()) return false;
-    return Sint.find<UserService>().user.userRole.value >= UserRole.pos.value;
-  }
-
-  /// True if user has admin+ role (for Equipo)
-  bool get _isAdminOrAbove {
-    if (!Sint.isRegistered<UserService>()) return false;
-    return Sint.find<UserService>().user.userRole.value >= UserRole.admin.value;
   }
 
   bool get _hasApprovedRoom {
@@ -208,6 +191,150 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
             child: ListView(
               padding: const EdgeInsets.symmetric(vertical: 4),
               children: [
+                if (AppConfig.instance.appInUse == AppInUse.c) ...[
+                  _NavItem(
+                    icon: Icons.waves_rounded,
+                    label: 'cyberTabPulse'.tr,
+                    expanded: widget.expanded,
+                    isActive: widget.currentTabIndex == 0,
+                    onTap: () => widget.onTabSelected(0),
+                  ),
+                  _NavItem(
+                    icon: Icons.search,
+                    label: HomeTranslationConstants.navSearch.tr,
+                    expanded: widget.expanded,
+                    onTap: () {
+                      if (Sint.isRegistered<HomeController>()) {
+                        Sint.find<HomeController>().toggleSearchPanel();
+                      } else {
+                        Sint.toNamed(AppRouteConstants.search, arguments: [SearchType.any]);
+                      }
+                    },
+                  ),
+                  _NavItem(
+                    icon: Icons.biotech_outlined,
+                    label: 'cyberTabLab'.tr,
+                    expanded: widget.expanded,
+                    isActive: widget.currentTabIndex == 1,
+                    onTap: () => widget.onTabSelected(1),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: widget.expanded ? 6 : 4, vertical: 8),
+                    child: Tooltip(
+                      message: widget.expanded ? '' : HomeTranslationConstants.navChamber.tr,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(12),
+                          onTap: () => Sint.toNamed(AppRouteConstants.generator),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: widget.expanded ? 12 : 0,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary.withAlpha(60),
+                                  Theme.of(context).colorScheme.primary.withAlpha(30),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary.withAlpha(100),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: widget.expanded
+                                  ? MainAxisAlignment.start
+                                  : MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.auto_awesome,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 22,
+                                ),
+                                if (widget.expanded) ...[
+                                  const SizedBox(width: 12),
+                                  Flexible(
+                                    child: Text(
+                                      HomeTranslationConstants.navChamber.tr,
+                                      style: TextStyle(
+                                        color: Theme.of(context).colorScheme.primary,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  _NavItem(
+                    icon: Icons.podcasts_outlined,
+                    label: 'cyberTabSanctuary'.tr,
+                    expanded: widget.expanded,
+                    isActive: widget.currentTabIndex == 2,
+                    onTap: () => widget.onTabSelected(2),
+                  ),
+                  _NavItem(
+                    icon: Icons.science_outlined,
+                    label: 'cyberTabJournal'.tr,
+                    expanded: widget.expanded,
+                    isActive: widget.currentTabIndex == 3,
+                    onTap: () => widget.onTabSelected(3),
+                  ),
+                  _NavItem(
+                    icon: Icons.spa_outlined,
+                    label: 'cyberTabAgora'.tr,
+                    expanded: widget.expanded,
+                    isActive: widget.currentTabIndex == 4,
+                    onTap: () => widget.onTabSelected(4),
+                  ),
+                  _NavItem(
+                    icon: Icons.monitor_heart_outlined,
+                    label: 'Monitor EEG',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/eeg'),
+                  ),
+                  _NavItem(
+                    icon: Icons.speed_outlined,
+                    label: 'PAR Readiness',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed('/par'),
+                  ),
+                  _NavItem(
+                    icon: Icons.headphones_outlined,
+                    label: HomeTranslationConstants.navAudio.tr,
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.audioPlayer),
+                  ),
+                  _NavItem(
+                    icon: Icons.record_voice_over_outlined,
+                    label: 'Salas en Vivo',
+                    expanded: widget.expanded,
+                    onTap: () => Sint.toNamed(AppRouteConstants.liveDiscover),
+                  ),
+                  if (AppFlavour.showLevitation())
+                    _NavItem(
+                      icon: Icons.waves,
+                      label: HomeTranslationConstants.navLevitation.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed(AppRouteConstants.levitationLab),
+                    ),
+                  if (AppFlavour.showInterComm() && AppGates.canUseHiddenBeta() && _isSupportOrAbove)
+                    _NavItem(
+                      icon: Icons.compare_arrows,
+                      label: HomeTranslationConstants.navInter.tr,
+                      expanded: widget.expanded,
+                      onTap: () => Sint.toNamed('/inter'),
+                    ),
+                ] else ...[
                 _NavItem(
                   icon: Icons.home_rounded,
                   label: HomeTranslationConstants.navHome.tr,
@@ -434,6 +561,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     expanded: widget.expanded,
                     onTap: () => Sint.toNamed(AppRouteConstants.collectives),
                   ),
+                ],
 
                 // Divider
                 Padding(
@@ -574,7 +702,7 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     ),
                   ],
                 ],
-                if (_isErpOrAbove) ...[
+                if (AdmineomSsoLauncher.canAccess(minimumRole: UserRole.support)) ...[
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: widget.expanded ? 16 : 12,
@@ -583,55 +711,13 @@ class _LeftSidebarState extends State<LeftSidebar> with WidgetsBindingObserver {
                     child: const Divider(color: Colors.white12, height: 1),
                   ),
                   _NavItem(
-                    icon: Icons.groups_2,
-                    label: 'CRM',
+                    icon: Icons.admin_panel_settings_outlined,
+                    label: 'Admineom',
                     expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.erpCrm),
-                  ),
-                  _NavItem(
-                    icon: Icons.account_balance,
-                    label: 'ERP',
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.erp),
-                  ),
-                  _NavItem(
-                    icon: Icons.view_kanban,
-                    label: 'Kanban',
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.kanbanDashboard),
-                  ),
-                  _NavItem(
-                    icon: Icons.support_agent,
-                    label: 'A&S',
-                    expanded: widget.expanded,
-                    onTap: () => Sint.toNamed(AppRouteConstants.erpSupport),
-                  ),
-                  if (_isPosOrAbove)
-                    _NavItem(
-                      icon: Icons.point_of_sale,
-                      label: 'POS',
-                      expanded: widget.expanded,
-                      onTap: () => Sint.toNamed('/pos'),
+                    onTap: () => AdmineomSsoLauncher.open(
+                      minimumRole: UserRole.support,
                     ),
-                  if (_isAdminOrAbove) ...[
-                    _NavItem(
-                      icon: Icons.groups,
-                      label: 'Equipo',
-                      expanded: widget.expanded,
-                      onTap: () async {
-                        final pid = _profileId;
-                        if (pid.isEmpty) return;
-                        final inbox = await InboxFirestore().getOrCreateTeamRoom(pid);
-                        Sint.toNamed(AppRouteConstants.inboxRoom, arguments: [inbox]);
-                      },
-                    ),
-                    _NavItem(
-                      icon: Icons.fact_check_outlined,
-                      label: 'testsCatalogTitle'.tr,
-                      expanded: widget.expanded,
-                      onTap: () => Sint.toNamed('/tests'),
-                    ),
-                  ],
+                  ),
                 ],
               ],
             ),

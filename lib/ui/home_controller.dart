@@ -323,7 +323,7 @@ class HomeController extends SintController implements HomeService {
     isLoading.value = true;
 
     try {
-      if (index == 0 && timelineServiceImpl != null) {
+      if (index == 0 && AppConfig.instance.appInUse != AppInUse.c && timelineServiceImpl != null) {
         timelineServiceImpl!.setScrollOffset(0);
         await setInitialTimeline();
       }
