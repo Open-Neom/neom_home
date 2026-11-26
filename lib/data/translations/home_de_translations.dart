@@ -81,5 +81,9 @@ class HomeDeTranslations {
     HomeTranslationConstants.dawStudioCardSubtitle:
         'Öffne die DAW, um deine Tracks zu erstellen, zu mischen und zu veröffentlichen.',
     HomeTranslationConstants.dawStudioCardBadge: 'Integrierte DAW',
+    HomeTranslationConstants.gigMasteringCardTitle: 'Gig Mastering',
+    HomeTranslationConstants.gigMasteringCardSubtitle:
+        'Mastere und entzerre deine Tracks mit KI. Kostenlose 30s-A/B-Vorschau.',
+    HomeTranslationConstants.gigMasteringCardBadge: 'KI-Mastering · Gratis-Vorschau',
   };
 }

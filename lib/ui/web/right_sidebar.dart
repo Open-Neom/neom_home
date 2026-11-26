@@ -11,6 +11,7 @@ import 'package:neom_core/app_config.dart';
 import 'package:neom_core/app_properties.dart';
 import 'package:neom_core/data/firestore/inbox_firestore.dart';
 import 'package:neom_core/domain/model/literature_books.dart';
+import 'package:neom_core/domain/use_cases/mastering_service.dart';
 import 'package:neom_core/domain/use_cases/timeline_service.dart';
 import 'package:neom_core/domain/use_cases/user_service.dart';
 import 'package:neom_core/utils/constants/app_route_constants.dart';
@@ -123,6 +124,8 @@ class RightSidebar extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             const _DawStudioCta(),
+            const SizedBox(height: 12),
+            const _GigMasteringCta(),
             const SizedBox(height: 24),
           ],
 
@@ -1124,6 +1127,117 @@ class _DawStudioCtaState extends State<_DawStudioCta> {
                 child: Text(
                   HomeTranslationConstants.dawStudioCardBadge.tr,
                   style: const TextStyle(color: Colors.cyanAccent, fontSize: 10, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _GigMasteringCta extends StatefulWidget {
+  const _GigMasteringCta();
+
+  @override
+  State<_GigMasteringCta> createState() => _GigMasteringCtaState();
+}
+
+class _GigMasteringCtaState extends State<_GigMasteringCta> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () {
+          AuthGuard.protect(
+            context,
+            () {
+              if (kIsWeb && Sint.isRegistered<MasteringService>()) {
+                Sint.find<MasteringService>().showMasteringModal(context);
+              } else {
+                Sint.toNamed(AppRouteConstants.mastering);
+              }
+            },
+            redirectRoute: AppRouteConstants.mastering,
+          );
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: _hovered
+                  ? [const Color(0xFF00796B), const Color(0xFF0288D1)]
+                  : [const Color(0xFF004D40), const Color(0xFF01579B)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                      color: const Color(0xFF0288D1).withValues(alpha: 0.4),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.auto_awesome_rounded, color: Colors.amberAccent, size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      HomeTranslationConstants.gigMasteringCardTitle.tr,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.white.withValues(alpha: 0.6),
+                    size: 12,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                HomeTranslationConstants.gigMasteringCardSubtitle.tr,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
+                  fontSize: 12,
+                  height: 1.4,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.amberAccent.withValues(alpha: 0.18),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.amberAccent.withValues(alpha: 0.45)),
+                ),
+                child: Text(
+                  HomeTranslationConstants.gigMasteringCardBadge.tr,
+                  style: const TextStyle(
+                    color: Colors.amberAccent,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],

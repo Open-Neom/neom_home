@@ -82,5 +82,9 @@ class HomeFrTranslations {
     HomeTranslationConstants.dawStudioCardSubtitle:
         'Ouvre la DAW pour créer, mixer et publier tes pistes.',
     HomeTranslationConstants.dawStudioCardBadge: 'DAW Intégrée',
+    HomeTranslationConstants.gigMasteringCardTitle: 'Gig Mastering',
+    HomeTranslationConstants.gigMasteringCardSubtitle:
+        'Masterise et égalise tes pistes avec IA. Aperçu A/B gratuit de 30s.',
+    HomeTranslationConstants.gigMasteringCardBadge: 'Mastering IA · Aperçu Gratuit',
   };
 }

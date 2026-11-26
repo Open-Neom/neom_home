@@ -86,4 +86,9 @@ class HomeTranslationConstants {
   static const String dawStudioCardTitle = 'dawStudioCardTitle';
   static const String dawStudioCardSubtitle = 'dawStudioCardSubtitle';
   static const String dawStudioCardBadge = 'dawStudioCardBadge';
+
+  // Web right sidebar — Gig Mastering card
+  static const String gigMasteringCardTitle = 'gigMasteringCardTitle';
+  static const String gigMasteringCardSubtitle = 'gigMasteringCardSubtitle';
+  static const String gigMasteringCardBadge = 'gigMasteringCardBadge';
 }

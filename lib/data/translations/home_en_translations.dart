@@ -82,5 +82,9 @@ class HomeEnTranslations {
     HomeTranslationConstants.dawStudioCardSubtitle:
         'Enter the DAW to create, mix, and publish your tracks.',
     HomeTranslationConstants.dawStudioCardBadge: 'Built-in DAW',
+    HomeTranslationConstants.gigMasteringCardTitle: 'Gig Mastering',
+    HomeTranslationConstants.gigMasteringCardSubtitle:
+        'Master and EQ your tracks with AI. Listen to a free 30s A/B preview.',
+    HomeTranslationConstants.gigMasteringCardBadge: 'AI Mastering · Free Preview',
   };
 }
